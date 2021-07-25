@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
+import { Text } from 'react-native'
 import Background from '../components/Background'
 import BackButton from '../components/BackButton'
 import Logo from '../components/Logo'
-import Header from '../components/Header'
 import TextInput from '../components/TextInput'
 import Button from '../components/Button'
 import { emailValidator } from '../helpers/emailValidator'
+import Styles from '../core/Styles'
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -23,7 +24,7 @@ export default function ResetPasswordScreen({ navigation }) {
     <Background>
       <BackButton goBack={navigation.goBack} />
       <Logo />
-      <Header>Restore Password</Header>
+      <Text style={Styles.header}>Restore Password</Text>
       <TextInput
         label="E-mail address"
         returnKeyType="done"

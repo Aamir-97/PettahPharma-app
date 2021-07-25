@@ -1,7 +1,8 @@
 import React from 'react'
+import { Text } from 'react-native'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
-import Header from '../components/Header'
+import Styles from '../core/Styles'
 import Button from '../components/Button'
 import Paragraph from '../components/Paragraph'
 
@@ -9,21 +10,15 @@ export default function StartScreen({ navigation }) {
   return (
     <Background>
       <Logo />
-      <Header>Login Template</Header>
+      <Text style={Styles.header}>WelCome To Pettah Pahrma (Pvt) Ltd. </Text>
       <Paragraph>
-        The easiest way to start with your amazing application.
+        Application for Medical Reperesentatives in PettahPharma.
       </Paragraph>
       <Button
         mode="contained"
         onPress={() => navigation.navigate('LoginScreen')}
       >
         Login
-      </Button>
-      <Button
-        mode="outlined"
-        onPress={() => navigation.navigate('RegisterScreen')}
-      >
-        Sign Up
       </Button>
     </Background>
   )

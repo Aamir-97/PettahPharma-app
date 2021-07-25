@@ -6,7 +6,6 @@ import { theme } from './src/core/theme'
 import {
   StartScreen,
   LoginScreen,
-  RegisterScreen,
   ResetPasswordScreen,
   Dashboard,
   ExpensesMng,
@@ -18,6 +17,7 @@ export default function Routes() {
   return (
     <Provider theme={theme}>
       
+      
         <Stack.Navigator
           initialRouteName="StartScreen"
           screenOptions={{
@@ -26,7 +26,6 @@ export default function Routes() {
         >
           <Stack.Screen name="StartScreen" component={StartScreen} />
           <Stack.Screen name="LoginScreen" component={LoginScreen} />
-          <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
           <Stack.Screen name="Dashboard" component={Dashboard} />
           <Stack.Screen name="ExpensesMng" component={ExpensesMng} />
           <Stack.Screen

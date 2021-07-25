@@ -3,13 +3,13 @@ import { TouchableOpacity, StyleSheet, View } from 'react-native'
 import { Text } from 'react-native-paper'
 import Background from '../components/Background'
 import Logo from '../components/Logo'
-import Header from '../components/Header'
 import Button from '../components/Button'
 import TextInput from '../components/TextInput'
 import BackButton from '../components/BackButton'
 import { theme } from '../core/theme'
 import { emailValidator } from '../helpers/emailValidator'
 import { passwordValidator } from '../helpers/passwordValidator'
+import Styles from '../core/Styles'
 
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' })
@@ -18,7 +18,7 @@ export default function LoginScreen({ navigation }) {
   const onLoginPressed = () => { 
     navigation.reset({
       index: 0,
-      routes: [{ name: 'ExpensesMng' }],
+      routes: [{ name: 'Dashboard' }],
     })
     // const emailError = emailValidator(email.value)
     // const passwordError = passwordValidator(password.value)
@@ -37,7 +37,7 @@ export default function LoginScreen({ navigation }) {
     <Background>
       <BackButton goBack={navigation.goBack} />
       <Logo />
-      <Header>Welcome back.</Header>
+      <Text style={Styles.header}>Welcome back.</Text >
       <TextInput
         label="Email"
         returnKeyType="next"
@@ -69,12 +69,12 @@ export default function LoginScreen({ navigation }) {
       <Button mode="contained" onPress={onLoginPressed}>
         Login
       </Button>
-      <View style={styles.row}>
+      {/* <View style={styles.row}>
         <Text>Don’t have an account? </Text>
         <TouchableOpacity onPress={() => navigation.replace('RegisterScreen')}>
           <Text style={styles.link}>Sign up</Text>
         </TouchableOpacity>
-      </View>
+      </View> */}
     </Background>
   )
 }
