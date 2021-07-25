@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "test-app",
-    "slug": "test-app",
+    "name": "PettahPharmaapp",
+    "slug": "PettahPharmaapp",
     "version": "1.0.0",
     "assetBundlePatterns": [
       "**/*"
     ]
   },
-  "name": "test-app"
+  "name": "PettahPharmaapp"
 }
