@@ -11,10 +11,13 @@ const Styles = StyleSheet.create({
 
 
     },
-
-
-
-
+    header1 : {
+        color :  "#0A6466",
+        fontSize : 18,
+        fontWeight : "bold",
+        textAlign : "center"
+    }
+    
 })
 
 export default Styles;
