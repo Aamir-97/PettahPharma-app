@@ -16,6 +16,18 @@ export default function Dashboard({ navigation }) {
         Dashboard Page Checking
       </Paragraph>
       <Button
+        mode="contained"
+        onPress={() => navigation.navigate('ManageLeaves')}
+      >
+        Manage leaves
+      </Button>
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('ManageExpenses')}
+      >
+        Manage Expenses
+      </Button>
+      <Button
         mode="outlined"
         onPress={() =>
           navigation.reset({
