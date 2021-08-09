@@ -3,7 +3,7 @@ import { Text } from 'react-native'
 import Background from '../components/Background'
 import Button from '../components/Button'
 import ExpensesGraph from '../components/ExpensesGraph'
-import Expenses from '../components/Expenses'
+// import Expenses from '../components/Expenses'
 import Styles from '../core/Styles'
 
 export default function ManageExpenses({ navigation }) {

@@ -2,8 +2,8 @@ import React from 'react'
 import { Text } from 'react-native'
 import Background from '../components/Background'
 import Button from '../components/Button'
-import IconButtons from '../components/IconButtons'
-import ExampleForm from '../components/ExampleForm'
+// import IconButtons from '../components/IconButtons'
+// import ExampleForm from '../components/ExampleForm'
 import Styles from '../core/Styles'
 
 
@@ -13,15 +13,15 @@ export default function ApprovedLeaves({ navigation }) {
     <Background>
       <Text style={Styles.header}>Approved Leaves</Text>
       
-      <IconButtons/>
-      <label>
+      {/* <IconButtons/> */}
+      {/* <label> */}
         <Button mode="outlined" onPress={() => navigation.navigate('ApplyLeaves')}>Apply</Button>
         <Button mode="outlined" onPress={() => navigation.navigate('ApprovedLeaves')}>Approved</Button> 
         <Button mode="outlined" onPress={() => navigation.navigate('ManageLeaves')}>Requested</Button> 
-      </label>
+      {/* </label> */}
+      {/* <ExampleForm/>
       <ExampleForm/>
-      <ExampleForm/>
-      <ExampleForm/>
+      <ExampleForm/> */}
     </Background>
   )
 }

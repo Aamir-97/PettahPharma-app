@@ -1,16 +1,14 @@
 // import { StatusBar } from 'expo-status-bar';
 import React from 'react';
-import { StyleSheet,StatusBar ,View } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import Routes from './Routes'
+import { StyleSheet, StatusBar ,View } from 'react-native';
+import Routes from './Routes';
 import Constants from 'expo-constants';
+import 'react-native-gesture-handler';
 
 export default function App() {
   return (
     <View style ={styles.container}>
-    <NavigationContainer>
-      <Routes />
-    </NavigationContainer>
+      <Routes />    
     </View>
 
   );

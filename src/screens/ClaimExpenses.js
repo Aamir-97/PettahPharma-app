@@ -1,22 +1,22 @@
 import React from 'react'
 import { Text } from 'react-native'
-import TextareaAutosize from '@material-ui/core/TextareaAutosize';
+// import TextareaAutosize from '@material-ui/core/TextareaAutosize';
 import Background from '../components/Background'
 import Styles from '../core/Styles'
 import Button from '../components/Button'
-import UploadButton from '../components/UploadButton'
-import DropdownMenu from '../components/DropdownMenu'
+// import UploadButton from '../components/UploadButton'
+// import DropdownMenu from '../components/DropdownMenu'
 
 export default function ClaimExpenses({ navigation }) {
   return (
     <Background>
       <Text style={Styles.header}>Claim Expenses</Text>
         <label>
-          Expense Type:<DropdownMenu />
+          {/* Expense Type:<DropdownMenu /> */}
           Location:<input type="text" />
-          Upload Bills:<UploadButton />
+          {/* Upload Bills:<UploadButton /> */}
           Amount (Rs.):<input type="text" />
-          Comments:<TextareaAutosize aria-label="minimum height" minRows={3} />
+          {/* Comments:<TextareaAutosize aria-label="minimum height" minRows={3} /> */}
         </label>
 
 

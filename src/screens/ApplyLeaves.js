@@ -1,25 +1,25 @@
 import React from 'react'
 import { Text } from 'react-native'
-import TextareaAutosize from '@material-ui/core/TextareaAutosize'
+// import TextareaAutosize from '@material-ui/core/TextareaAutosize'
 import Background from '../components/Background'
 import Styles from '../core/Styles'
 import Button from '../components/Button'
-import DatePicker from '../components/DatePicker'
-import DropdownMenu from '../components/DropdownMenu'
 import Calendar from 'react-calendar'
-import IconButtons from '../components/IconButtons'
+// import DatePicker from '../components/DatePicker'
+// import DropdownMenu from '../components/DropdownMenu'
+// import IconButtons from '../components/IconButtons'
 //import 'react-calendar/dist/Calendar.css';
 
 export default function ApplyLeaves({ navigation }) {
   return (
     <Background>
       <Text style={Styles.header}>Leave Application Form</Text>
-      <IconButtons/>
-      <div>
+      {/* <IconButtons/> */}
+      {/* <div> */}
         <Button mode="outlined" onPress={() => navigation.navigate('ApplyLeaves')}>Apply</Button>
         <Button mode="outlined" onPress={() => navigation.navigate('ApprovedLeaves')}>Approved</Button> 
         <Button mode="outlined" onPress={() => navigation.navigate('ManageLeaves')}>Requested</Button> 
-      </div>
+      {/* </div> */}
       <Calendar />
       <div>
         <form>
@@ -27,16 +27,16 @@ export default function ApplyLeaves({ navigation }) {
             Med Rep ID:<input type="text" />
           </label>
           <label>
-            Leave Type:<DropdownMenu />
+            {/* Leave Type:<DropdownMenu /> */}
           </label>
           <label>
-            Date:<DatePicker />
+            {/* Date:<DatePicker /> */}
           </label>
           <label>
             Duration:<input type="text" />
           </label>
           <label>
-            Description:<TextareaAutosize aria-label="minimum height" minRows={3} />
+            {/* Description:<TextareaAutosize aria-label="minimum height" minRows={3} /> */}
           </label>
         </form>
       </div>
