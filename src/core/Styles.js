@@ -8,15 +8,18 @@ const Styles = StyleSheet.create({
         fontSize : 24,
         fontWeight : "bold",
         textAlign : "center"
-
-
     },
     header1 : {
         color :  "#0A6466",
         fontSize : 18,
         fontWeight : "bold",
         textAlign : "center"
-    }
+    },
+    homelogo : {
+        height : 60 ,
+        width : 80,
+        alignSelf : 'center',
+    },
     
 })
 

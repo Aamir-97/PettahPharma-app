@@ -1,5 +1,5 @@
 import React from 'react'
-import { Text, View, SafeAreaView, ScrollView, StatusBar } from 'react-native'
+import { Text, View, SafeAreaView, ScrollView, StatusBar, Image } from 'react-native'
 import Logo from '../components/Logo'
 import Paragraph from '../components/Paragraph'
 import Button from '../components/Button'
@@ -10,11 +10,12 @@ import TopNav from '../components/TopNav'
 export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView>
-      <ScrollView>
-
-      
-      <TopNav />
-      <Logo />
+      <ScrollView>      
+      {/* <TopNav /> */}
+      {/* <Logo /> */}
+      <Image style= {Styles.homelogo} 
+      source ={require('../assets/logoWithoutName.png')} 
+      />
       <Text style={Styles.header}>Good Morning, Aamir!</Text>
       <Paragraph>
         HomeScreen Page Checking
