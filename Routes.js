@@ -1,6 +1,6 @@
 import React from 'react'
 import { Provider } from 'react-native-paper'
-import { NavigationContainer } from '@react-navigation/native'
+import { NavigationContainer, ThemeProvider } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { theme } from './src/core/theme'
@@ -21,6 +21,9 @@ import ResetPasswordScreen from './src/screens/ResetPasswordScreen'
 import Task from './src/screens/Task'
 import VisitSummaryReport from './src/screens/VisitSummaryReport'
 import VSRForm from './src/screens/VSRForm'
+import AddNewTask from './src/screens/AddNewTask'
+import AddNewDoctor from './src/screens/AddNewDoctor'
+import DiscussionForum from './src/screens/DiscussionForum'
 
 
 const Stack = createStackNavigator();
@@ -28,6 +31,7 @@ const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator ();
 const VisitSummaryReportStack = createStackNavigator ();
 const ManageLeavesStack = createStackNavigator ();
+const DoctorDetailsStack = createStackNavigator ();
 
 const HomeStackScreen= ({navigation}) => {
   return (
@@ -35,7 +39,7 @@ const HomeStackScreen= ({navigation}) => {
     initialRouteName = "Home"
     screenOptions={{
       headerStyle: {
-        backgroundColor : "#009387",
+        backgroundColor : "#0A6466",
         height : 50
       },
       headerTintColor : "#ffffff",
@@ -48,9 +52,10 @@ const HomeStackScreen= ({navigation}) => {
     >
     <HomeStack.Screen name="Home" component={HomeScreen} options= { {
         headerLeft: () => (
-          <Icon.Button name= "menu" size= {25} backgroundColor="#009387" onPress= { () => navigation.openDrawer()}></Icon.Button>
+          <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )
       }} /> 
+    <HomeStack.Screen name="AddNewTask" component = {AddNewTask} />
 
     </HomeStack.Navigator>
     
@@ -64,7 +69,7 @@ const VisitSummaryReportStackScreen = ({navigation}) => {
     initialRouteName="VisitSummaryReport" 
     screenOptions={{
       headerStyle: {
-        backgroundColor : "#009387",
+        backgroundColor : "#0A6466",
         height : 50
       },
       headerTintColor : "#ffffff",
@@ -77,7 +82,7 @@ const VisitSummaryReportStackScreen = ({navigation}) => {
       >
       <VisitSummaryReportStack.Screen  name="VisitSummaryReport" component={VisitSummaryReport} options= { {
         headerLeft: () => (
-          <Icon.Button name= "menu" size= {25} backgroundColor="#009387" onPress= { () => navigation.openDrawer()}></Icon.Button>
+          <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )
       }} />
       <VisitSummaryReportStack.Screen  name="VSRForm" component={VSRForm} options={{
@@ -89,13 +94,44 @@ const VisitSummaryReportStackScreen = ({navigation}) => {
 };
 
 
+const DoctorDetailsStackScreen = ({navigation}) => {
+  return (
+    <DoctorDetailsStack.Navigator
+    initialRouteName="DoctorDetails" 
+    screenOptions={{
+      headerStyle: {
+        backgroundColor : "#0A6466",
+        height : 50
+      },
+      headerTintColor : "#ffffff",
+      headerTintStyle : {
+        fontWeight : 'bold',
+        alignItems : 'center',
+        justifyContent : 'center'
+      }
+    }}
+      >
+      <DoctorDetailsStack.Screen  name="DoctorDetails" component={DoctorDetails} options= { {
+        headerLeft: () => (
+          <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
+        )
+      }} />
+      <DoctorDetailsStack.Screen  name="AddNewDoctor" component={AddNewDoctor} options={{
+        title: "New Doctor"
+      }} />
+
+    </DoctorDetailsStack.Navigator>
+  )
+};
+
+
 const ManageLeavesStackScreen = ({navigation}) => {
   return (
     <ManageLeavesStack.Navigator 
     initialRouteName = "ManageLeaves"
     screenOptions={{
       headerStyle: {
-        backgroundColor : "#009387",
+        backgroundColor : "#0A6466",
         height : 50
       },
       headerTintColor : "#ffffff",
@@ -108,7 +144,7 @@ const ManageLeavesStackScreen = ({navigation}) => {
     >
       <ManageLeavesStack.Screen name="ManageLeaves" component={ManageLeaves} options= { {
         headerLeft: () => (
-          <Icon.Button name= "menu" size= {25} backgroundColor="#009387" onPress= { () => navigation.openDrawer()}></Icon.Button>
+          <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )
       }}/>
       <ManageLeavesStack.Screen name="ApplyLeaves" component={ApplyLeaves} />
@@ -122,10 +158,10 @@ export default function Routes() {
   return (
     <NavigationContainer>
     <Provider theme={theme}>      
-      <Drawer.Navigator initialRouteName="VisitSummaryReport"
+      <Drawer.Navigator initialRouteName="StartScreen"
                 screenOptions={{
                   headerStyle: {
-                    backgroundColor : "#009387",
+                    backgroundColor : "#0A6466",
                     height : 50
                   },
                   headerTintColor : "#ffffff",
@@ -139,12 +175,14 @@ export default function Routes() {
 
           <Drawer.Screen name="StartScreen" component={StartScreen} options={{headerShown : false, drawerLabel: () => null , title: null, drawerIcon: () => null}} />
           <Drawer.Screen name="LoginScreen" component={LoginScreen} options={{headerShown : false, drawerLabel: () => null , title: null, drawerIcon: () => null }} />
+          {/* <Drawer.Screen name="Profile" component={Profile} /> */}
           <Drawer.Screen name="Home" component={HomeStackScreen} />
-          <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />
           <Drawer.Screen name="ManageExpenses" component={ManageExpenses} />
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />
-          <Drawer.Screen name="DoctorDetails" component={DoctorDetails} />
-          <Drawer.Screen name="ProductDetails" component={ProductDetails} />
+          <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />
+          <Drawer.Screen name="DoctorDetails" component={DoctorDetailsStackScreen} />
+          <Drawer.Screen name="ProductDetails" component={ProductDetails} options={{ headerShown : true }} />
+          <Drawer.Screen name="DiscussionForum" component={DiscussionForum} options={{ headerShown : true }} />
       </Drawer.Navigator> 
       
     </Provider>

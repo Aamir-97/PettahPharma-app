@@ -6,13 +6,13 @@ import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
 
 
-export default function VSRForm ({navigation}){
+export default function AddNewDoctor ({navigation}){
 
     return (
         <ScrollView>
             <BackgroundLayout>
 
-            <Text style={styles.header}>This is the Report Form page</Text> 
+            <Text style={styles.header}>Enter the Doctor Details</Text> 
 
             {/* VSRForm */}
 
@@ -137,7 +137,7 @@ const styles = StyleSheet.create ({
         fontWeight : 'bold',
         alignSelf : 'center',
         marginBottom : 30,
-        color : theme.colors.primary,
+        color : theme.colors.primary
         
     },
     visitSummaryForm : {

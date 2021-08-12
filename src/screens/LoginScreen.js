@@ -39,6 +39,7 @@ export default function LoginScreen({ navigation }) {
       <BackButton goBack={navigation.goBack} />
       <Logo />
       <Text style={Styles.header}>Welcome back.</Text >
+      <Text style={Styles.header}>Sign in.</Text >
       <TextInput
         label="Email"
         returnKeyType="next"

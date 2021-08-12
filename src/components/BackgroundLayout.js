@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, KeyboardAvoidingView } from 'react-native'
+import { View, StyleSheet, KeyboardAvoidingView, Dimensions } from 'react-native'
 import { theme } from '../core/theme'
 
 export default function BackgroundLayout({ children }) {
@@ -14,9 +14,12 @@ export default function BackgroundLayout({ children }) {
 
 const styles = StyleSheet.create({
   background: {
+    padding : 20,
     flex: 1,
     width: '100%',
-    backgroundColor: '#ffffff',  
+    backgroundColor: '#fff',  
+    minHeight: Dimensions.get('window').height,
+
   },
   // container: {
   //   flex: 1,

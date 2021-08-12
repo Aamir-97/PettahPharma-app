@@ -4,16 +4,12 @@ import BackgroundLayout from '../components/BackgroundLayout';
 import Button from '../components/Button';
 
 
-export default function DoctorDetails({navigation}){
+export default function DiscussionForum({navigation}){
     return ( 
         <ScrollView>
         <BackgroundLayout>
-        <Button
-        mode='contained'
-        onPress={() => navigation.navigate('AddNewDoctor')} 
-        style={styles.newReportButton}
-        > Add New Doctor </Button>
-        <Text> List Down of Doctors </Text>
+ 
+        <Text> Discussion Forum </Text>
         </BackgroundLayout>
         </ScrollView>
     )
@@ -24,4 +20,3 @@ const styles = StyleSheet.create ({
 
     },
 })
-
