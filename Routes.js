@@ -32,6 +32,7 @@ const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator ();
 const VisitSummaryReportStack = createStackNavigator ();
 const ManageLeavesStack = createStackNavigator ();
+const ManageExpensesStack = createStackNavigator ();
 const DoctorDetailsStack = createStackNavigator ();
 
 const HomeStackScreen= ({navigation}) => {
@@ -148,8 +149,12 @@ const ManageLeavesStackScreen = ({navigation}) => {
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )
       }}/>
-      <ManageLeavesStack.Screen name="ApplyLeaves" component={ApplyLeaves} />
-      <ManageLeavesStack.Screen name="ApprovedLeaves" component={ApprovedLeaves} />
+      <ManageLeavesStack.Screen name="ApplyLeaves" component={ApplyLeaves} options={{
+        title: "Apply Leaves"
+      }} />
+      <ManageLeavesStack.Screen name="ApprovedLeaves" component={ApprovedLeaves} options={{
+        title: "Approved Leaves"
+      }} />
 
     </ManageLeavesStack.Navigator>
   )
@@ -180,6 +185,36 @@ const AuthStackScreen = ({navigation}) => {
 }
 
 
+const ManageExpensesStackScreen = ({navigation}) => {
+  return (
+    <ManageExpensesStack.Navigator 
+    initialRouteName = "ManageExpenses"
+    screenOptions={{
+      headerStyle: {
+        backgroundColor : "#0A6466",
+        height : 50
+      },
+      headerTintColor : "#ffffff",
+      headerTintStyle : {
+        fontWeight : 'bold',
+        alignItems : 'center',
+        justifyContent : 'center'
+      }
+    }}
+    >
+      <ManageExpensesStack.Screen name="ManageExpenses" component={ManageExpenses} options= { {
+        headerLeft: () => (
+          <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
+        )
+      }}/>
+      <ManageExpensesStack.Screen name="ClaimExpenses" component={ClaimExpenses} options={{
+        title: "Claim Expenses"
+      }} />
+
+    </ManageExpensesStack.Navigator>
+  )
+}
+
 export default function Routes() {
   return (
     <NavigationContainer>
@@ -203,7 +238,7 @@ export default function Routes() {
                   >
 
           <Drawer.Screen name="Home" component={HomeStackScreen} />
-          <Drawer.Screen name="ManageExpenses" component={ManageExpenses} />
+          <Drawer.Screen name="ManageExpenses" component={ManageExpensesStackScreen} />
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />
           <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />
           <Drawer.Screen name="DoctorDetails" component={DoctorDetailsStackScreen} />
