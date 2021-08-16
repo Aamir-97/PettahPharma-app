@@ -21,17 +21,17 @@ export default function LoginScreen({ navigation }) {
   //     index: 0,
   //     routes: [{ name: 'Home' }],      
   //   })
-  //   // const emailError = emailValidator(email.value)
-  //   // const passwordError = passwordValidator(password.value)
-  //   // if (emailError || passwordError) {
-  //   //   setEmail({ ...email, error: emailError })
-  //   //   setPassword({ ...password, error: passwordError })
-  //   //   return
-  //   // }
-  //   // navigation.reset({
-  //   //   index: 0,
-  //   //   routes: [{ name: 'Home' }],
-  //   // })
+  //   const emailError = emailValidator(email.value)
+  //   const passwordError = passwordValidator(password.value)
+  //   if (emailError || passwordError) {
+  //     setEmail({ ...email, error: emailError })
+  //     setPassword({ ...password, error: passwordError })
+  //     return
+  //   }
+  //   navigation.reset({
+  //     index: 0,
+  //     routes: [{ name: 'Home' }],
+  //   })
   // }
 
   return (
@@ -68,6 +68,7 @@ export default function LoginScreen({ navigation }) {
           <Text style={styles.forgot}>Forgot your password?</Text>
         </TouchableOpacity>
       </View>
+      {/* <Button mode="contained" onPress={() => {onLoginPressed}}> */}
       <Button mode="contained" onPress={() => navigation.navigate('Home')}>
         Login
       </Button>

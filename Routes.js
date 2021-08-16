@@ -6,6 +6,8 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { theme } from './src/core/theme'
 import Icon from 'react-native-vector-icons/Ionicons'
 
+import { DrawerContent } from './src/screens/DrawerContent'
+
 // Screens
 import StartScreen from './src/screens/StartScreen'
 import LoginScreen from './src/screens/LoginScreen'
@@ -18,7 +20,6 @@ import ManageExpenses from './src/screens/ManageExpenses'
 import ManageLeaves from './src/screens/ManageLeaves'
 import ProductDetails from './src/screens/ProductDetails'
 import ResetPasswordScreen from './src/screens/ResetPasswordScreen'
-import Task from './src/screens/Task'
 import VisitSummaryReport from './src/screens/VisitSummaryReport'
 import VSRForm from './src/screens/VSRForm'
 import AddNewTask from './src/screens/AddNewTask'
@@ -26,7 +27,7 @@ import AddNewDoctor from './src/screens/AddNewDoctor'
 import DiscussionForum from './src/screens/DiscussionForum'
 
 
-const Stack = createStackNavigator();
+const AuthStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
 const HomeStack = createStackNavigator ();
 const VisitSummaryReportStack = createStackNavigator ();
@@ -117,7 +118,7 @@ const DoctorDetailsStackScreen = ({navigation}) => {
         )
       }} />
       <DoctorDetailsStack.Screen  name="AddNewDoctor" component={AddNewDoctor} options={{
-        title: "New Doctor"
+        title: "Add New Doctor"
       }} />
 
     </DoctorDetailsStack.Navigator>
@@ -154,11 +155,38 @@ const ManageLeavesStackScreen = ({navigation}) => {
   )
 }
 
+const AuthStackScreen = ({navigation}) => {
+  return (
+    <AuthStack.Navigator>
+      <AuthStack.Screen name="StartScreen" component={StartScreen} 
+      options ={{
+        headerShown :false,
+      }}
+      />
+      <AuthStack.Screen name="LoginScreen" component={LoginScreen} 
+      options= { {
+        headerShown : false,
+      }}/>
+      <AuthStack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} 
+      options= { {
+        headerShown : false,
+      }}/>
+      <AuthStack.Screen name="Home" component={HomeStackScreen} 
+            options= { {
+              headerShown : false,
+            }}/>
+    </AuthStack.Navigator>
+  )
+}
+
+
 export default function Routes() {
   return (
     <NavigationContainer>
-    <Provider theme={theme}>      
-      <Drawer.Navigator initialRouteName="StartScreen"
+    <Provider theme={theme}>    
+
+    {/* <AuthStackScreen /> */}
+      <Drawer.Navigator 
                 screenOptions={{
                   headerStyle: {
                     backgroundColor : "#0A6466",
@@ -171,11 +199,9 @@ export default function Routes() {
                     justifyContent : 'center',
                   }
                   }}
+                  drawerContent={props => <DrawerContent {...props}/>}
                   >
 
-          <Drawer.Screen name="StartScreen" component={StartScreen} options={{headerShown : false, drawerLabel: () => null , title: null, drawerIcon: () => null}} />
-          <Drawer.Screen name="LoginScreen" component={LoginScreen} options={{headerShown : false, drawerLabel: () => null , title: null, drawerIcon: () => null }} />
-          {/* <Drawer.Screen name="Profile" component={Profile} /> */}
           <Drawer.Screen name="Home" component={HomeStackScreen} />
           <Drawer.Screen name="ManageExpenses" component={ManageExpenses} />
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />

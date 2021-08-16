@@ -5,10 +5,10 @@ import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'
 // import Background from '../components/Background'
 import { theme } from '../core/theme'
-import Icon from 'react-native-vector-icons/Ionicons'
+// import Icon from 'react-native-vector-icons/Ionicons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
-import { ThemeProvider } from '@react-navigation/native'
+// import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 
 
@@ -27,17 +27,17 @@ export default function HomeScreen({ navigation }) {
 
       <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
-          <Text>56</Text>
-          <Text> Submited Visit Report </Text>
+          <Text> 56 </Text>
+          <Text> Visit Report </Text>
           <FontAwesome5Icon name= "file-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Text>15</Text>
+          <Text> 15 </Text>
           <Text> Claimed Expenses </Text>
           <FontAwesome5Icon name= "money-bill-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Text>18</Text>
+          <Text> 18 </Text>
           <Text> Annual left Leaves </Text>
           <FontAwesome5Icon name= "adjust" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
         </View>
@@ -46,17 +46,17 @@ export default function HomeScreen({ navigation }) {
 
       <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
-          <Text>30</Text>
+          <Text> 30 </Text>
           <Text> Total Doctors </Text>
           <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontistoIcon>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Text>2</Text>
+          <Text> 2 </Text>
           <Text> Sheduled Task </Text>
           <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Text>26</Text>
+          <Text> 26 </Text>
           <Text> Total Products </Text>
           <FontAwesome5Icon name= "capsules" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
         </View>
