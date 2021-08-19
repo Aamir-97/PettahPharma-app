@@ -21,7 +21,7 @@ export default function ApplyLeaves({ navigation }) {
         </View>
         <View style={{alignItems: 'center'}}>
           <Text>26</Text>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApprovedLeaves')}></FontAwesome5Icon>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
           <Text> Approved </Text>
         </View>
         <View style={{alignItems: 'center'}}>

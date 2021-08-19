@@ -16,3 +16,21 @@ INFO: Unsupported notification method: $/setTrace
 [0m2021.08.16 07:13:03 WARN  no build tool detected in workspace 'D:\Third Year\Group Project ll\PettahPharma-app'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
 Aug 16, 2021 10:33:04 AM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
 INFO: Unsupported notification method: $/setTrace
+[0m2021.08.16 21:13:28 INFO  Started: Metals version 0.10.5 in workspace 'D:\Third Year\Group Project ll\PettahPharma-app' for client Visual Studio Code 1.59.0.[0m
+[0m2021.08.16 21:13:34 INFO  time: initialize in 5.64s[0m
+[0m2021.08.16 21:13:39 WARN  Build server is not auto-connectable.[0m
+[0m2021.08.16 21:13:39 WARN  no build tool detected in workspace 'D:\Third Year\Group Project ll\PettahPharma-app'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Aug 16, 2021 9:38:50 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
+[0m2021.08.16 21:39:07 INFO  shutting down Metals[0m
+[0m2021.08.16 21:41:14 INFO  Started: Metals version 0.10.5 in workspace 'D:\Third Year\Group Project ll\PettahPharma-app' for client Visual Studio Code 1.59.0.[0m
+[0m2021.08.16 21:41:18 INFO  time: initialize in 4.37s[0m
+[0m2021.08.16 21:41:20 WARN  Build server is not auto-connectable.[0m
+[0m2021.08.16 21:41:20 WARN  no build tool detected in workspace 'D:\Third Year\Group Project ll\PettahPharma-app'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+[0m2021.08.17 09:40:44 INFO  shutting down Metals[0m
+[0m2021.08.18 13:38:21 INFO  Started: Metals version 0.10.5 in workspace 'D:\Third Year\Group Project ll\PettahPharma-app' for client Visual Studio Code 1.59.0.[0m
+[0m2021.08.18 13:38:26 INFO  time: initialize in 5.07s[0m
+[0m2021.08.18 13:38:28 WARN  Build server is not auto-connectable.[0m
+[0m2021.08.18 13:38:28 WARN  no build tool detected in workspace 'D:\Third Year\Group Project ll\PettahPharma-app'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Aug 18, 2021 1:43:32 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace

@@ -3,7 +3,10 @@ import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, But
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
-import CurrencyInput from '../components/CurrencyInput'
+import Currencyinput from '../components/Currencyinput'
+import ImagePicker from 'react-native-image-crop-picker';
+
+  
 export default function ClaimExpenses({ navigation }) {
   return (
     <SafeAreaView>
@@ -28,7 +31,7 @@ export default function ClaimExpenses({ navigation }) {
       <TextInput style={styles.InputField} placeholder="Upload Bills" />
       <TextInput style={styles.InputField} placeholder="Amount" />
       <TextInput style={styles.comments} placeholder="Comments" />
-        {/* <CurrencyInput/> */}
+         {/* <Currencyinput/>  */}
         {/* <Image/> */}
       <View style = {styles.sameRow}>
         <Button color = '#0A6466' title = 'submit' onPress={() => { alert('Applied') }}>Apply</Button>
