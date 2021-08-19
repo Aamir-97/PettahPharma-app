@@ -4,11 +4,13 @@ import Logo from '../components/Logo'
 import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'
 // import Background from '../components/Background'
-import { theme } from '../core/theme'
+// import { ThemeProvider } from '@react-navigation/native'
 // import Icon from 'react-native-vector-icons/Ionicons'
+
+
+import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
-// import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 
 
@@ -70,6 +72,11 @@ export default function HomeScreen({ navigation }) {
           color = '#0A6466'
           title = 'Add new'
           onPress= {() => navigation.navigate('AddNewTask')}
+        />
+        <Button
+          color = '#0A6466'
+          title = 'TestForm'
+          onPress= {() => navigation.navigate('TestForm')}
         />
 
       </View>

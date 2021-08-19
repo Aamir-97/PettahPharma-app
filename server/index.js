@@ -1,8 +1,12 @@
 const express  = require ('express');
 const app = express();
 const mysql = require ('mysql');
-const bodyParser = require('body-parser')
-const cors = require('cors')
+const bodyParser = require('body-parser');
+const cors = require('cors');
+// const medrep = require('./medrepApi');
+const router = express.Router();
+      
+
 
 const PORT = 3001;
 
@@ -12,7 +16,6 @@ const PORT = 3001;
 //     password: "",
 //     database: "pettahpharma"
 // })
-
 
 const db = mysql.createConnection({
     user : "root",
@@ -25,6 +28,21 @@ app.use(cors());
 app.use(express.json());
 app.use(bodyParser.urlencoded({extended: true}));
 
+app.listen(PORT,()=>{
+    console.log("Your server is running on port 3001");
+});
+
+db.connect((err)=>{
+    if(err) 
+    {
+        console.log(err);
+    }
+    else
+    {
+        console.log('Database Connected...');
+    }
+});
+
 app.get ("/", (req, res) => {
     res.send("Web Server is working Perfectly...!")
 });
@@ -33,17 +51,64 @@ app.get ("/test",(req, res) => {
     res.send ("The Emulator is connected to the server");
 });
 
-app.post("/medrep", (req , res) => {
-    const sqlINsertRap = "INSERT INTO medicalrep(rep_ID,name, email, phone_no, area, level, password, manager_ID) VALUES (167,'Madhu','madhu@gamil.com','0758677094','Kallaru','3.5','madhu@123',2)";
+// app.post('/login',(req,res)=>{
+//     const email = req.body.email;
+//     const password = req.body.password;
 
-    db.query(sqlINsertRap, (err,result) => {
-        console.log("Successfully Inserted ");
-    })
-    console.log("Somthing Error");
-})
+//     const sqlLogin = "SELECT * FROM medicalrep WHERE email=? AND password=?";
+     
+//     db.query(sqlLogin,[email,password],(err,result)=>{
+//             if(err){  
+//                 res.send({err:err})
+//                 console.log("err");
+//             }
+//               if(result.length > 0){
+//                 // res.send(result.rep_ID);
+//                 res.send({message1 :"Login Successful" });
+//                 console.log("message1");
+//               } else{
+//                 res.send({message2 : " Wrong Username Or password "});
+//                 console.log("message2");
+
+//               }     
+//             }); 
+// });  
+
+app.post('/login',(req,res)=>{
+    const email = req.body.email;
+    const password = req.body.password;
+
+    const sqlLogin = "SELECT * FROM medicalrep WHERE email=? AND password=?";
+     
+    db.query(sqlLogin,[email,password],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("err");
+            }
+              if(result.length > 0){
+                // res.send(result);
+                res.send({
+                    id: result[0].rep_ID,
+                    name: result[0].name,
+                    email: result[0].email,
+                    // userType: result[0].user_type,
+                    // profilePicturePath: result[0].profile_picture_path,
+                    // isVerified: result[0].is_verified
+                })
+ 
+                // res.send({message1 :"Login Successful" });
+                console.log("message1");
+              } else{
+                res.send({message2 : " Wrong Username Or password "});
+                console.log("message2");
+
+              }     
+            }); 
+});  
 
 app.post("/newTask",(req, res) => {
     console.log(req);
+
     const title = req.body.title;
     const location = req.body.location;
     const date = req.body.date ;
@@ -53,11 +118,16 @@ app.post("/newTask",(req, res) => {
 
     const sqlNewTask = "INSERT INTO task(title, location, date, session, description) VALUES (?,?,?,?,?)";
 
-    db.query(sqlNewTask, [title,location,date,session,description], (err,result)=>{
-        console.log("Data is Inserted");
-        res.send("Data is inserted");
+    db.query(sqlNewTask, [title,location,date,session,description], (err,_result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Somthing Error");
+        } else{
+            console.log("Task is Inserted");
+            res.send("Task is inserted");
+        }
+
     })
-    console.log ("Somthing Error");
 
 });
 
@@ -85,46 +155,53 @@ app.post('/createmedicalrep',(req,res)=>{
     
 });
 
-
-
-
 app.post("/doctor/addNewDoctor", (req, res) => {
+    console.log(req);
+    const displayPhoto = req.body.displayPhoto;
+    const slmcNo = req.body.slmcNo;
+    const doctorName = req.body.doctorName;
+    const clinic = req.body.clinic;
+    const contactNumber = req.body.contactNumber;
+    const email = req.body.email;
+    const clinicArea = req.body.clinicArea;
+    const dob = req.body.dob;
+    const citation = req.body.citation;
+    const qualification = req.body.qualification;
+    const note = req.body.note;
 
-    // const displayPhoto = req.body.displayPhoto
-    // const slmcNo = req.body.slmcNo
-    // const doctorName = req.body.doctorName
-    // const clinic = req.body.clinic
-    // const contactNumber = req.body.contactNumber
-    // const email = req.body.email
-    // const clinicArea = req.body.clinicArea
-    // const dob = req.body.dob
-    // const citation = req.body.citation
-    // const qualification = req.body.qualification
-    // const note = req.body.note
-    res.send ("Working Wiithout SQl part 2");
+    const sqlInsertDoctor =  "INSERT INTO doctor_details( display_photo, slmc_no, name, clinic, contact_no, email, area, dob, citation, qualification, note) VALUES (?,?,?,?,?,?,?,?,?,?,?)" ;
 
-    const sqlInsertDoctor =  "INSERT INTO doctor_details(slmc_no, name, clinic, contact_no, email, area, citation, qualification, note) VALUES ('2356','Aamir','DeltaClinic','0768921288','aamir@gmail.com','Dhehiwala','Generel','MBBS','Ivan oru Doctor')" ;
-
-    db.query(sqlInsertDoctor, (err, result)=> {
-        console.log("Data is Inserted");
-        res.send("Data is inserted");
+    db.query(sqlInsertDoctor,[displayPhoto,slmcNo,doctorName,clinic,contactNumber,email,clinicArea,dob,citation,qualification,note], (err,_result)=> {
+        if(err){
+            console.log(err);
+            console.log ("Somthing Error");
+        } else{
+            console.log("New Doctor is Inserted");
+            res.send("New Doctor is inserted");
+        }
     })
-    res.send ("Something error..!"); 
+});
+
+app.get('/viewproduct',(_req,res)=>{
+    db.query('SELECT * FROM product ',(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
 });
 
 
-
-app.listen(PORT,()=>{
-    console.log("Your server is running on port 3001");
+app.get('/viewDoctorDetails',(_req,res)=>{
+    db.query('SELECT * FROM doctor_details ',(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
 });
 
-// db.connect((err)=>{
-//     if(err) 
-//     {
-//         console.log(err);
-//     }
-//     else
-//     {
-//         console.log('Database Connected...');
-//     }
-// });
+          
+   

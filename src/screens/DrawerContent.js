@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { View, StyleSheet, TouchableOpacity } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -23,14 +23,17 @@ import{ AuthContext } from '../components/context';
 
 export function DrawerContent(props) {
 
+    const { signOut } = React.useContext(AuthContext);
+
     // const paperTheme = useTheme();
     // const { signOut, toggleTheme } = React.useContext(AuthContext);
 
-    const [isDarkTheme, setDarkTheme] = React.useState(false);
+    // const [isDarkTheme, setDarkTheme] = React.useState(false);
 
-    const toggleTheme = () => {
-        setDarkTheme(!isDarkTheme);
-    }
+
+    // const toggleTheme = () => {
+    //     setDarkTheme(!isDarkTheme);
+    // }
 
 
     return(
@@ -40,19 +43,18 @@ export function DrawerContent(props) {
 
                     {/* User Information */}
                     <View style={styles.userInfoSection}>
-                        <View style={{flexDirection:'row',marginTop: 15}}>
+                        <TouchableOpacity style={{flexDirection:'row',marginTop: 15}}
+                            onPress={() => {props.navigation.navigate('Profile')}}
+                        >
                             <Avatar.Image 
-                                source={{
-                                    uri: 'https://api.adorable.io/avatars/50/abott@adorable.png'
-                
-                                }}
+                                source={require('../assets/aamirDp.jpeg')}
                                 size={50}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
                                 <Title style={styles.title}>Aamir Ali</Title>
                                 <Caption style={styles.caption}>Medical Rep-Colombo</Caption>
                             </View>
-                        </View>
+                        </TouchableOpacity>
 
                         <View style={styles.row}>
                             <View style={styles.section}>

@@ -1,30 +1,28 @@
 import React, {useState} from 'react';
-import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Picker, Image, Alert} from 'react-native';
+import { View, Text, ScrollView, TextInput, StyleSheet, Image, Alert} from 'react-native';
 import { Button } from 'react-native-paper'
-import DatePicker from 'react-native-datepicker'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import axios from 'axios'
 
 export default function AddNewDoctor ({navigation}){
 
-    const [displayPhoto , setDisplayPhoto] = useState('');
-    const [slmcNo , setSlmcNo] = useState('');
-    const [doctorName , setDoctorName] = useState('');
-    const [clinic , setClinic] = useState('');
-    const [contactNumber , setContactNumber] = useState('');
-    const [email , setEmail] = useState('');
-    const [clinicArea , setClinicArea] = useState('');
-    const [dob , setDob] = useState('');
-    const [citations , setCitations] = useState('');
-    const [qualification , setQualification] = useState('');
-    const [note , setnote] = useState('');
+    const [displayPhoto , setDisplayPhoto] = React.useState('');
+    const [slmcNo , setSlmcNo] = React.useState('');
+    const [doctorName , setDoctorName] = React.useState('');
+    const [clinic , setClinic] = React.useState('');
+    const [contactNumber , setContactNumber] = React.useState('');
+    const [email , setEmail] = React.useState('');
+    const [clinicArea , setClinicArea] = React.useState('');
+    const [dob , setDob] = React.useState('');
+    const [citations , setCitations] = React.useState('');
+    const [qualification , setQualification] = React.useState('');
+    const [note , setNote] = React.useState('');
 
 
     const saveDetails = () => { 
-        axios.post("http://localhost:3001/doctor/addNewDoctor", {
+        axios.post("http://10.0.2.2:3001/doctor/addNewDoctor", {
             displayPhoto: displayPhoto, 
             slmcNo: slmcNo,
             doctorName : doctorName, 
@@ -37,6 +35,7 @@ export default function AddNewDoctor ({navigation}){
             qualification: qualification, 
             note: note  
         }).then(()=>{
+            console.log(slmcNo);
             console.log("Succesfully Inserted:!");
             Alert.alert(
                 "Database",
@@ -73,7 +72,7 @@ export default function AddNewDoctor ({navigation}){
     // }
 
 
-    const [date, setDate] = useState(new Date(1598051730000));
+    // const [date, setDate] = useState(new Date(1598051730000));
     // const [mode, setMode] = useState('date');
     // const [show, setShow] = useState(false);
   
@@ -99,138 +98,128 @@ export default function AddNewDoctor ({navigation}){
     return (
         <ScrollView>
             <BackgroundLayout>
-                <View style={styles.sameRow}>
-                <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontistoIcon>
-                <Text style={styles.header}>Enter the Doctor Details</Text> 
+                <View style={styles.center}>
+                    <View style={styles.sameRow}>
+                    <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontistoIcon>
+                    <Text style={styles.header}>Enter the Doctor Details</Text> 
+                    </View>
                 </View>
-
 
 
             {/* Add New Doctor Form */}
 
             <View style={styles.visitSummaryForm}>
 
-            <View style={styles.actionButton}>
-            <Button  labelStyle={{color:'red',fontSize:16,fontWeight : 'bold'}} icon="delete" mode="Text" onPress={() => console.log('Delete Pressed')}>
-                Delete
-            </Button>
-            <Button  labelStyle={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="account-edit" mode="Text" onPress={() => console.log('Edit Pressed')}>
-                Edit
-            </Button>
-
-            </View>
-
             <View style ={styles.sameRow}>
                 <Image source={require ('../assets/Doctors/aamirDp.jpeg')} style ={styles.displayPhoto} /> 
-                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold', marginTop : 45}} icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
-                Change 
+                <View style={{alignSelf: 'center',marginLeft:20}}>
+                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
+                    Change 
                 </Button>
-                
-                <TextInput style= {styles.InputField} placeholder="SLMC No." required onChange={(e) => {
-                    setSlmcNo(e.target.value)
-                }} />    
+                </View>
+
             </View>
-                
-
-
-
-
-
+ 
+            <View style ={styles.sameRow}>
+                <Text style = {styles.labelText}> SLMC No.:</Text>
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="Medical Counsil Number"
+                    onChangeText={(val) => setSlmcNo(val)}
+                    value={slmcNo}
+                />
+            </View>
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Doctor's Name :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setDoctorName(e.target.value)
-                }}/>
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="ex:John"
+                    onChangeText={(val) => setDoctorName(val)}
+                    value={doctorName}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Clinic :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setClinic(e.target.value)
-                }} />
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="Name of medical center"
+                    onChangeText={(val) => setClinic(val)}
+                    value={clinic}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Contact Number :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setContactNumber(e.target.value)
-                }} />
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="ex: 0768921288"
+                    onChangeText={(val) => setContactNumber(val)}
+                    value={contactNumber}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Email :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setEmail(e.target.value)
-                }}/>
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="ex:john@gmail.com"
+                    onChangeText={(val) => setEmail(val)}
+                    value={email}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Cilinic Area :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setClinicArea(e.target.value)
-                }} />
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="Location of clinic(Colombo)"
+                    onChangeText={(val) => setClinicArea(val)}
+                    value={clinicArea}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Date of Birth :</Text>
-                {/* <TextInput style={styles.InputField} onChange={(e) => {
-                    setDob(e.target.value)
-                }}/> */}
-            
-
-            <DatePicker
-                style={styles.InputField}
-                // date={this.state.date}
-                mode="date"
-                placeholder="Date of visit"
-                format="YYYY-MM-DD"
-                // minDate="2016-05-01"
-                // maxDate="2016-06-01"
-                confirmBtnText="Confirm"
-                cancelBtnText="Cancel"
-                customStyles={{
-                dateIcon: {
-                    // position: 'absolute',
-                    left: 50,
-                    // right : 0,
-                    // top: 4,
-                    // marginLeft: 30,
-                    // marginRight : 36,
-                    color : theme.colors.primary,
-                },
-                dateInput: {
-                    // marginLeft: 36
-                    borderColor: "#B0B0B000",
-                }
-                // ... You can check the source to find the other keys.
-                }}
-                onDateChange={(date) => {this.setDate({date: date})}}
-            />
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="Choose date(ex:2021-5-10)"
+                    onChangeText={(val) => setDob(val)}
+                    value={dob}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Citations :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setCitations(e.target.value)
-                }}/>
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="ex:General Doctor"
+                    onChangeText={(val) => setCitations(val)}
+                    value={citations}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Qualification :</Text>
-                <TextInput style={styles.InputField} onChange={(e) => {
-                    setQualification(e.target.value)
-                }} />
+                <TextInput 
+                    style = {styles.InputField}
+                    placeholder="ex: MBBS(sur.Eye)"
+                    onChangeText={(val) => setQualification(val)}
+                    value={qualification}
+                />
             </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Note :</Text>
-                <TextInput style={styles.CommentField} placeholder="Other Description" onChange={(e) => {
-                    setnote(e.target.value)
-                }}/>
-
+                <TextInput 
+                    style = {styles.CommentField}
+                    placeholder="Other Information"
+                    onChangeText={(val) => setNote(val)}
+                    value={note}
+                />
             </View>
 
-            <Button mode="contained" onPress={() => {saveDetails}}>
+            <Button mode="contained" onPress={() => {saveDetails()}}>
                 Save
             </Button>
 
@@ -244,6 +233,9 @@ export default function AddNewDoctor ({navigation}){
 }
 
 const styles = StyleSheet.create ({
+    center : {
+        alignSelf : 'center'
+    },
     header : {
         fontSize : 20,
         fontWeight : 'bold',
@@ -254,7 +246,6 @@ const styles = StyleSheet.create ({
     },
     visitSummaryForm : {
         alignSelf : 'stretch',
-        // margin : 20,
         padding : 20,
         paddingTop : 0,
         borderColor : theme.colors.primary,
@@ -264,31 +255,32 @@ const styles = StyleSheet.create ({
     InputField : {
         alignSelf : 'stretch',
         height : 35,
-        width : '60%',
         marginBottom : 10,
         borderBottomColor : '#009387',
-        borderBottomWidth : 1,
+        borderBottomWidth : 2,
         fontSize : 16,
+        color : theme.colors.primary,
         
     },
     sameRow : {
         flexDirection : 'row',
         width : '100%',
-        justifyContent : 'space-between'
+        // justifyContent : 'space-between'
         // alignContent : 'center'
         // justifyContent : 'center'
     },
     CommentField : {
         height : 100,
-        borderColor : '#0A6466',
-        borderWidth : 1,
+        borderColor : theme.colors.primary,
+        borderWidth : 2,
+        borderRadius : 5,
+        width : '60%',
         marginBottom : 30,
         marginTop : 30,
         padding : 20,
     },
     actionButton: {
         flexDirection : 'row',
-        // right : 0,
         alignSelf : 'flex-end',
         marginBottom : 10
         

@@ -1,27 +1,129 @@
-import React from 'react';
-import {Text, ScrollView, StyleSheet} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
+import {Text, ScrollView, StyleSheet, View} from 'react-native';
 import BackgroundLayout from '../components/BackgroundLayout';
-import Button from '../components/Button';
+// import Button from '../components/Button';
+import BackButton from '../components/BackButton'
 
+import axios from 'axios';
+
+
+const optionsPerPage = [2, 3, 4];
 
 export default function DoctorDetails({navigation}){
-    return ( 
-        <ScrollView>
+
+  const [searchQuery, setSearchQuery] = React.useState('');
+  const onChangeSearch = query => { setSearchQuery(query) }
+  console.log(searchQuery);
+
+//   const [searchTerm,setSearchTerm]=useState("");
+
+
+  const [page, setPage] = React.useState(3);
+  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+
+
+  const [productList,setProductList]=useState([]);
+
+  useEffect(()=>{
+    axios.get("http://10.0.2.2:3001/viewDoctorDetails").then((response)=>{
+      setProductList(response.data);
+    })
+  },[]);
+
+  React.useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+
+  return (
+    <ScrollView>
         <BackgroundLayout>
-        <Button
-        mode='contained'
-        onPress={() => navigation.navigate('AddNewDoctor')} 
-        style={styles.newReportButton}
-        > Add New Doctor </Button>
-        <Text> List Down of Doctors </Text>
+            <View style= {styles.sameRow}>
+                <View style={{top:-20}}>
+                <BackButton goBack={navigation.goBack} />
+                </View>                
+                <Searchbar
+                    style= {styles.searchBar}
+                    placeholder="Search"
+                    onChangeText={onChangeSearch}
+                    // onChangeText={(e)=>{setSearchTerm(e.target.value);}}
+                    value={searchQuery}
+                />
+
+            </View>
+            <Button
+                style= {styles.addButton}
+                mode='contained'
+                icon = "camera"
+                onPress={() => navigation.navigate('AddNewDoctor')} 
+                style={styles.newReportButton}
+                > Add New Doctor 
+            </Button>
+
+
+            <DataTable>
+                <DataTable.Header>
+                    <DataTable.Title>Profile</DataTable.Title>
+                    <DataTable.Title>Name</DataTable.Title>
+                    <DataTable.Title numeric>Clinic Center</DataTable.Title>
+                    <DataTable.Title numeric>Contact</DataTable.Title>
+                </DataTable.Header>
+
+                {productList.filter(val=>{if(searchQuery===""){
+                            return val;
+                            }else if(
+                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                            {
+                            return val;
+                            }
+                            }).map((record)=>{
+                            return(
+                    <DataTable.Row key={record.doctor_id}>
+                    <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/Doctors/aamirDp.jpeg')} /></DataTable.Cell>
+                    <DataTable.Cell align="center">{record.name}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
+                    </DataTable.Row>
+                    )})
+                }
+
+                <DataTable.Pagination
+                    page={page}
+                    numberOfPages={3}
+                    onPageChange={(page) => setPage(page)}
+                    label="1-2 of 6"
+                    optionsPerPage={optionsPerPage}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                    showFastPagination
+                    optionsLabel={'Rows per page'}
+                />
+            </DataTable>
+
         </BackgroundLayout>
-        </ScrollView>
-    )
+    </ScrollView>
+  );
 }
 
-const styles = StyleSheet.create ({
-    newReportButton :{
 
+const styles= StyleSheet.create({
+    searchBar: {
+        width : '80%',
+        marginLeft : '20%',
+        height: 40,
+    },
+    sameRow : {
+        flexDirection : 'row',
+        // alignSelf : 'center',
+        justifyContent : 'space-between'
+    },
+    addButton: {
+        width : 200,
+        height : 50
+
+    },
+    productImage: {
+        backgroundColor : '#B0B0B000'
     },
 })
 

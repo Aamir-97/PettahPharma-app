@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Provider } from 'react-native-paper'
 import { NavigationContainer, ThemeProvider } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
 import { theme } from './src/core/theme'
 import Icon from 'react-native-vector-icons/Ionicons'
+import axios from 'axios'
 
 import { DrawerContent } from './src/screens/DrawerContent'
+import { AuthContext } from './src/components/context'
+
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Screens
 import StartScreen from './src/screens/StartScreen'
@@ -25,7 +29,9 @@ import VSRForm from './src/screens/VSRForm'
 import AddNewTask from './src/screens/AddNewTask'
 import AddNewDoctor from './src/screens/AddNewDoctor'
 import DiscussionForum from './src/screens/DiscussionForum'
-
+import TestForm from './src/screens/TestForm'
+import Profile from './src/screens/Profile'
+import { View, ActivityIndicator } from 'react-native'
 
 const AuthStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -58,6 +64,7 @@ const HomeStackScreen= ({navigation}) => {
         )
       }} /> 
     <HomeStack.Screen name="AddNewTask" component = {AddNewTask} />
+    <HomeStack.Screen name="TestForm" component = {TestForm} />
 
     </HomeStack.Navigator>
     
@@ -216,11 +223,110 @@ const ManageExpensesStackScreen = ({navigation}) => {
 }
 
 export default function Routes() {
-  return (
-    <NavigationContainer>
-    <Provider theme={theme}>    
 
-    {/* <AuthStackScreen /> */}
+  const initialLoginState = {
+    isLoading : true,
+    userName : null,
+    userToken : null,
+  };
+
+  const loginReducer = (prevState, action) => {
+    switch(action.type){
+      case 'RETRIEVE_TOKEN':
+       return {
+         ...prevState,
+         userToken : action.token,
+         isLoading : false,
+       };
+      case 'LOGIN':
+       return {
+        ...prevState,
+        userToken : action.token,
+        userEmail : action.email,
+        userID : action.id,
+        isLoading : false,
+       };
+      case 'LOGOUT':
+       return {
+        ...prevState,
+        userToken : null,
+        userName : null,
+        isLoading : false,
+       };
+    }
+  }
+
+  const [loginState , dispatch ] = React.useReducer(loginReducer, initialLoginState);
+
+  const authContext = React.useMemo(() => ({
+    signIn: async(email, password) => {
+      let userToken, userID;
+      userToken, userID = null;
+      console.log("Sign In Function in route file");
+      // console.log(email);
+      // console.log(password);
+      try {
+        axios.post("http://10.0.2.2:3001/login", {
+          email: email,
+          password: password,
+        }).then((response)=>{
+          console.log (response.data.id);
+          if (response.data.id){
+            userToken = 'medicalrep';
+            dispatch({ type : 'LOGIN', id:userID , email: email, token: userToken  });
+          }
+        });
+        await AsyncStorage.setItem(key, userToken);
+      } catch (e){
+        console.log(e);
+      }
+
+
+    },
+    
+    signOut: async() => {
+      // setIsLoading(false);
+      // setUserToken(null);
+      try {
+        userToken = 'medicalrep';
+        await AsyncStorage.removeItem('userToken')
+      } catch (e){
+        console.log(e);
+      }
+      dispatch({ type : 'LOGOUT' });
+
+    },
+
+  }),[]);
+
+  // useEffect(() => {
+  //   setTimeout(async()=>{
+  //     let userToken;
+  //     userToken= null;
+  //     try {
+  //       userToken = await AsyncStorage.getItem('userToken', userToken);        
+  //     } catch (e){
+  //       console.log(e);
+  //     }
+  //     dispatch({ type : 'RETRIEVE_TOKEN', token: userToken });
+
+  //   });
+
+  // },[]);
+
+  if (loginState.isloading) {
+    return(
+      <View style={{flex: 1, justifyContent:'center', alignItems: 'center'}}>
+        <ActivityIndicator size="large" color={theme.colors.primary} />
+      </View>
+    );
+  }
+
+  return (
+    <AuthContext.Provider value={authContext} >
+    <NavigationContainer>
+    <Provider theme={theme}>          
+      { loginState.userToken !== null ? (
       <Drawer.Navigator 
                 screenOptions={{
                   headerStyle: {
@@ -238,15 +344,22 @@ export default function Routes() {
                   >
 
           <Drawer.Screen name="Home" component={HomeStackScreen} />
+          <Drawer.Screen name="Profile" component={Profile} options={{ headerShown : true }}/>
           <Drawer.Screen name="ManageExpenses" component={ManageExpensesStackScreen} />
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />
           <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />
           <Drawer.Screen name="DoctorDetails" component={DoctorDetailsStackScreen} />
           <Drawer.Screen name="ProductDetails" component={ProductDetails} options={{ headerShown : true }} />
           <Drawer.Screen name="DiscussionForum" component={DiscussionForum} options={{ headerShown : true }} />
-      </Drawer.Navigator> 
-      
+      </Drawer.Navigator>  
+
+      ) : 
+        <AuthStackScreen />
+                  
+      }      
     </Provider>
     </NavigationContainer>
+    </AuthContext.Provider>
+
   )
 };
