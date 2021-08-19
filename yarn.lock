@@ -5641,6 +5641,11 @@
   "resolved" "https://registry.npmjs.org/pngjs/-/pngjs-5.0.0.tgz"
   "version" "5.0.0"
 
+"pod-install@^0.1.26":
+  "integrity" "sha512-cPuS5g/LgZrjvfynfiljfudAf2F3L86udzQQfPaHqbUfi2cEFsaTQPwlGuw9Xu33qPJJixGEZm4jV+SukzpgbA=="
+  "resolved" "https://registry.npmjs.org/pod-install/-/pod-install-0.1.26.tgz"
+  "version" "0.1.26"
+
 "posix-character-classes@^0.1.0":
   "integrity" "sha1-AerA/jta9xoqbAL+q7jB/vfgDqs="
   "resolved" "https://registry.npmjs.org/posix-character-classes/-/posix-character-classes-0.1.1.tgz"
@@ -5879,6 +5884,11 @@
     "invariant" "^2.2.4"
     "prop-types" "^15.7.2"
 
+"react-native-image-crop-picker@^0.36.2":
+  "integrity" "sha512-cTauoEHHzx14ZHA7Pt65e7RVnbn1WRYQz2ufTZp9/05EtNDrdsXwNhgtXdWVFbOhYB8qgUFQjy2NelkBOHIH3g=="
+  "resolved" "https://registry.npmjs.org/react-native-image-crop-picker/-/react-native-image-crop-picker-0.36.2.tgz"
+  "version" "0.36.2"
+
 "react-native-image-picker@^4.0.6":
   "integrity" "sha512-Pp3UWKUADuMG1mz12m6dSO/R2KnvXVEd77bldrfTMFpz4PFc4iVKo+bHeS79It0mUBezfzDMgfesg/OPLSugvQ=="
   "resolved" "https://registry.npmjs.org/react-native-image-picker/-/react-native-image-picker-4.0.6.tgz"
@@ -5895,6 +5905,11 @@
   "version" "0.1.4"
   dependencies:
     "rnpm" "1.5.2"
+
+"react-native-my-sql-connection@^1.0.4":
+  "integrity" "sha512-HVZ/HR9imKEaeM4BMlvrFDEnbDA/1s6goyT8N9UGjkui0/kLuSnGtATBOOX9CGGFaNPOwQs9cFPXr/hNR0kMBg=="
+  "resolved" "https://registry.npmjs.org/react-native-my-sql-connection/-/react-native-my-sql-connection-1.0.4.tgz"
+  "version" "1.0.4"
 
 "react-native-numeric-input@^1.9.0":
   "integrity" "sha512-PEtji6X0duniB/PrCl4DgBFSmjrQQaMxfZqGqbUjh1UalNX4ITdrPyctZK5BFs2/AbJq05tj/OYBNEGTiDIbPw=="
@@ -5991,7 +6006,7 @@
     "prop-types" "^15.6.0"
     "react-timer-mixin" "^0.13.4"
 
-"react-native@*", "react-native@>=0.14.0", "react-native@>=0.42.0", "react-native@>=0.62.0-rc.0 <0.64.0", "react-native@~0.63.4":
+"react-native@*", "react-native@>=0.14.0", "react-native@>=0.40.0", "react-native@>=0.42.0", "react-native@>=0.60.0-rc.0 <1.0.x", "react-native@>=0.62.0-rc.0 <0.64.0", "react-native@~0.63.4":
   "integrity" "sha512-I4kM8kYO2mWEYUFITMcpRulcy4/jd+j9T6PbIzR0FuMcz/xwd+JwHoLPa1HmCesvR1RDOw9o4D+OFLwuXXfmGw=="
   "resolved" "https://registry.npmjs.org/react-native/-/react-native-0.63.4.tgz"
   "version" "0.63.4"
@@ -6034,7 +6049,7 @@
   "resolved" "https://registry.npmjs.org/react-timer-mixin/-/react-timer-mixin-0.13.4.tgz"
   "version" "0.13.4"
 
-"react@*", "react@^0.14.7 || ^15.0.0-0 || ^16.0.0 || ^17.0.0", "react@^16.13.1", "react@^16.3.0", "react@^16.3.0 || ^17.0.0-0", "react@^16.8.0 || ^17.0.0", "react@>=16.5.1", "react@~0.14.8 || ^15.0.0 || ^16.0.0", "react@16.13.1":
+"react@*", "react@^0.14.7 || ^15.0.0-0 || ^16.0.0 || ^17.0.0", "react@^16.13.1", "react@^16.3.0", "react@^16.3.0 || ^17.0.0-0", "react@^16.8.0 || ^17.0.0", "react@^16.8.1", "react@>=16.5.1", "react@~0.14.8 || ^15.0.0 || ^16.0.0", "react@16.13.1":
   "integrity" "sha512-YMZQQq32xHLX0bz5Mnibv1/LHb3Sqzngu7xstSM+vrkE5Kzr9xE0yMByK5kMoTK30YVJE61WfbxIFFvfeDKT1w=="
   "resolved" "https://registry.npmjs.org/react/-/react-16.13.1.tgz"
   "version" "16.13.1"
@@ -6062,7 +6077,7 @@
     "pinkie-promise" "^2.0.0"
     "readable-stream" "^2.0.0"
 
-"readable-stream@^2.0.1", "readable-stream@^2.2.2", "readable-stream@~2.3.6", "readable-stream@2.3.7":
+"readable-stream@^2.0.0", "readable-stream@^2.0.1", "readable-stream@^2.0.2", "readable-stream@^2.0.5", "readable-stream@^2.0.6", "readable-stream@^2.2.2", "readable-stream@~2.3.6", "readable-stream@2.3.7":
   "integrity" "sha512-Ebho8K4jIbHAxnuxi7o42OrZgF/ZTNcsZj6nRKyUmkhLFq8CHItp/fy6hQZuZmP/n3yZ9VBUbp4zz/mX8hmYPw=="
   "resolved" "https://registry.npmjs.org/readable-stream/-/readable-stream-2.3.7.tgz"
   "version" "2.3.7"

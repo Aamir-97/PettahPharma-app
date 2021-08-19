@@ -1,21 +1,8 @@
 // import React, { Fragment, Component } from 'react';
 // import ImagePicker from 'react-native-image-picker';
-// import {
-//   SafeAreaView,
-//   StyleSheet,
-//   ScrollView,
-//   View,
-//   Text,
-//   StatusBar,
-//   Image,
-//   Button,
-//   Dimensions,
-//   TouchableOpacity
-// } from 'react-native';
+// import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, Image, Button, Dimensions, TouchableOpacity } from 'react-native';
 
-// import {
-//   Header, LearnMoreLinks, Colors, DebugInstructions, ReloadInstructions,
-// } from 'react-native/Libraries/NewAppScreen';
+// import { Header, LearnMoreLinks, Colors, DebugInstructions, ReloadInstructions, } from 'react-native/Libraries/NewAppScreen';
 
 // const options = {
 //   title: 'Select Avatar',
