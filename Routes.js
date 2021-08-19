@@ -17,7 +17,7 @@ import StartScreen from './src/screens/StartScreen'
 import LoginScreen from './src/screens/LoginScreen'
 import HomeScreen from './src/screens/HomeScreen'
 import ApplyLeaves from './src/screens/ApplyLeaves'
-import ApprovedLeaves from './src/screens/ApprovedLeaves'
+import AnnualLeaves from './src/screens/AnnualLeaves'
 import ClaimExpenses from './src/screens/ClaimExpenses'
 import DoctorDetails from './src/screens/DoctorDetails'
 import ManageExpenses from './src/screens/ManageExpenses'
@@ -30,8 +30,10 @@ import AddNewTask from './src/screens/AddNewTask'
 import AddNewDoctor from './src/screens/AddNewDoctor'
 import DiscussionForum from './src/screens/DiscussionForum'
 import TestForm from './src/screens/TestForm'
-import Profile from './src/screens/Profile'
 import { View, ActivityIndicator } from 'react-native'
+import Profile from './src/screens/Profile'
+import EditProfile from './src/screens/EditProfile'
+
 
 const AuthStack = createStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -40,6 +42,7 @@ const VisitSummaryReportStack = createStackNavigator ();
 const ManageLeavesStack = createStackNavigator ();
 const ManageExpensesStack = createStackNavigator ();
 const DoctorDetailsStack = createStackNavigator ();
+const ProfileStack = createStackNavigator ();
 
 const HomeStackScreen= ({navigation}) => {
   return (
@@ -159,13 +162,13 @@ const ManageLeavesStackScreen = ({navigation}) => {
       <ManageLeavesStack.Screen name="ApplyLeaves" component={ApplyLeaves} options={{
         title: "Apply Leaves"
       }} />
-      <ManageLeavesStack.Screen name="ApprovedLeaves" component={ApprovedLeaves} options={{
-        title: "Approved Leaves"
+      <ManageLeavesStack.Screen name="AnnualLeaves" component={AnnualLeaves} options={{
+        title: "Annual Leaves"
       }} />
 
     </ManageLeavesStack.Navigator>
   )
-}
+};
 
 const AuthStackScreen = ({navigation}) => {
   return (
@@ -220,7 +223,37 @@ const ManageExpensesStackScreen = ({navigation}) => {
 
     </ManageExpensesStack.Navigator>
   )
-}
+};
+
+const ProfileStackScreen = ({navigation}) => {
+  return (
+    <ProfileStack.Navigator
+    initialRouteName="Profile" 
+    screenOptions={{
+      headerStyle: {
+        backgroundColor : "#0A6466",
+        height : 50
+      },
+      headerTintColor : "#ffffff",
+      headerTintStyle : {
+        fontWeight : 'bold',
+        alignItems : 'center',
+        justifyContent : 'center'
+      }
+    }}
+      >
+      <ProfileStack.Screen  name="Profile" component={Profile} options= { {
+        headerLeft: () => (
+          <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
+        )
+      }} />
+      <ProfileStack.Screen  name="EditProfile" component={EditProfile} options={{
+        title: "Edit Profile"
+      }} />
+
+    </ProfileStack.Navigator>
+  )
+};
 
 export default function Routes() {
 
@@ -349,6 +382,7 @@ export default function Routes() {
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />
           <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />
           <Drawer.Screen name="DoctorDetails" component={DoctorDetailsStackScreen} />
+          <Drawer.Screen name="Profile" component={ProfileStackScreen} />
           <Drawer.Screen name="ProductDetails" component={ProductDetails} options={{ headerShown : true }} />
           <Drawer.Screen name="DiscussionForum" component={DiscussionForum} options={{ headerShown : true }} />
       </Drawer.Navigator>  
