@@ -42,3 +42,5 @@ INFO: Unsupported notification method: $/setTrace
 [0m2021.08.22 12:41:16 INFO  time: initialize in 6.15s[0m
 [0m2021.08.22 12:41:22 WARN  Build server is not auto-connectable.[0m
 [0m2021.08.22 12:41:22 WARN  no build tool detected in workspace 'D:\Third Year\Group Project ll\PettahPharma-app'. The most common cause for this problem is that the editor was opened in the wrong working directory, for example if you use sbt then the workspace directory should contain build.sbt. [0m
+Aug 22, 2021 12:46:36 PM org.eclipse.lsp4j.jsonrpc.services.GenericEndpoint notify
+INFO: Unsupported notification method: $/setTrace
