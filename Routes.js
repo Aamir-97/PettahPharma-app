@@ -359,7 +359,7 @@ export default function Routes() {
     <AuthContext.Provider value={authContext} >
     <NavigationContainer>
     <Provider theme={theme}>          
-      { loginState.userToken !== null ? (
+      { loginState.userToken == null ? (
       <Drawer.Navigator 
                 screenOptions={{
                   headerStyle: {
@@ -382,7 +382,6 @@ export default function Routes() {
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />
           <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />
           <Drawer.Screen name="DoctorDetails" component={DoctorDetailsStackScreen} />
-          <Drawer.Screen name="Profile" component={ProfileStackScreen} />
           <Drawer.Screen name="ProductDetails" component={ProductDetails} options={{ headerShown : true }} />
           <Drawer.Screen name="DiscussionForum" component={DiscussionForum} options={{ headerShown : true }} />
       </Drawer.Navigator>  

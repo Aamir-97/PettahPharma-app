@@ -14,7 +14,7 @@ export default function Profile({navigation}){
         <BackgroundLayout>
         <Button mode='contained' onPress={() => navigation.navigate('EditProfile')} style={styles.editProfileButton} > Edit Profile </Button>
 
-        <View style={{padding:10, width:'100%',height:150, backgroundColor:'#f0ead5', alignItems:'center'}}>
+        <View style={{padding:10, width:'100%',height:150, backgroundColor:'#0A6466', alignItems:'center'}}>
             <TouchableOpacity>
                 <Image source ={require('../assets/cover.jpg')} style = {{width:160, height: 160, marginTop:70, borderRadius: 100}}></Image>
             </TouchableOpacity>

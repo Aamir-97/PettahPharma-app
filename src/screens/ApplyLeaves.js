@@ -1,13 +1,33 @@
 import React, {useState} from 'react'
 import Calendar from 'react-calendar'
-import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button} from 'react-native'
+import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button, Alert} from 'react-native'
 import { theme } from '../core/theme'
 import DatePicker from 'react-native-datepicker'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
+import axios from 'axios'
+
 
 export default function ApplyLeaves({ navigation }) {
   // const [selectedValue, setSelectedValue] = useState("Sick Leave");
+  const [repId,setRepId] = React.useState('');
+  const [leaveType,setLeaveType] = React.useState('');
+  const [startDate,setStartDate] = React.useState('');
+  const [endDate,setEndDate] = React.useState('');
+  const [description,setDescription] = React.useState('');
+
+  const saveDetails = () =>{
+    axios.post("http://10.0.2.2:3001/appplyLeave", {
+      repId: repId, leaveType: leaveType, startDate: startDate, endDate: endDate, description: description
+    }).then(()=>{
+      console.log();// leaveId? don't think so
+      console.log("Inserted sucessfully");
+      Alert.alert("Database", "Leave Form submitted sucessfully",
+        [{text: "Cancel", onPress: () => console.log("Cancelled"),style:"cancel"},
+          {text:"Submit", onPress: () => console.log("Submitted")}
+        ]);
+    })
+  };
   return (
     <SafeAreaView>
       <ScrollView> 
@@ -34,7 +54,7 @@ export default function ApplyLeaves({ navigation }) {
       <View style ={styles.leaveContainer}>
         {/* <Calendar/> */}
       <Text style={styles.header}>Leave Apply Form</Text> 
-      <TextInput style={styles.InputField} placeholder="Med Rep ID" />
+      <TextInput style={styles.InputField} placeholder="Med Rep ID" onChangeText={(val) => setRepId(val)} value={repId} />
 
       <Picker>
         {/* selectedValue={selectedValue}
@@ -52,21 +72,13 @@ export default function ApplyLeaves({ navigation }) {
                 mode="date"
                 placeholder="Start Date"
                 format="YYYY-MM-DD"
-                minDate="2016-05-01"
-                maxDate="2016-06-01"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 customStyles={{
                 dateIcon: {
-                    // position: 'absolute',
                     left: 50,
-                    // right : 0,
-                    // top: 4,
-                    // marginLeft: 30,
-                    // marginRight : 36,
                 },
                 dateInput: {
-                    // marginLeft: 36
                     borderColor: "#B0B0B000",
                 }
                 }}
@@ -78,28 +90,20 @@ export default function ApplyLeaves({ navigation }) {
                 mode="date"
                 placeholder="End Date"
                 format="YYYY-MM-DD"
-                minDate="2016-05-01"
-                maxDate="2016-06-01"
                 confirmBtnText="Confirm"
                 cancelBtnText="Cancel"
                 customStyles={{
                 dateIcon: {
-                    // position: 'absolute',
                     left: 50,
-                    // right : 0,
-                    // top: 4,
-                    // marginLeft: 30,
-                    // marginRight : 36,
                 },
                 dateInput: {
-                    // marginLeft: 36
                     borderColor: "#B0B0B000",
                 }
               }}
                 onDateChange={(date) => {this.setState({date: date})}}
             />
-      <TextInput style={styles.description} placeholder="Description"/>
-      {/* <TextInput style={styles.description} placeholder="Sales Manager's comments" /> */}
+      <TextInput style={styles.description} placeholder="Description" onChangeText={(val) => setDescription(val)} value={description}/>
+      
         <View style = {styles.sameRow}>
         <Button
           color = '#0A6466'
