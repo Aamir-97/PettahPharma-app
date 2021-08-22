@@ -3,7 +3,7 @@ import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, But
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
-import Currencyinput from '../components/Currencyinput'
+import Currencyinput from '../components/CurrencyInput'
 import ImagePicker from 'react-native-image-crop-picker';
 
   

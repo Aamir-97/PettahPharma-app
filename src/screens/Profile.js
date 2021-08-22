@@ -20,7 +20,7 @@ export default function Profile({navigation}){
             </TouchableOpacity>
             </View>
         <View style={{alignItems:'center'}}>
-            <Image source ={require('../assets/Doctors/aamirDp.jpeg')} style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}></Image> 
+            <Image source ={require('../assets/aamirDp.jpeg')} style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}></Image> 
             <Text style={{fontSize:25, fontWeight:'bold', padding:10}}>Fred Wright</Text>
             <Text style={{fontSize:15, fontWeight:'bold', color:'grey', padding:10}}>25, Male</Text>
             <View style = {styles.sameRow}>

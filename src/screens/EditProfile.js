@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import Calendar from 'react-calendar'
 import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button} from 'react-native'
 import { theme } from '../core/theme'
-import DatePicker from 'react-native-datepicker'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import ImagePicker from 'react-native-image-crop-picker';

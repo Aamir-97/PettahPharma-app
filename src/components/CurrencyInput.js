@@ -2,7 +2,7 @@ import React from 'react'
 import { formatNumber } from 'react-native-currency-input';
 import CurrencyInput from 'react-native-currency-input';
 
-export function Currencyinput() {
+export default function Currencyinput() {
   const [value, setValue] = React.useState(0.00); 
 
   return (

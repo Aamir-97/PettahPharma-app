@@ -14,19 +14,12 @@ export default function ProductDetails({navigation}){
 //   const [searchQuery, setSearchQuery] = React.useState('');
 //   const onChangeSearch = query => setSearchQuery(query);
 
-  const [page, setPage] = React.useState(3);
-  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
-
-
-//   const [searchTerm, setSearchTerm] = useState('');
+// const [searchTerm, setSearchTerm] = useState('');
 // console.log(searchTerm);
 
   const [query, setSearchTerm] = React.useState('');
   const onChangeSearch = query => setSearchTerm(query);
   console.log(query);
-
-
-
 
   const [productList,setProductList]=useState([]);
 
@@ -36,9 +29,13 @@ export default function ProductDetails({navigation}){
     })
   },[]);
 
+  const [page, setPage] = React.useState(2);
+  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+
   React.useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
+
 
   return (
     <ScrollView>
@@ -76,11 +73,11 @@ export default function ProductDetails({navigation}){
                             }
                             }).map((record)=>{
                             return(
-                    <DataTable.Row key={record.product_ID}>
-                    <DataTable.Cell align="center">{record.display_photo}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.name}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.volume}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.price}</DataTable.Cell>
+                    <DataTable.Row key={record.product_id}>
+                    <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/medicine/capsule.png')} /></DataTable.Cell>
+                    <DataTable.Cell align='right'>{record.name}</DataTable.Cell>
+                    <DataTable.Cell numeric>{record.volume}</DataTable.Cell>
+                    <DataTable.Cell numeric>{record.price}</DataTable.Cell>
                     {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
                     </DataTable.Row>
                     )})

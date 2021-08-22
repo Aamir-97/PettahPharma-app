@@ -2,7 +2,6 @@ import React, {useState} from 'react'
 import Calendar from 'react-calendar'
 import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button} from 'react-native'
 import { theme } from '../core/theme'
-import DatePicker from 'react-native-datepicker'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 
@@ -45,8 +44,9 @@ export default function ApplyLeaves({ navigation }) {
             <Picker.Item label="Personal" value="2" />
             <Picker.Item label="Unpaid" value="3" />
             <Picker.Item label="Paid" value="4" />
-            </Picker>
-      <DatePicker
+      </Picker>
+
+      {/* <DatePicker
                 style={styles.InputField}
                 // date={this.state.date}
                 mode="date"
@@ -97,7 +97,9 @@ export default function ApplyLeaves({ navigation }) {
                 }
               }}
                 onDateChange={(date) => {this.setState({date: date})}}
-            />
+            /> */}
+
+            
       <TextInput style={styles.description} placeholder="Description"/>
       {/* <TextInput style={styles.description} placeholder="Sales Manager's comments" /> */}
         <View style = {styles.sameRow}>

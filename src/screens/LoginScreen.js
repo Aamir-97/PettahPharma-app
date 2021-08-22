@@ -23,11 +23,11 @@ export default function LoginScreen({ navigation }) {
     isValidPassword: true,
   });
 
-  const { signIn } = React.useContext(AuthContext);
+  const { signIn , setInfo } = React.useContext(AuthContext);
 
   const loginHandle= (email,password) => {
-    console.log(email);
-    console.log(password);
+    // console.log(email);
+    // console.log(password);
     const emailError = emailValidator(email)
     const passwordError = passwordValidator(password)
     if (emailError || passwordError) {
@@ -36,6 +36,7 @@ export default function LoginScreen({ navigation }) {
       return
     }
       signIn(email, password);
+      // setInfo();
   };
 
   // const handleValidEmail= (val) => {

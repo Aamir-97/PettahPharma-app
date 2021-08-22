@@ -89,7 +89,7 @@ export function DrawerContent(props) {
                                 size={30}
                                 />
                             )}
-                            label="ManageExpenses"
+                            label="Manage Expenses"
                             onPress={() => {props.navigation.navigate('ManageExpenses')}}
 
                         />
@@ -101,7 +101,7 @@ export function DrawerContent(props) {
                                 size={30}
                                 />
                             )}
-                            label="ManageLeaves"
+                            label="Manage Leaves"
                             onPress={() => {props.navigation.navigate('ManageLeaves')}}
 
                         />
@@ -113,7 +113,7 @@ export function DrawerContent(props) {
                                 size={30}
                                 />
                             )}
-                            label="VisitSummaryReport"
+                            label="Visit Summary Report"
                             onPress={() => {props.navigation.navigate('VisitSummaryReport')}}
 
                         />
@@ -125,7 +125,7 @@ export function DrawerContent(props) {
                                 size={30}
                                 />
                             )}
-                            label="DoctorDetails"
+                            label="Doctor Details"
                             onPress={() => {props.navigation.navigate('DoctorDetails')}}
 
                         />
@@ -137,7 +137,7 @@ export function DrawerContent(props) {
                                 size={30}
                                 />
                             )}
-                            label="ProductDetails"
+                            label="Product Details"
                             onPress={() => {props.navigation.navigate('ProductDetails')}}
 
                         />
@@ -149,7 +149,7 @@ export function DrawerContent(props) {
                                 size={30}
                                 />
                             )}
-                            label="DiscussionForum"
+                            label="Discussion Forum"
                             onPress={() => {props.navigation.navigate('DiscussionForum')}}
 
                         />

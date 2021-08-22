@@ -10,9 +10,9 @@ export default function StartScreen({ navigation }) {
   return (
     <Background>
       <Logo />
-      <Text style={Styles.header}>WelCome To Pettah Pharma (Pvt) Ltd. </Text>
+      <Text style={Styles.header}>Wel Come To Pettah Pharma (Pvt) Ltd. </Text>
       <Paragraph>
-        Application for Medical Reperesentatives in PettahPharma.
+          Application for Medical Reperesentatives in PettahPharma.
       </Paragraph>
       <Button
         mode="contained"
