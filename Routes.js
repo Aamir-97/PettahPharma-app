@@ -378,7 +378,7 @@ export default function Routes() {
     <AuthContext.Provider value={authContext} >
     <NavigationContainer>
     <Provider theme={theme}>          
-      { loginState.userToken !== null ? (
+      { loginState.userToken == null ? (
       <Drawer.Navigator 
                 screenOptions={{
                   headerStyle: {
