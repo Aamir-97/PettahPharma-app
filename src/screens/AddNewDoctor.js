@@ -34,7 +34,7 @@ export default function AddNewDoctor ({navigation}){
             citations: citations, 
             qualification: qualification, 
             note: note  
-        }).then(()=>{
+        }).then((response)=>{
             console.log(slmcNo);
             console.log("Succesfully Inserted:!");
             Alert.alert(
@@ -54,47 +54,6 @@ export default function AddNewDoctor ({navigation}){
     };
 
 
-
-    // const connect= () => {
-    //     const URL = "http://10.0.2.2:3001/test";
-    //     fetch (URL).then(response => {
-    //         if (response.status == 200){
-    //             return response.text();
-    //         }
-    //         else {
-    //             throw new Error ("Something Wrong");
-    //         }
-    //     }).then(responseText => {
-    //         // this.setState({response: responseText});
-    //     }).catch(error => {
-    //         console.error(error.message);
-    //     })
-    // }
-
-
-    // const [date, setDate] = useState(new Date(1598051730000));
-    // const [mode, setMode] = useState('date');
-    // const [show, setShow] = useState(false);
-  
-    // const onChange = (event, selectedDate) => {
-    //   const currentDate = selectedDate || date;
-    //   setShow(Platform.OS === 'android');
-    //   setDate(currentDate);
-    // };
-  
-    // const showMode = (currentMode) => {
-    //   setShow(true);
-    //   setMode(currentMode);
-    // };
-  
-    // const showDatepicker = () => {
-    //   showMode('date');
-    // };
-  
-    // const showTimepicker = () => {
-    //   showMode('time');
-    // };
-
     return (
         <ScrollView>
             <BackgroundLayout>
@@ -111,7 +70,7 @@ export default function AddNewDoctor ({navigation}){
             <View style={styles.visitSummaryForm}>
 
             <View style ={styles.sameRow}>
-                <Image source={require ('../assets/Doctors/aamirDp.jpeg')} style ={styles.displayPhoto} /> 
+                <Image source={require ('../assets/Doctors/vectorDoctor.png')} style ={styles.displayPhoto} /> 
                 <View style={{alignSelf: 'center',marginLeft:20}}>
                 <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
                     Change 

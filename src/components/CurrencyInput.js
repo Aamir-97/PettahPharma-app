@@ -2,8 +2,8 @@
 // import { formatNumber } from 'react-native-currency-input';
 // import CurrencyInput from 'react-native-currency-input';
 
-// export function Currencyinput() {
-//   const [value, setValue] = React.useState(0.00); 
+export default function Currencyinput() {
+  const [value, setValue] = React.useState(0.00); 
 
 //   return (
 //     <CurrencyInput value={value} onChangeValue={setValue} 
@@ -24,3 +24,4 @@
 //   });
   
 //   console.log(formattedValue);
+}

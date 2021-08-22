@@ -1,6 +1,6 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Background from '../components/Background'
-import { Text, View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, Button} from 'react-native'
+import { Text, View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, Button, AsyncStorage} from 'react-native'
 import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'
 import { theme } from '../core/theme'
@@ -12,7 +12,31 @@ import BackgroundLayout from '../components/BackgroundLayout'
 import {Card} from 'react-native-paper';
 
 
+
+
 export default function ManageLeaves({ navigation }) {
+
+  const [user, setUser] = React.useState({ 
+    rep_ID: '', 
+    manager_ID: '',
+  });
+  
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+        }
+      } catch (e){
+        console.log(e);
+      }
+    }
+    fetchData();
+  },[]);
+
+
   return (
     <SafeAreaView>
       <ScrollView> 
@@ -20,7 +44,7 @@ export default function ManageLeaves({ navigation }) {
 
       <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
-          <Text>27</Text>
+          <Text>{user.rep_ID}</Text>
           <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           <Text> Requested </Text>
         </View>

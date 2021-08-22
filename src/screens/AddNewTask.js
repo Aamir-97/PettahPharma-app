@@ -1,8 +1,6 @@
 import React, { useState, Component } from 'react'
 import { Text, ScrollView, Picker , View, StyleSheet, TextInput, Button} from 'react-native'
 import BackgroundLayout from '../components/BackgroundLayout'
-import DatePicker from 'react-native-datepicker'
-// import NumericInput from 'react-native-numeric-input'
 import { theme } from '../core/theme'
 import Axios from 'axios'
 
@@ -30,7 +28,7 @@ export default class MyDatePicker extends Component {
                 setLocation(e.target.value)
             }} />
 
-<DatePicker
+{/* <DatePicker
         style={{width: 200}}
         date={this.state.date}
         mode="date"
@@ -53,7 +51,7 @@ export default class MyDatePicker extends Component {
           // ... You can check the source to find the other keys.
         }}
         onDateChange={(date) => {this.setState({date: date})}}
-      />
+      /> */}
 
     
             <TextInput style={styles.InputField} placeholder="Location" onChange={(e) => {

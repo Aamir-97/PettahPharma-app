@@ -1,9 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
-import {Text, ScrollView, StyleSheet, View} from 'react-native';
+import {Text, ScrollView, StyleSheet, View, AsyncStorage} from 'react-native';
+import { theme } from '../core/theme';
 import BackgroundLayout from '../components/BackgroundLayout';
 // import Button from '../components/Button';
 import BackButton from '../components/BackButton'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import EntypoIcons from 'react-native-vector-icons/Entypo'
 
 import axios from 'axios';
 
@@ -35,6 +38,8 @@ export default function DoctorDetails({navigation}){
     setPage(0);
   }, [itemsPerPage]);
 
+
+
   return (
     <ScrollView>
         <BackgroundLayout>
@@ -54,9 +59,14 @@ export default function DoctorDetails({navigation}){
             <Button
                 style= {styles.addButton}
                 mode='contained'
-                icon = "camera"
+                icon={({color, size}) => (
+                    <EntypoIcons 
+                    name="add-user" 
+                    color={theme.colors.surface}
+                    size={22}
+                    />
+                )}
                 onPress={() => navigation.navigate('AddNewDoctor')} 
-                style={styles.newReportButton}
                 > Add New Doctor 
             </Button>
 
@@ -79,7 +89,7 @@ export default function DoctorDetails({navigation}){
                             }).map((record)=>{
                             return(
                     <DataTable.Row key={record.doctor_id}>
-                    <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/Doctors/aamirDp.jpeg')} /></DataTable.Cell>
+                    <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/Doctors/vectorDoctor.png')} /></DataTable.Cell>
                     <DataTable.Cell align="center">{record.name}</DataTable.Cell>
                     <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
                     <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
@@ -118,8 +128,12 @@ const styles= StyleSheet.create({
         justifyContent : 'space-between'
     },
     addButton: {
+        margin: 10,
         width : 200,
-        height : 50
+        // height : 50,
+        flexDirection : 'row',
+        alignSelf : 'flex-end'
+
 
     },
     productImage: {

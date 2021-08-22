@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react'
+import { AsyncStorage } from 'react-native';
 import { Provider } from 'react-native-paper'
 import { NavigationContainer, ThemeProvider } from '@react-navigation/native'
 import { createStackNavigator } from '@react-navigation/stack'
@@ -10,7 +11,7 @@ import axios from 'axios'
 import { DrawerContent } from './src/screens/DrawerContent'
 import { AuthContext } from './src/components/context'
 
-import AsyncStorage from '@react-native-async-storage/async-storage'
+// import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Screens
 import StartScreen from './src/screens/StartScreen'
@@ -30,7 +31,7 @@ import AddNewTask from './src/screens/AddNewTask'
 import AddNewDoctor from './src/screens/AddNewDoctor'
 import DiscussionForum from './src/screens/DiscussionForum'
 import TestForm from './src/screens/TestForm'
-import { View, ActivityIndicator } from 'react-native'
+import { View, ActivityIndicator, Alert } from 'react-native'
 import Profile from './src/screens/Profile'
 import EditProfile from './src/screens/EditProfile'
 
@@ -95,10 +96,14 @@ const VisitSummaryReportStackScreen = ({navigation}) => {
       <VisitSummaryReportStack.Screen  name="VisitSummaryReport" component={VisitSummaryReport} options= { {
         headerLeft: () => (
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
-        )
+        ),
+        title: "Visit Summary Reports"
       }} />
       <VisitSummaryReportStack.Screen  name="VSRForm" component={VSRForm} options={{
-        title: "New Report"
+        title: "New Report",
+        // headerLeft: () => (
+        //   <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
+        // ),
       }} />
 
     </VisitSummaryReportStack.Navigator>
@@ -259,7 +264,8 @@ export default function Routes() {
 
   const initialLoginState = {
     isLoading : true,
-    userName : null,
+    rep_ID : null,
+    manager_ID: null,
     userToken : null,
   };
 
@@ -275,15 +281,16 @@ export default function Routes() {
        return {
         ...prevState,
         userToken : action.token,
-        userEmail : action.email,
-        userID : action.id,
+        rep_ID : action.id,
+        manager_ID : action.man_ID,
         isLoading : false,
        };
       case 'LOGOUT':
        return {
         ...prevState,
         userToken : null,
-        userName : null,
+        rep_ID : null,
+        manager_ID : null,
         isLoading : false,
        };
     }
@@ -293,36 +300,38 @@ export default function Routes() {
 
   const authContext = React.useMemo(() => ({
     signIn: async(email, password) => {
-      let userToken, userID;
-      userToken, userID = null;
-      console.log("Sign In Function in route file");
-      // console.log(email);
-      // console.log(password);
+      let userToken, rep_ID, manager_ID;
+      userToken, rep_ID, manager_ID = null;
       try {
         axios.post("http://10.0.2.2:3001/login", {
           email: email,
           password: password,
         }).then((response)=>{
-          console.log (response.data.id);
-          if (response.data.id){
+          // console.log (response.data.id);
+          if (response.data.rep_ID){
             userToken = 'medicalrep';
-            dispatch({ type : 'LOGIN', id:userID , email: email, token: userToken  });
+            const user = {
+              rep_ID : response.data.rep_ID,
+              manager_ID : response.data.manager_ID,
+              userToken: userToken,
+            };
+            storeData(user);
+            dispatch({ type : 'LOGIN', id: rep_ID, man_ID: manager_ID,  token: userToken  });
+
+          } else {
+            Alert.alert("Credetials miss match!","Invalid User name or password");
           }
         });
-        await AsyncStorage.setItem(key, userToken);
       } catch (e){
         console.log(e);
       }
-
-
     },
     
     signOut: async() => {
-      // setIsLoading(false);
-      // setUserToken(null);
       try {
-        userToken = 'medicalrep';
-        await AsyncStorage.removeItem('userToken')
+        loginState.userToken = 'medicalrep';
+        // await AsyncStorage.removeItem('userToken')
+        await AsyncStorage.clear();
       } catch (e){
         console.log(e);
       }
@@ -332,20 +341,30 @@ export default function Routes() {
 
   }),[]);
 
-  // useEffect(() => {
-  //   setTimeout(async()=>{
-  //     let userToken;
-  //     userToken= null;
-  //     try {
-  //       userToken = await AsyncStorage.getItem('userToken', userToken);        
-  //     } catch (e){
-  //       console.log(e);
-  //     }
-  //     dispatch({ type : 'RETRIEVE_TOKEN', token: userToken });
+  const storeData = async (value) => {
+    try {
+      console.log(value, "-----Value Assigned----");
+      await AsyncStorage.setItem('user',JSON.stringify(value));
+    }catch (err) {
+      console.log(err, "Error while storing the values.");
+    }
+  }
 
-  //   });
+  useEffect(() => {
+    setTimeout(async()=>{
+      let userToken;
+      userToken= null;
+      try {   
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile); 
+        userToken = profile.userToken;
+      } catch (e){
+        console.log(e);
+      }
+      dispatch({ type : 'RETRIEVE_TOKEN', token: userToken });
+    });
 
-  // },[]);
+  },[]);
 
   if (loginState.isloading) {
     return(
@@ -377,7 +396,7 @@ export default function Routes() {
                   >
 
           <Drawer.Screen name="Home" component={HomeStackScreen} />
-          <Drawer.Screen name="Profile" component={Profile} options={{ headerShown : true }}/>
+          <Drawer.Screen name="Profile" component={ProfileStackScreen}/>
           <Drawer.Screen name="ManageExpenses" component={ManageExpensesStackScreen} />
           <Drawer.Screen name="ManageLeaves" component={ManageLeavesStackScreen} />
           <Drawer.Screen name="VisitSummaryReport" component={VisitSummaryReportStackScreen} />

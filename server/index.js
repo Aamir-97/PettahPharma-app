@@ -50,30 +50,7 @@ app.get ("/", (req, res) => {
 app.get ("/test",(req, res) => {
     res.send ("The Emulator is connected to the server");
 });
-
-// app.post('/login',(req,res)=>{
-//     const email = req.body.email;
-//     const password = req.body.password;
-
-//     const sqlLogin = "SELECT * FROM medicalrep WHERE email=? AND password=?";
-     
-//     db.query(sqlLogin,[email,password],(err,result)=>{
-//             if(err){  
-//                 res.send({err:err})
-//                 console.log("err");
-//             }
-//               if(result.length > 0){
-//                 // res.send(result.rep_ID);
-//                 res.send({message1 :"Login Successful" });
-//                 console.log("message1");
-//               } else{
-//                 res.send({message2 : " Wrong Username Or password "});
-//                 console.log("message2");
-
-//               }     
-//             }); 
-// });  
-
+  
 app.post('/login',(req,res)=>{
     const email = req.body.email;
     const password = req.body.password;
@@ -84,23 +61,18 @@ app.post('/login',(req,res)=>{
             if(err){
                 res.send({err:err})
                 console.log("err");
-            }
+            }  
               if(result.length > 0){
                 // res.send(result);
                 res.send({
-                    id: result[0].rep_ID,
-                    name: result[0].name,
-                    email: result[0].email,
-                    // userType: result[0].user_type,
-                    // profilePicturePath: result[0].profile_picture_path,
-                    // isVerified: result[0].is_verified
+                    rep_ID: result[0].rep_ID,
+                    manager_ID : result[0].manager_ID,
                 })
- 
                 // res.send({message1 :"Login Successful" });
-                console.log("message1");
+                console.log("Login Successful");
               } else{
                 res.send({message2 : " Wrong Username Or password "});
-                console.log("message2");
+                console.log(" Wrong Username Or password ");
 
               }     
             }); 
@@ -129,30 +101,6 @@ app.post("/newTask",(req, res) => {
 
     })
 
-});
-
-app.post('/createmedicalrep',(req,res)=>{
-    console.log(req.body)
-    const rep_ID = req.body.rep_ID;
-    const name = req.body.name;
-    const email = req.body.email;
-    const phone_no = req.body.phone_no;
-    const area = req.body.area;
-    const level = req.body.level;
-    const password = req.body.password;
-    const manager_ID = req.body.manager_ID;
-
-    
-    db.query("INSERT INTO medicalrep (rep_ID,name,email,phone_no,area,level,password,manager_ID) VALUES (?,?,?,?,?,?,?,?)",
-    [rep_ID,name,email,phone_no,area,level,password,manager_ID],(err,_results)=>{
-        if(err){
-            console.log(err);
-        } else{
-            res.send("medical rep created");
-        }
-    
-    });
-    
 });
 
 app.post("/doctor/addNewDoctor", (req, res) => {
@@ -202,6 +150,525 @@ app.get('/viewDoctorDetails',(_req,res)=>{
         }
     });
 });
+
+app.post('/viewVisitSummaryReport',(req,res)=>{
+    // console.log(req.body.rep_ID);
+    const rep_ID = req.body.rep_ID;
+    db.query('SELECT * ,doctor_details.name AS doctorName FROM visit_summary_report INNER JOIN doctor_details ON doctor_details.doctor_id = visit_summary_report.doctor_id WHERE visit_summary_report.rep_ID=?',[rep_ID],(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+});     
+   
+app.post('/homePage/reportCount',(req,res)=>{
+    // console.log(req.body.rep_ID);
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(rep_ID) AS reportCount FROM visit_summary_report WHERE rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while reportCount ");
+              } if(result.length > 0){
+                res.send({
+                    reportCount: result[0].reportCount,
+                });
+                // console.log("Get Report reportCount");
+              } else {
+                res.send({message : " No report submit yet "});
+                // console.log("NO report reportCount");
+
+              }     
+    }); 
+}); 
+
+app.post('/homePage/expensesCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(rep_ID) AS expensesCount FROM expenses WHERE rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while expensesCount ");
+              } if(result.length > 0){
+                res.send({
+                    expensesCount: result[0].expensesCount,
+                });
+              } else {
+                res.send({message : " No Expenses claimed yet "});
+                // console.log("NO report count");
+
+              }     
+    }); 
+}); 
+
+app.post('/homePage/leaveCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(rep_ID) AS leaveCount FROM leaves WHERE rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while leaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    leaveCount: result[0].leaveCount,
+                });
+                // console.log("Get Report Count");
+              } else {
+                res.send({message : " No leave taken yet "});
+                // console.log("NO report count");
+
+              }     
+    }); 
+}); 
+
+app.post('/homePage/doctorCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(doctor_ID) AS doctorCount FROM doctor_details WHERE rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while doctorCount ");
+              } if(result.length > 0){
+                //   console.log(result[0].doctorCount);
+                res.send({
+                    doctorCount: result[0].doctorCount,
+                });
+                // console.log("Get Report Count");
+              } else {
+                res.send({message : " No Doctors added yet "});
+                // console.log("NO report count");
+
+              }     
+    }); 
+}); 
+
+app.post('/homePage/SheduledTaskCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(rep_ID) AS SheduledTaskCount FROM task WHERE rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while SheduledTaskCount");
+              } if(result.length > 0){
+                res.send({
+                    SheduledTaskCount: result[0].SheduledTaskCount,
+                });
+                // console.log("Get Report Count");
+              } else {
+                res.send({message : " No task assigned yet "});
+                // console.log("NO report count");
+
+              }     
+    }); 
+}); 
+
+app.get('/homePage/productsCount',(req,res)=>{
+
+    // const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(product_id) AS productsCount FROM product";
+     
+    db.query(sqlLogin,(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while productsCount report");
+              } if(result.length > 0){
+                res.send({
+                    productsCount: result[0].productsCount,
+                });
+                // console.log("Get Report Count");
+              } else {
+                res.send({message : " No product available yet "});
+                // console.log("NO report count");
+
+              }     
+    }); 
+}); 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+// Start From Here Nimni..........................................................................................................................
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
           
    

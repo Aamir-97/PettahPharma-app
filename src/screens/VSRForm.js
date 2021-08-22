@@ -1,6 +1,5 @@
 import React, {useState} from 'react';
 import { View, Text, ScrollView, TextInput, TouchableOpacity, StyleSheet, Picker, Button} from 'react-native';
-import DatePicker from 'react-native-datepicker'
 import NumericInput from 'react-native-numeric-input'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
@@ -37,7 +36,7 @@ export default function VSRForm ({navigation}){
             <Picker.Item label="Thulasi" value="Appoinment" />
             </Picker>
 
-            <DatePicker
+            {/* <DatePicker
                 style={styles.InputField}
                 // date={this.state.date}
                 mode="date"
@@ -63,7 +62,7 @@ export default function VSRForm ({navigation}){
                 // ... You can check the source to find the other keys.
                 }}
                 onDateChange={(date) => {this.setState({date: date})}}
-            />
+            /> */}
 
             <View style={styles.sameRow}>
                 <TextInput style={styles.InputField} placeholder="TimeIn" />
