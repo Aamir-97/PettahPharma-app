@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
-import {Text, ScrollView, StyleSheet, View, AsyncStorage} from 'react-native';
+import {Text, ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
 import { theme } from '../core/theme';
 import BackgroundLayout from '../components/BackgroundLayout';
 // import Button from '../components/Button';
@@ -11,22 +11,22 @@ import EntypoIcons from 'react-native-vector-icons/Entypo'
 import axios from 'axios';
 
 
-const optionsPerPage = [2, 3, 4];
+const optionsPerPage = [2, 3, 4, 5];
 
 export default function VisitSummaryReport({navigation}){
 
   const [searchQuery, setSearchQuery] = React.useState('');
   const onChangeSearch = query => { setSearchQuery(query) }
-  console.log(searchQuery);
+  // console.log(searchQuery);
 
 //   const [searchTerm,setSearchTerm]=useState("");
 
 
   const [page, setPage] = React.useState(3);
-  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+  const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[6]);
 
 
-  const [productList,setProductList]=useState([]);
+  const [productList, setProductList]=useState([]);
 
 
 
@@ -48,7 +48,7 @@ export default function VisitSummaryReport({navigation}){
       }
     }
     fetchData();
-  },[]);  
+  },[productList]);    
 
 
   const getStaticCounts = (rep_ID) => {
@@ -69,6 +69,12 @@ export default function VisitSummaryReport({navigation}){
   React.useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
+
+
+  const viewReport = (report_id) => {
+    navigation.navigate('')
+
+  }
 
   return (
     <ScrollView>
@@ -112,18 +118,24 @@ export default function VisitSummaryReport({navigation}){
                 {productList.filter(val=>{if(searchQuery===""){
                             return val;
                             }else if(
-                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                            val.visit_type.toLowerCase().includes(searchQuery.toLowerCase()));
                             {
                             return val;
                             }
                             }).map((record)=>{
                             return(
-                    <DataTable.Row key={record.report_id}>
-                    <DataTable.Cell align="center">{record.date}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.visit_type}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.date}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.description}</DataTable.Cell>
-                    </DataTable.Row>
+                        <TouchableOpacity
+                              key={record.report_id}
+                              onPress = {() => viewReport(record.report_id)}
+                        >
+                          <DataTable.Row >
+                            <DataTable.Cell align="center">{record.date}</DataTable.Cell>
+                            <DataTable.Cell align="center">{record.visit_type}</DataTable.Cell>
+                            <DataTable.Cell align="center">{record.location}</DataTable.Cell>
+                            <DataTable.Cell align="center">{record.description}</DataTable.Cell>
+                            {/* <DataTable.Cell numaric></DataTable.Cell> */}
+                          </DataTable.Row>
+                        </TouchableOpacity>
                     )})
                 }
 

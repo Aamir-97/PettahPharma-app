@@ -78,19 +78,19 @@ app.post('/login',(req,res)=>{
             }); 
 });  
 
-app.post("/newTask",(req, res) => {
-    console.log(req);
-
+app.post("/task/submitScheduleForm",(req, res) => {
+    // console.log(req);
     const title = req.body.title;
     const location = req.body.location;
     const date = req.body.date ;
     const session =req.body.session;
     const description = req.body.description;
-    
+    const manager_ID = req.body.manager_ID;
+    const rep_ID = req.body.rep_ID;
 
-    const sqlNewTask = "INSERT INTO task(title, location, date, session, description) VALUES (?,?,?,?,?)";
+    const sqlNewTask = "INSERT INTO task( title, location, date, session, description, manager_ID, rep_ID) VALUES (?,?,?,?,?,?,?)";
 
-    db.query(sqlNewTask, [title,location,date,session,description], (err,_result)=>{
+    db.query(sqlNewTask, [title,location,date,session,description,manager_ID,rep_ID], (err,_result)=>{
         if(err){
             console.log(err);
             console.log ("Somthing Error");
@@ -116,10 +116,11 @@ app.post("/doctor/addNewDoctor", (req, res) => {
     const citation = req.body.citation;
     const qualification = req.body.qualification;
     const note = req.body.note;
+    const rep_ID = req.body.rep_ID;
 
-    const sqlInsertDoctor =  "INSERT INTO doctor_details( display_photo, slmc_no, name, clinic, contact_no, email, area, dob, citation, qualification, note) VALUES (?,?,?,?,?,?,?,?,?,?,?)" ;
+    const sqlInsertDoctor =  "INSERT INTO doctor_details(display_photo, slmc_no, name, clinic, contact_no, email, area, dob, citation, qualification, note, rep_ID) VALUES (?,?,?,?,?,?,?,?,?,?,?,?)" ;
 
-    db.query(sqlInsertDoctor,[displayPhoto,slmcNo,doctorName,clinic,contactNumber,email,clinicArea,dob,citation,qualification,note], (err,_result)=> {
+    db.query(sqlInsertDoctor,[displayPhoto,slmcNo,doctorName,clinic,contactNumber,email,clinicArea,dob,citation,qualification,note,rep_ID], (err,_result)=> {
         if(err){
             console.log(err);
             console.log ("Somthing Error");
@@ -141,32 +142,21 @@ app.get('/viewproduct',(_req,res)=>{
 });
 
 
-app.get('/viewDoctorDetails',(_req,res)=>{
-    db.query('SELECT * FROM doctor_details ',(err,result,_fields)=>{
-        if(!err){
-            res.send(result);
-        }else{
-        console.log(err);
-        }
-    });
-});
-
-app.post('/viewVisitSummaryReport',(req,res)=>{
-    // console.log(req.body.rep_ID);
+app.post('/viewDoctorDetails',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    db.query('SELECT * ,doctor_details.name AS doctorName FROM visit_summary_report INNER JOIN doctor_details ON doctor_details.doctor_id = visit_summary_report.doctor_id WHERE visit_summary_report.rep_ID=?',[rep_ID],(err,result,_fields)=>{
+    db.query('SELECT * FROM doctor_details WHERE rep_ID = ?',[rep_ID],(err,result)=>{
         if(!err){
             res.send(result);
         }else{
         console.log(err);
         }
     });
-});     
+});    
    
 app.post('/homePage/reportCount',(req,res)=>{
     // console.log(req.body.rep_ID);
     const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(rep_ID) AS reportCount FROM visit_summary_report WHERE rep_ID=?";
+    const sqlLogin = "SELECT COUNT(report_id) AS reportCount FROM visit_summary_report WHERE rep_ID=?";
      
     db.query(sqlLogin,[rep_ID],(err,result)=>{
             if(err){
@@ -205,7 +195,7 @@ app.post('/homePage/expensesCount',(req,res)=>{
               }     
     }); 
 }); 
-
+   
 app.post('/homePage/leaveCount',(req,res)=>{
 
     const rep_ID = req.body.rep_ID;
@@ -226,9 +216,9 @@ app.post('/homePage/leaveCount',(req,res)=>{
 
               }     
     }); 
-}); 
+});   
 
-app.post('/homePage/doctorCount',(req,res)=>{
+app.post('/homePage/doctorCount',(req,res)=>{    
 
     const rep_ID = req.body.rep_ID;
     const sqlLogin = "SELECT COUNT(doctor_ID) AS doctorCount FROM doctor_details WHERE rep_ID=?";
@@ -293,9 +283,138 @@ app.get('/homePage/productsCount',(req,res)=>{
 
               }     
     }); 
+});
+
+app.post('/homePage/viewTask',(req,res)=>{  
+   
+    const rep_ID = req.body.rep_ID;
+    const sql = "SELECT * FROM task WHERE rep_ID=? and status='Pending'";
+     
+    db.query(sql,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while GetTask");  
+              } if(result.length > 0){
+                // res.send({
+                //     SheduledTaskCount: result[0].SheduledTaskCount,
+                // });
+                res.send(result);
+                // console.log("Get schedule task");
+              } else {
+                res.send({message : " No task assigned yet "});
+                // console.log("NO schedule task");
+
+              }     
+    }); 
 }); 
 
+// Visit Summary Report Page API's    
 
+app.post('/viewVisitSummaryReport',(req,res)=>{
+    // console.log(req.body.rep_ID);
+    const rep_ID = req.body.rep_ID;
+    db.query('SELECT * FROM visit_summary_report WHERE rep_ID=?',[rep_ID],(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);  
+        }
+    });
+}); 
+
+app.post('/vsr/getDoctorName',(req,res)=>{
+    // console.log(req.body.rep_ID);
+    const rep_ID = req.body.rep_ID;
+    db.query('SELECT doctor_id,name FROM doctor_details WHERE rep_ID=?',[rep_ID],(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+}); 
+
+app.get('/vsr/getProductsName',(_req,res)=>{
+    db.query('SELECT product_id,name FROM product',(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+}); 
+
+app.post("/vsr/submitForm", (req, res) => {
+    // console.log(req);
+    const visitType = req.body.visitType;
+    const location = req.body.location;  
+    const date = req.body.date; 
+    const avgDuration = req.body.avgDuration; 
+    const noOfSample = req.body.noOfSample;   
+    const description = req.body.comments;
+    const doctor_name  = req.body.doctorId; 
+    const product_name = req.body.productId;
+    const repId = req.body.repId;
+    const managerId = req.body.managerId;  
+    // console.log(req.body.managerId);
+    
+    const sqlInsertDoctor =  "INSERT INTO visit_summary_report(visit_type, location, date, avg_duration, no_of_sample, description, doctor_name, product_name, rep_ID, manager_ID) VALUES (?,?,?,?,?,?,?,?,?,?)" ;
+
+    db.query(sqlInsertDoctor,[visitType, location, date, avgDuration, noOfSample ,description, doctor_name, product_name, repId, managerId], (err,_result)=> {
+        if(err){
+            console.log(err);
+            // console.log ("Somthing Error");
+        } else{
+            // console.log("New VSR is Inserted");
+            res.send("New VSR form submitted");
+        }
+    })
+});
+
+app.post('/profileDetails',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sql = "SELECT * FROM medicalrep WHERE rep_ID=?";
+     
+    db.query(sql,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while GetProfile");
+              } if(result.length > 0){
+                res.send(result);
+              } else {
+                res.send({message : " Noo Profile Data In that Id "});
+                // console.log("NO schedule task");
+
+              }     
+    }); 
+});
+
+app.put('/updateProfile',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const name = req.body.name;
+    const display_Photo = req.body.display_Photo;
+    const email = req.body.email;
+    const phone_no =req.body.phone_no;
+    const address = req.body.address;
+    const password = req.body.password;
+
+    const sql = "UPDATE medicalrep SET name=?,display_photo=?,email=?,phone_no=?,address=?,password=? WHERE rep_ID=?";
+     
+    db.query(sql,[name, display_Photo, email, phone_no, address, password,rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while update Profile");
+              } if(result){
+                res.send(result);
+              } else {
+                res.send({message : " Noo Profile Data In that Id "});
+                // console.log("NO schedule task");
+
+              }     
+    }); 
+}); 
 
 
 
@@ -671,4 +790,4 @@ app.get('/homePage/productsCount',(req,res)=>{
 
 
           
-   
+     

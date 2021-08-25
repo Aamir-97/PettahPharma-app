@@ -1,125 +1,69 @@
-import React, { useState, Component } from 'react'
-import { Text, ScrollView, Picker , View, StyleSheet, TextInput, Button} from 'react-native'
+import React, { useState, Component, useEffect } from 'react'
+import { Text, ScrollView, Picker , View, StyleSheet, AsyncStorage, Alert, SafeAreaView} from 'react-native'
+import { TextInput } from 'react-native-paper'
+import { Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout'
 import { theme } from '../core/theme'
-import Axios from 'axios'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
- 
-export default class MyDatePicker extends Component {
-  constructor(props){
-    super(props)
-    this.state = {date:"2016-05-15"}
-  }
+
+import axios from 'axios'
+
+export default function AddNewTask({navigation}){
+
+    const [user, setUser] = React.useState({ 
+        rep_ID: '', 
+        manager_ID: '',
+      });
 
   
- 
-  render(){
-    return (
-        <ScrollView>
-        <BackgroundLayout>
-        <View style={styles.visitSummaryForm}>
-        <Text style={styles.header}>Add new Shedule</Text> 
+    useEffect(() => {
+      async function fetchData(){
+        try {
+          const userProfile = await AsyncStorage.getItem('user');
+          const profile  = JSON.parse(userProfile); 
+          if (profile !== null ){
+            setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });        
+            const rep_ID = profile.rep_ID;
+            // Call any function
+          }      
+        } catch (e){
+          console.log(e);
+        }
+      }
+      fetchData();
+    },[]);  
 
-        <TextInput style={styles.InputField} placeholder="Title" onChange={(e) => {
-                setTitle(e.target.value)
-            }} />
-
-        <TextInput style={styles.InputField} placeholder="Location" onChange={(e) => {
-                setLocation(e.target.value)
-            }} />
-
-{/* <DatePicker
-        style={{width: 200}}
-        date={this.state.date}
-        mode="date"
-        placeholder="select date"
-        format="YYYY-MM-DD"
-        minDate="2016-05-01"
-        maxDate="2016-06-01"
-        confirmBtnText="Confirm"
-        cancelBtnText="Cancel"
-        customStyles={{
-          dateIcon: {
-            position: 'absolute',
-            left: 0,
-            top: 4,
-            marginLeft: 0
-          },
-          dateInput: {
-            marginLeft: 36
-          }
-          // ... You can check the source to find the other keys.
-        }}
-        onDateChange={(date) => {this.setState({date: date})}}
-      /> */}
-
-    
-            <TextInput style={styles.InputField} placeholder="Location" onChange={(e) => {
-                setDate(e.target.value)
-            }} />
-
-            <TextInput style={styles.InputField} placeholder="Session" onChange={(e) => {
-                setSession(e.target.value)
-            }} />
-
-        <TextInput style={styles.CommentField} placeholder="Discription" onChange={(e) => {
-                setDescription(e.target.value)
-            }} />
-
-        <View style={styles.sameRow}>
-            <Button title="Cancel" 
-            color = {theme.colors.primary}
-            />
-            <Button title="Submit"      
-            color = {theme.colors.primary}  
-            // onClick={console.log("Submit Pressed")}        
-            // onPress = {()=> {SubmitTask}} 
-            onPress = {()=> {SubmitTask}} 
-            />
-
-
-        </View>
-
-
-        </View>
-        </BackgroundLayout>  
-    </ScrollView>
-
-
-
-    )
-  }
-}
-
-
-export function AddNewTask({navigation}){
-
-
-    const [title , setTitle] = useState('');
-    const [location , setLocation] = useState('');
-    const [date , setDate] = useState('');
-    const [session , setSession] = useState('');
-    const [description , setDescription] = useState('');
+    const [scheduleFormDetails, setSheduleFormDetails] = React.useState({
+        title : '',
+        location : '',
+        date : '',
+        session : '',
+        description : '',
+    })
+  
 
     const SubmitTask = () => { 
-        Axios.post("http://localhost:3001/newTask", {
-            title: title, 
-            location: location,
-            date : date, 
-            session: session, 
-            description: description, 
-        }).then(()=>{
-            console.log("Succesfully Inserted:!");
+        axios.post("http://10.0.2.2:3001/task/submitScheduleForm", {            
+            title: scheduleFormDetails.title, 
+            location: scheduleFormDetails.location,
+            date : scheduleFormDetails.date, 
+            session: scheduleFormDetails.session, 
+            description: scheduleFormDetails.description,
+            manager_ID : user.manager_ID,
+            rep_ID: user.rep_ID, 
+        }).then((response)=>{
+            // console.log("Succesfully Inserted:!");
             Alert.alert(
                 "Database",
-                "New Doctor Successfully inserted...!",
+                "New Shedule inserted...!",
                 [
                   {
                     text: "Cancel",
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                   },
-                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                  { text: "OK", onPress: () => navigation.navigate('Home') }
                 ]
               );
         })
@@ -128,91 +72,83 @@ export function AddNewTask({navigation}){
 
 
     return (
+        <SafeAreaView>
         <ScrollView>
             <BackgroundLayout>
             <View style={styles.visitSummaryForm}>
-            <Text style={styles.header}>Add new Shedule</Text> 
 
-            <TextInput style={styles.InputField} placeholder="Title" onChange={(e) => {
-                    setTitle(e.target.value)
-                }} />
-
-            <TextInput style={styles.InputField} placeholder="Location" onChange={(e) => {
-                    setLocation(e.target.value)
-                }} />
-
-            {/* <DatePicker
-                style={styles.InputField}
-                date={this.state.date}
-                mode="date"
-                placeholder="Date"
-                format="YYYY-MM-DD"
-                // minDate="2016-05-01"
-                // maxDate="2016-06-01"
-                confirmBtnText="Confirm"
-                cancelBtnText="Cancel"
-                customStyles={{
-                dateIcon: {
-                    // position: 'absolute',
-                    left: 50,
-                    // right : 0,
-                    // top: 4,
-                    // marginLeft: 30,
-                    // marginRight : 36,
-                },
-                dateInput: {
-                    // marginLeft: 36
-                    borderColor: "#B0B0B000",
-                }
-                // ... You can check the source to find the other keys.
-                }}
-                onDateChange={(date) => {this.setState({date: date})}}
-                // onDateChange={(e) => {setDate(e.target.value)}}
-
-                // onChange={(e) => {
-                //     setDate(e.target.value)
-                // }}
-            /> */}
-
-        
-                <TextInput style={styles.InputField} placeholder="Location" onChange={(e) => {
-                    setDate(e.target.value)
-                }} />
+                <View style={{alignSelf: 'center'}}>
+                    <View style={styles.sameRow}>
+                        <Icon name="add-task" color={theme.colors.primary} size={30} />              
+                        <Text style={styles.header}>  Add Shedule</Text> 
+                    </View>
+                    
+                </View>
 
 
-            {/* <Picker >
-            <Picker.Item label="Session" value="" />
-            <Picker.Item label="Morning" value="Ragular" />
-            <Picker.Item label="Evening" value="Promotion Visit" />
-            <Picker.Item label="Fullday" value="Appoinment" />
-            </Picker> */}
-
-                <TextInput style={styles.InputField} placeholder="Session" onChange={(e) => {
-                    setSession(e.target.value)
-                }} />
-
-            <TextInput style={styles.CommentField} placeholder="Discription" onChange={(e) => {
-                    setDescription(e.target.value)
-                }} />
-
-            <View style={styles.sameRow}>
-                <Button title="Cancel" 
-                color = {theme.colors.primary}
+                <TextInput 
+                    label= 'Title'
+                    mode= 'outlined'
+                    outlineColor = {theme.colors.primary}
+                    style={styles.InputField} 
+                    placeholder="Ex: Appoinment" 
+                    onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, title:text})}} 
                 />
-                <Button title="Submit"      
-                color = {theme.colors.primary}  
-                // onClick={console.log("Submit Pressed")}        
-                // onPress = {()=> {SubmitTask}} 
-                onPress = {()=> {SubmitTask}} 
+
+                <TextInput 
+                    label= 'Location'
+                    mode= 'outlined'
+                    outlineColor = {theme.colors.primary}
+                    style={styles.InputField} 
+                    placeholder="Ex: Clinic Name or Place" 
+                    style={styles.InputField} 
+                    onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, location:text})}} 
+
+                 />
+            
+                    <TextInput 
+                        label= 'Date'
+                        mode= 'outlined'
+                        outlineColor = {theme.colors.primary}
+                        style={styles.InputField} 
+                        placeholder="Ex:(YYYY-MM-DD)" 
+                        onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, date:text})}} 
+                     />
+
+                    <View style={styles.InputField}>
+                        <Picker 
+                                selectedValue={scheduleFormDetails.session}
+                                onValueChange={(itemValue, itemIndex) => setSheduleFormDetails({ ...scheduleFormDetails, session: itemValue })}
+                                >
+                            <Picker.Item label="Time Session" value="" />
+                            <Picker.Item label="Morning" value="Morning" />
+                            <Picker.Item label="Evening" value="Evening" />
+                            <Picker.Item label="Full-Day" value="Full-Day" />
+                        </Picker>
+                    </View>
+
+                <TextInput 
+                    label= 'Description'
+                    mode= 'outlined'
+                    multiline 
+                    numberOfLines =  {5}
+                    outlineColor = {theme.colors.primary}
+                    style={styles.CommentField} 
+                    placeholder="Type something about the schedule" 
+                    onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, description:text})}} 
                 />
 
 
-            </View>
-
+                <Button 
+                    mode="contained" 
+                    onPress={() => SubmitTask()}>
+                        Submit
+                </Button>
 
             </View>
             </BackgroundLayout>  
         </ScrollView>
+        </SafeAreaView>
     )
 }
 
@@ -231,10 +167,8 @@ const styles = StyleSheet.create ({
     },
     InputField : {
         alignSelf : 'stretch',
-        height : 35,
-        marginBottom : 25,
-        borderBottomColor : '#009387',
-        borderBottomWidth : 1,
+        height : 50,
+        marginBottom : 10,
         fontSize : 16,
         
     },
@@ -244,10 +178,11 @@ const styles = StyleSheet.create ({
     },
     CommentField : {
         height : 100,
-        borderColor : '#0A6466',
-        borderWidth : 1,
+        alignSelf : 'stretch',
         marginBottom : 30,
-        padding : 20
+        padding : 20,
+        fontSize : 16,
+
     }
 
 })

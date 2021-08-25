@@ -21,12 +21,4 @@ const styles = StyleSheet.create({
     minHeight: Dimensions.get('window').height,
 
   },
-  // container: {
-  //   flex: 1,
-  //   padding : '20',
-  //   width: '100%',
-  //   maxWidth: 340,
-  //   alignSelf: 'center',
-  //   justifyContent: 'center',
-  // },
 })

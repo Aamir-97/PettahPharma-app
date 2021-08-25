@@ -4,9 +4,12 @@ import {Text, ScrollView, StyleSheet, View, Image } from 'react-native';
 import BackgroundLayout from '../components/BackgroundLayout';
 import Button from '../components/Button';
 import BackButton from '../components/BackButton';
+import SearchInput, { createFilter } from 'react-native-search-filter';
 
 import axios from 'axios';
 
+
+const Keys_to_filter = ['name'];
 const optionsPerPage = [2, 3, 4];
 
 export default function ProductDetails({navigation}){
@@ -14,18 +17,22 @@ export default function ProductDetails({navigation}){
 //   const [searchQuery, setSearchQuery] = React.useState('');
 //   const onChangeSearch = query => setSearchQuery(query);
 
-// const [searchTerm, setSearchTerm] = useState('');
+const [searchTerm, setSearchTerm] = useState('');
 // console.log(searchTerm);
 
-  const [query, setSearchTerm] = React.useState('');
-  const onChangeSearch = query => setSearchTerm(query);
-  console.log(query);
+//   const [query, setSearchTerm] = React.useState('');
+//   const onChangeSearch = query => setSearchTerm(query);
+//   console.log(query);
 
   const [productList,setProductList]=useState([]);
+
+  const filteredKey = productList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
+
 
   useEffect(()=>{
     axios.get("http://10.0.2.2:3001/viewproduct").then((response)=>{
       setProductList(response.data);
+    //   console.log({...productList});
     })
   },[]);
 
@@ -35,6 +42,11 @@ export default function ProductDetails({navigation}){
   React.useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
+
+  const viewProduct = (product_id) => {
+      navigation.navigate('ViewProduct', {product_id});
+      console.log("product passed to the viewProduct function");
+  }
 
 
   return (
@@ -47,10 +59,10 @@ export default function ProductDetails({navigation}){
                 <Searchbar
                     style= {styles.searchBar}
                     placeholder="Search"
-                    onChangeText={onChangeSearch}
-                    value={query}
-                    // onChangeText={(text) => setSearchTerm({ value: text})}
-                    // value={searchTerm}
+                    // onChangeText={onChangeSearch}
+                    // value={query}
+                    onChangeText={(text) => {setSearchTerm(text)} }
+                    value={searchTerm}
                 />
 
             </View>
@@ -64,23 +76,22 @@ export default function ProductDetails({navigation}){
                     <DataTable.Title numeric>Price</DataTable.Title>
                 </DataTable.Header>
 
-                {productList.filter(val=>{if(query===""){
-                            return val;
-                            }else if(
-                            val.name.toLowerCase().includes(query.toLowerCase()));
-                            {
-                            return val
-                            }
-                            }).map((record)=>{
-                            return(
-                    <DataTable.Row key={record.product_id}>
-                    <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/medicine/capsule.png')} /></DataTable.Cell>
-                    <DataTable.Cell align='right'>{record.name}</DataTable.Cell>
-                    <DataTable.Cell numeric>{record.volume}</DataTable.Cell>
-                    <DataTable.Cell numeric>{record.price}</DataTable.Cell>
-                    {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
-                    </DataTable.Row>
-                    )})
+                {filteredKey.map((record,i) => {
+                    return(
+                    <TouchableOpacity
+                        key={record.product_id}
+                        onPress = {()=> viewProduct(record.product_id)}
+                    >
+                        <DataTable.Row >
+                            <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/medicine/capsule.png')} /></DataTable.Cell>
+                            <DataTable.Cell align='right'>{record.name}</DataTable.Cell>
+                            <DataTable.Cell numeric>{record.volume}</DataTable.Cell>
+                            <DataTable.Cell numeric>{record.price}</DataTable.Cell>
+                            {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
+                        </DataTable.Row>
+                    </TouchableOpacity>
+                    )
+                    })
                 }
 
                 <DataTable.Pagination

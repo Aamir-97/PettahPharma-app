@@ -1,41 +1,67 @@
-import React, {useState} from 'react';
-import { View, Text, ScrollView, TextInput, StyleSheet, Image, Alert} from 'react-native';
+import React, {useState, useEffect} from 'react';
+import { View, Text, ScrollView, TextInput, StyleSheet, Image, Alert, AsyncStorage} from 'react-native';
 import { Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
+
 import axios from 'axios'
 
-export default function AddNewDoctor ({navigation}){
+export default function AddNewDoctor ({route, navigation}){
 
-    const [displayPhoto , setDisplayPhoto] = React.useState('');
-    const [slmcNo , setSlmcNo] = React.useState('');
-    const [doctorName , setDoctorName] = React.useState('');
-    const [clinic , setClinic] = React.useState('');
-    const [contactNumber , setContactNumber] = React.useState('');
-    const [email , setEmail] = React.useState('');
-    const [clinicArea , setClinicArea] = React.useState('');
-    const [dob , setDob] = React.useState('');
-    const [citations , setCitations] = React.useState('');
-    const [qualification , setQualification] = React.useState('');
-    const [note , setNote] = React.useState('');
+
+    const [user, setUser] = React.useState({ 
+        rep_ID: '', 
+        manager_ID: '',
+      });
+
+
+    useEffect(() => {
+        async function fetchData(){
+          try {
+            const userProfile = await AsyncStorage.getItem('user');
+            const profile  = JSON.parse(userProfile);
+            if (userProfile !== null){
+              setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });        
+            }
+          } catch (e){
+            console.log(e);
+          }
+        }
+        fetchData();     
+      },[]);
+
+    const [doctorDetails, setDoctorDetails] = React.useState({
+        displayPhoto : '',
+        slmcNo : '',
+        doctorName : '',
+        clinic : '',
+        contactNumber : '',
+        email : '',
+        clinicArea : '',
+        dob : '',
+        citations : '',
+        qualification : '',
+        note : '',
+    })
 
 
     const saveDetails = () => { 
         axios.post("http://10.0.2.2:3001/doctor/addNewDoctor", {
-            displayPhoto: displayPhoto, 
-            slmcNo: slmcNo,
-            doctorName : doctorName, 
-            clinic: clinic, 
-            contactNumber: contactNumber, 
-            email: email, 
-            clinicArea: clinicArea, 
-            dob: dob, 
-            citations: citations, 
-            qualification: qualification, 
-            note: note  
+            displayPhoto: doctorDetails.displayPhoto, 
+            slmcNo: doctorDetails.slmcNo,
+            doctorName : doctorDetails.doctorName, 
+            clinic: doctorDetails.clinic, 
+            contactNumber: doctorDetails.contactNumber, 
+            email: doctorDetails.email, 
+            clinicArea: doctorDetails.clinicArea, 
+            dob: doctorDetails.dob, 
+            citations: doctorDetails.citations, 
+            qualification: doctorDetails.qualification, 
+            note: doctorDetails.note,
+            rep_ID : user.rep_ID 
         }).then((response)=>{
-            console.log(slmcNo);
+            // console.log(slmcNo);
             console.log("Succesfully Inserted:!");
             Alert.alert(
                 "Database",
@@ -46,7 +72,7 @@ export default function AddNewDoctor ({navigation}){
                     onPress: () => console.log("Cancel Pressed"),
                     style: "cancel"
                   },
-                  { text: "OK", onPress: () => console.log("OK Pressed") }
+                  { text: "OK", onPress: () => {navigation.navigate('DoctorDetails')} }
                 ]
               );
         })
@@ -76,7 +102,6 @@ export default function AddNewDoctor ({navigation}){
                     Change 
                 </Button>
                 </View>
-
             </View>
  
             <View style ={styles.sameRow}>
@@ -84,8 +109,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="Medical Counsil Number"
-                    onChangeText={(val) => setSlmcNo(val)}
-                    value={slmcNo}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, slmcNo:val})}
+                    value={doctorDetails.slmcNo}
                 />
             </View>
             <View style ={styles.sameRow}>
@@ -93,8 +118,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex:John"
-                    onChangeText={(val) => setDoctorName(val)}
-                    value={doctorName}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, doctorName:val})}
+                    value={doctorDetails.doctorName}
                 />
             </View>
 
@@ -103,8 +128,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="Name of medical center"
-                    onChangeText={(val) => setClinic(val)}
-                    value={clinic}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, clinic:val})}
+                    value={doctorDetails.clinic}
                 />
             </View>
 
@@ -113,8 +138,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex: 0768921288"
-                    onChangeText={(val) => setContactNumber(val)}
-                    value={contactNumber}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, contactNumber:val})}
+                    value={doctorDetails.contactNumber}
                 />
             </View>
 
@@ -123,8 +148,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex:john@gmail.com"
-                    onChangeText={(val) => setEmail(val)}
-                    value={email}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, email:val})}
+                    value={doctorDetails.email}
                 />
             </View>
 
@@ -133,8 +158,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="Location of clinic(Colombo)"
-                    onChangeText={(val) => setClinicArea(val)}
-                    value={clinicArea}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, clinicArea:val})}
+                    value={doctorDetails.clinicArea}
                 />
             </View>
 
@@ -143,8 +168,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="Choose date(ex:2021-5-10)"
-                    onChangeText={(val) => setDob(val)}
-                    value={dob}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, dob:val})}
+                    value={doctorDetails.dob}
                 />
             </View>
 
@@ -153,8 +178,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex:General Doctor"
-                    onChangeText={(val) => setCitations(val)}
-                    value={citations}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, citations:val})}
+                    value={doctorDetails.citations}
                 />
             </View>
 
@@ -163,8 +188,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex: MBBS(sur.Eye)"
-                    onChangeText={(val) => setQualification(val)}
-                    value={qualification}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, qualification:val})}
+                    value={doctorDetails.qualification}
                 />
             </View>
 
@@ -173,8 +198,8 @@ export default function AddNewDoctor ({navigation}){
                 <TextInput 
                     style = {styles.CommentField}
                     placeholder="Other Information"
-                    onChangeText={(val) => setNote(val)}
-                    value={note}
+                    onChangeText={(val) => setDoctorDetails({...doctorDetails, note:val})}
+                    value={doctorDetails.note}
                 />
             </View>
 
