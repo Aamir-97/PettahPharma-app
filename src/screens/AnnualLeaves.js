@@ -11,9 +11,14 @@ import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 import {Card, Text, Paragraph } from 'react-native-paper';
 import { DataTable } from 'react-native-paper';
+import axios from 'axios';
 
 export default function AnnualLeaves({ navigation }) {
-  
+ 
+  // const [searchQuery, setSearchQuery] = React.useState('');
+  // const onChangeSearch = query => { setSearchQuery(query) }
+  // console.log(searchQuery);
+
   return (
     <SafeAreaView>
       <ScrollView> 
