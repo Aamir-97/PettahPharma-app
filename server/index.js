@@ -71,123 +71,8 @@ app.post('/login',(req,res)=>{
             }); 
 });  
 
-app.post("/task/submitScheduleForm",(req, res) => {
-    // console.log(req);
-    const title = req.body.title;
-    const location = req.body.location;
-    const date = req.body.date ;
-    const session =req.body.session;
-    const description = req.body.description;
-    const manager_ID = req.body.manager_ID;
-    const rep_ID = req.body.rep_ID;
 
-    const sqlNewTask = "INSERT INTO task( title, location, date, session, description, manager_ID, rep_ID) VALUES (?,?,?,?,?,?,?)";
-
-    db.query(sqlNewTask, [title,location,date,session,description,manager_ID,rep_ID], (err,result)=>{
-        if(err){
-            console.log(err);
-            console.log ("Somthing Error while submit schedule");
-        } else{
-            res.send(result);
-        }
-
-    })
-
-});
-
-app.post('/Task/ViewTask',(req,res)=>{  
-   
-    const task_id = req.body.task_id;
-    const sql = "SELECT * FROM task WHERE task_id=?";
-     
-    db.query(sql,[task_id],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while GetTask");  
-              } if(result.length > 0){
-                res.send(result);
-              }    
-    }); 
-});
-
-app.post('/Task/CompleteTask',(req,res)=>{  
-   
-    const task_id = req.body.task_id;
-    const rep_note = req.body.rep_note;
-    // console.log(rep_note);
-
-    const sql = "UPDATE task SET rep_note =?, status='Complete' WHERE task_id=?";
-     
-    db.query(sql,[rep_note,task_id],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while Complete Task");  
-              } if(result){
-                res.send(result);
-              }    
-    }); 
-});
-
-app.post('/Task/RejectTask',(req,res)=>{  
-   
-    const task_id = req.body.task_id;
-    const rep_note = req.body.rep_note;
-
-    const sql = "UPDATE task SET rep_note =?, status='Reject' WHERE task_id=?";
-     
-    db.query(sql,[rep_note,task_id],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while Complete Task");  
-              } if(result){
-                res.send(result);
-              }    
-    }); 
-});
-
-app.post('/Task/CheckAvailability',(req,res)=>{ 
-    const rep_ID = req.body.rep_ID;
-    const date = req.body.date;
-    const session = req.body.session;
-
-    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?)";
-     
-    db.query(sql,[rep_ID,date,date,session],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while Complete Task");  
-              } if(result){
-                res.send({
-                    repAvailable: result[0].repAvailable,
-                });
-              }    
-    }); 
-});
-
-
-
-app.get('/viewproduct',(_req,res)=>{
-    db.query('SELECT * FROM product ',(err,result)=>{
-        if(!err){
-            res.send(result);
-        }else{
-        console.log(err, "Error while view product");
-        }
-    });
-});
-
-
-app.post('/viewDoctorDetails',(req,res)=>{
-    const rep_ID = req.body.rep_ID;
-    db.query('SELECT * FROM doctor_details WHERE rep_ID = ?',[rep_ID],(err,result)=>{
-        if(!err){
-            res.send(result);
-        }else{
-        console.log(err);
-        }
-    });
-});    
-   
+// Home Page Back-end
 app.post('/homePage/reportCount',(req,res)=>{
     // console.log(req.body.rep_ID);
     const rep_ID = req.body.rep_ID;
@@ -350,6 +235,197 @@ app.post('/homePage/viewTask',(req,res)=>{
     }); 
 }); 
 
+// Task Handling Back-end
+
+app.post("/task/submitScheduleForm",(req, res) => {
+    // console.log(req);
+    const title = req.body.title;
+    const location = req.body.location;
+    const date = req.body.date ;
+    const session =req.body.session;
+    const description = req.body.description;
+    const manager_ID = req.body.manager_ID;
+    const rep_ID = req.body.rep_ID;
+
+    const sqlNewTask = "INSERT INTO task( title, location, date, session, description, manager_ID, rep_ID) VALUES (?,?,?,?,?,?,?)";
+
+    db.query(sqlNewTask, [title,location,date,session,description,manager_ID,rep_ID], (err,result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Somthing Error while submit schedule");
+        } else{
+            res.send(result);
+        }
+
+    })
+
+});
+
+app.post('/Task/ViewTask',(req,res)=>{  
+   
+    const task_id = req.body.task_id;
+    const sql = "SELECT * FROM task WHERE task_id=?";
+     
+    db.query(sql,[task_id],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while GetTask");  
+              } if(result.length > 0){
+                res.send(result);
+              }    
+    }); 
+});
+
+app.post('/Task/CompleteTask',(req,res)=>{  
+   
+    const task_id = req.body.task_id;
+    const rep_note = req.body.rep_note;
+    // console.log(rep_note);
+
+    const sql = "UPDATE task SET rep_note =?, status='Complete' WHERE task_id=?";
+     
+    db.query(sql,[rep_note,task_id],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Complete Task");  
+              } if(result){
+                res.send(result);
+              }    
+    }); 
+});
+
+app.post('/Task/RejectTask',(req,res)=>{  
+   
+    const task_id = req.body.task_id;
+    const rep_note = req.body.rep_note;
+
+    const sql = "UPDATE task SET rep_note =?, status='Reject' WHERE task_id=?";
+     
+    db.query(sql,[rep_note,task_id],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Complete Task");  
+              } if(result){
+                res.send(result);
+              }    
+    }); 
+});
+
+app.post('/Task/CheckAvailability',(req,res)=>{ 
+    const rep_ID = req.body.rep_ID;
+    const date = req.body.date;
+    const session = req.body.session;
+
+    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?)";
+     
+    db.query(sql,[rep_ID,date,date,session],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Complete Task");  
+              } if(result){
+                res.send({
+                    repAvailable: result[0].repAvailable,
+                });
+              }    
+    }); 
+});
+
+// Profile Details Back-end
+
+app.post('/profileDetails',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sql = "SELECT * FROM medicalrep WHERE rep_ID=?";
+     
+    db.query(sql,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while GetProfile");
+              } if(result.length > 0){
+                res.send(result);
+              } 
+            //   else {
+            //     res.send({message : " Noo Profile Data In that Id "});
+            //   }     
+    }); 
+});
+
+app.post('/Profile/ManagerDetails',(req,res)=>{
+
+    const manager_ID = req.body.manager_ID;
+    const sql = "SELECT * FROM salesmanager WHERE manager_ID=?";
+     
+    db.query(sql,[manager_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while GetProfile");
+              } if(result.length > 0){
+                res.send(result);
+              } 
+            //   else {
+            //     res.send({message : " Noo Profile Data In that Id "});
+            //   }     
+    }); 
+});
+
+app.put('/updateProfile',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const name = req.body.name;
+    const display_photo = req.body.display_photo;
+    const email = req.body.email;
+    const phone_no =req.body.phone_no;
+    const address = req.body.address;
+    const password = req.body.password;
+
+    const sql = "UPDATE medicalrep SET name=?,display_photo=?,email=?,phone_no=?,address=?,password=? WHERE rep_ID=?";
+     
+    db.query(sql,[name, display_photo, email, phone_no, address, password,rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while update Profile");
+              } if(result){
+                res.send(result);
+              } 
+            //   else {
+            //     res.send({message : " Noo Profile Data In that Id "});
+            //   }     
+    }); 
+}); 
+
+// View Product back-end
+
+app.get('/viewproduct',(_req,res)=>{
+    db.query('SELECT * FROM product ',(err,result)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err, "Error while view product");
+        }
+    });
+});
+
+app.post('/ProductDetails/ViewProduct',(req,res)=>{
+    const product_id = req.body.product_id;   
+
+    const sql = "SELECT * FROM product WHERE product_id=?";
+     
+    db.query(sql,[product_id],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while get product details");
+              } if(result){
+                res.send(result);
+              } 
+            //   else {
+            //     res.send({message : " Noo Product Data In that Id "});
+            //     // console.log("NO schedule task");
+            //   }     
+    });
+});
+
+
+
 // Visit Summary Report Page API's    
 
 app.post('/viewVisitSummaryReport',(req,res)=>{
@@ -446,85 +522,21 @@ app.post('/VisitSummaryReport/DeleteReport',(req,res)=>{
 }); 
               
 
-app.post('/profileDetails',(req,res)=>{
 
+
+// Doctor handling Back-end
+
+
+app.post('/viewDoctorDetails',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    const sql = "SELECT * FROM medicalrep WHERE rep_ID=?";
-     
-    db.query(sql,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while GetProfile");
-              } if(result.length > 0){
-                res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Profile Data In that Id "});
-            //   }     
-    }); 
-});
-
-app.post('/Profile/ManagerDetails',(req,res)=>{
-
-    const manager_ID = req.body.manager_ID;
-    const sql = "SELECT * FROM salesmanager WHERE manager_ID=?";
-     
-    db.query(sql,[manager_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while GetProfile");
-              } if(result.length > 0){
-                res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Profile Data In that Id "});
-            //   }     
-    }); 
-});
-
-app.put('/updateProfile',(req,res)=>{
-
-    const rep_ID = req.body.rep_ID;
-    const name = req.body.name;
-    const display_photo = req.body.display_photo;
-    const email = req.body.email;
-    const phone_no =req.body.phone_no;
-    const address = req.body.address;
-    const password = req.body.password;
-
-    const sql = "UPDATE medicalrep SET name=?,display_photo=?,email=?,phone_no=?,address=?,password=? WHERE rep_ID=?";
-     
-    db.query(sql,[name, display_photo, email, phone_no, address, password,rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while update Profile");
-              } if(result){
-                res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Profile Data In that Id "});
-            //   }     
-    }); 
-}); 
-
-app.post('/ProductDetails/ViewProduct',(req,res)=>{
-    const product_id = req.body.product_id;   
-
-    const sql = "SELECT * FROM product WHERE product_id=?";
-     
-    db.query(sql,[product_id],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while get product details");
-              } if(result){
-                res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Product Data In that Id "});
-            //     // console.log("NO schedule task");
-            //   }     
+    db.query('SELECT * FROM doctor_details WHERE rep_ID = ?',[rep_ID],(err,result)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
     });
-});
+}); 
 
 app.post('/DoctorDetails/ViewDoctor',(req,res)=>{
     // console.log(req.body.doctor_id);

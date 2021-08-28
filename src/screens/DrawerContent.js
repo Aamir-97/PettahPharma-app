@@ -37,7 +37,7 @@ export function DrawerContent(props) {
     // }
     const [profileDetails, setProfileDetails] = React.useState({
         name : '',
-        display_photo : '',
+        display_photo : 'https://i.pravatar.cc/300',
         working_area : '',
         rating : '',
         manager_ID : ''
@@ -89,7 +89,7 @@ export function DrawerContent(props) {
                             onPress={() => {props.navigation.navigate('Profile')}}
                         >
                             <Avatar.Image 
-                                source={require('../assets/aamirDp.jpeg')}
+                                source={{uri : profileDetails.display_photo}}
                                 size={50}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>

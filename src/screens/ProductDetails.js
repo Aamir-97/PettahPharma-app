@@ -42,7 +42,7 @@ export default function ProductDetails({navigation}){
 
   const viewProduct = (product_id) => {
       navigation.navigate('ViewProduct', {product_id});
-      console.log("product passed to the viewProduct function");
+    //   console.log("product passed to the viewProduct function");
   }
 
 

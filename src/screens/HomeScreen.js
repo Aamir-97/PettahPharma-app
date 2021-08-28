@@ -186,9 +186,9 @@ export default function HomeScreen({ navigation }) {
       />
       <Text style={Styles.header}>Good Morning, Aamir!</Text>
       <View style={{alignSelf : 'center', flexDirection : 'row'}}>
-        <Text style = { styles.Subtitle}> You have </Text>
-        <Text style ={{ color: 'red', fontSize : 15} }> {sheduledTaskCount} </Text> 
-        <Text style = { styles.Subtitle}> task or sheduled today {"\n"} </Text>
+        <Text style ={styles.countTextLabel}> You have </Text>
+        <Text style ={{ color: 'red', fontSize : 15, fontWeight : 'bold'} }> {sheduledTaskCount} </Text> 
+        <Text style ={styles.countTextLabel}> task or sheduled today {"\n"} </Text>
       </View>
   
 

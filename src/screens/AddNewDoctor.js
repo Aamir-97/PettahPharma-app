@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TextInput, StyleSheet, Image, Alert, AsyncStora
 import { IconButton, Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { requiredField } from '../helpers/requiredField';
@@ -208,6 +209,8 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
  
             <View style ={styles.sameRow}>
+
+                <FontAwesome5Icon name="id-card-alt" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontAwesome5Icon>
                 <Text style = {styles.labelText}> SLMC No. : </Text>
                     <FontistoIcon
                         name="star" 
@@ -218,12 +221,14 @@ export default function AddNewDoctor ({route, navigation}){
                     />
                 <TextInput 
                     style = {styles.InputField}
-                    placeholder="Medical Counsil Number"
+                    placeholder="Medical Counsil Id"
                     onChangeText={(val) => setDoctorDetails({...doctorDetails, slmcNo:val})}
                     value={doctorDetails.slmcNo}
                 />
             </View>
+
             <View style ={styles.sameRow}>
+                <FontistoIcon name="doctor" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontistoIcon>
                 <Text style = {styles.labelText}> Doctor's Name :</Text>
                     <FontistoIcon
                         name="star" 
@@ -241,6 +246,7 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
 
             <View style ={styles.sameRow}>
+                <FontAwesome5Icon name="clinic-medical" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontAwesome5Icon>
                 <Text style = {styles.labelText}> Clinic :</Text>
                     <FontistoIcon
                         name="star" 
@@ -251,14 +257,15 @@ export default function AddNewDoctor ({route, navigation}){
                     />
                 <TextInput 
                     style = {styles.InputField}
-                    placeholder="Name of medical center"
+                    placeholder="Medical center"
                     onChangeText={(val) => setDoctorDetails({...doctorDetails, clinic:val})}
                     value={doctorDetails.clinic}
                 />
             </View>
 
             <View style ={styles.sameRow}>
-                <Text style = {styles.labelText}> Contact Number :</Text>
+                <FontAwesome5Icon name="mobile-alt" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontAwesome5Icon>
+                <Text style = {styles.labelText}> Mobile No. :</Text>
                     <FontistoIcon
                         name="star" 
                         color={theme.colors.error}
@@ -276,6 +283,7 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
 
             <View style ={styles.sameRow}>
+                <FontistoIcon name="email" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontistoIcon>
                 <Text style = {styles.labelText}> Email :</Text>
                 <TextInput 
                     style = {styles.InputField}
@@ -287,6 +295,7 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
 
             <View style ={styles.sameRow}>
+                <FontAwesome5Icon name="location-arrow" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontAwesome5Icon>
                 <Text style = {styles.labelText}> Cilinic Area :</Text>
                 <TextInput 
                     style = {styles.InputField}
@@ -296,46 +305,47 @@ export default function AddNewDoctor ({route, navigation}){
                 />
             </View>
 
-                        <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
-                            <View style={{flex : 2}}>
-                                <Text style = {styles.labelText}>Date of Birth :</Text> 
-                            </View>
-                            <View style={{flex : 2}}>
-                                <TextInput
-                                    editable = {false}
-                                    label= 'Date'
-                                    mode= 'outlined'
-                                    outlineColor = {theme.colors.primary}
-                                    style={styles.InputField} 
-                                    value= {doctorDetails.dob}
-                                />
-                            </View>
+            <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+                <View style={{flex : 2}}>
+                    <Text style = {styles.labelText}>Date of Birth :</Text> 
+                </View>
+                <View style={{flex : 2}}>
+                    <TextInput
+                        editable = {false}
+                        label= 'Date'
+                        mode= 'outlined'
+                        outlineColor = {theme.colors.primary}
+                        style={styles.InputField} 
+                        value= {doctorDetails.dob}
+                    />
+                </View>
 
-                            <View style={{flex : 2}}>
-                                <IconButton
-                                    style = {{margin : -8}}
-                                    icon="calendar"
-                                    color= {theme.colors.primary}
-                                    size={45}
-                                    onPress={() => {showDatepicker()}}
-                                />
-                                <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
+                <View style={{flex : 2}}>
+                    <IconButton
+                        style = {{margin : -8}}
+                        icon="calendar"
+                        color= {theme.colors.primary}
+                        size={45}
+                        onPress={() => {showDatepicker()}}
+                    />
+                    <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
 
-                            </View>
+                </View>
 
-                            {show && (
-                                <DateTimePicker
-                                testID="dateTimePicker"
-                                value={date}
-                                mode={mode}
-                                is24Hour={true}
-                                display="default"
-                                onChange={onChange}
-                                />
-                            )}
-                        </View>
+                {show && (
+                    <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={mode}
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChange}
+                    />
+                )}
+            </View>
 
             <View style ={styles.sameRow}>
+                <FontAwesome5Icon name="stethoscope" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontAwesome5Icon>
                 <Text style = {styles.labelText}> Citations :</Text>
                 <TextInput 
                     style = {styles.InputField}
@@ -346,6 +356,7 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
 
             <View style ={styles.sameRow}>
+                <FontAwesome5Icon name="notes-medical" color={theme.colors.primary} size={15} style={{paddingTop:15}}></FontAwesome5Icon>
                 <Text style = {styles.labelText}> Note :</Text>
                 <TextInput 
                     style = {styles.CommentField}

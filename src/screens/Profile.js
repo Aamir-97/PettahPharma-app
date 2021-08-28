@@ -29,7 +29,7 @@ export default function Profile({navigation}){
 
     const [mangerDetails, setManagerDetails] = React.useState({
         name : '',
-        display_photo : '',
+        display_photo : 'https://i.pravatar.cc/300',
         email : '',
         phone_no : '',
         working_area : '',
@@ -170,7 +170,10 @@ export default function Profile({navigation}){
 
                     <View style={{alignItems:'center'}}>                          
 
-                        <Image source ={require('../assets/aamirDp.jpeg')} style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}></Image> 
+                                <Image 
+                                    source= {{uri : profileDetails.display_photo }}
+                                    style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}
+                                />
 
                         <Text style={{fontSize:25, fontWeight:'bold', color: theme.colors.primary,  }}>{ profileDetails.name }</Text>
 
@@ -266,22 +269,22 @@ export default function Profile({navigation}){
 
                         
                         <View style = {styles.sameRow}>
-                            <FontAwesome5Icon name="phone" color={theme.colors.primary} size={20}></FontAwesome5Icon>
+                            <FontAwesome5Icon name="external-link-alt" color={theme.colors.primary} size={20}></FontAwesome5Icon>
                             <Text style={styles.detailText}>Mobile No. : { profileDetails.phone_no }</Text>
                         </View>
 
                         <View style = {styles.sameRow}>
-                            <FontAwesome5Icon name="map-marker-alt" color={theme.colors.primary} size={20}></FontAwesome5Icon>
+                            <FontAwesome5Icon name="crosshairs" color={theme.colors.primary} size={20}></FontAwesome5Icon>
                             <Text style={styles.detailText}>Address : { profileDetails.address }</Text>
                         </View>
 
                         <View style = {styles.sameRow}>
-                            <FontAwesome5Icon name="envelope" color={theme.colors.primary} size={20}></FontAwesome5Icon>
+                            <FontAwesome5Icon name="dice-d20" color={theme.colors.primary} size={20}></FontAwesome5Icon>
                             <Text style={styles.detailText}>Email : { profileDetails.email }</Text>
                         </View>
 
                         <View style = {styles.sameRow}>
-                            <FontAwesome5Icon name="network-wired" color={theme.colors.primary} size={20}></FontAwesome5Icon>
+                            <FontAwesome5Icon name="dollar-sign" color={theme.colors.primary} size={20}></FontAwesome5Icon>
                             <Text style={styles.detailText}>Joined At : {year + month + day} </Text>
                         </View>
 
