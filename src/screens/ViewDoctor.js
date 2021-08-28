@@ -105,7 +105,7 @@ export default function ViewDoctor ({route, navigation}){
       }).then((response) => {
         //   console.log("Succesfully Deleted:!");
           Alert.alert(
-            "Doctor Table",
+            "DataBase",
             "Doctor Remove from your list...!",
             [
               {
@@ -167,6 +167,23 @@ export default function ViewDoctor ({route, navigation}){
     setDoctorDetails({...doctorDetails, dob : year+month+day})
       
     },[date]);
+
+
+    const deleteConfirmation = () => { 
+      Alert.alert(
+          "Here You....!",
+          "Are you sure want to remove?",
+          [
+              {
+              text: "NO",
+              onPress: () => console.log("No Pressed"),
+              style: "cancel"
+              },
+              { text: "YES", onPress: () => deleteDoctor()}
+          ]
+          );
+  
+    }
 
 
 
@@ -374,7 +391,7 @@ export default function ViewDoctor ({route, navigation}){
                                     />
                                 )}
                                 // goBack={navigation.goBack}
-                                onPress={() => deleteDoctor()} 
+                                onPress={() => deleteConfirmation()} 
                                 > Delete 
                             </Button>
                             <Button

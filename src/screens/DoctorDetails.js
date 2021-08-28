@@ -127,8 +127,8 @@ export default function DoctorDetails({navigation}){
                         onPress = {()=> doctorView(record.doctor_id)}
                     >
                         <DataTable.Row >
-                            <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/Doctors/vectorDoctor.png')} /></DataTable.Cell>
-                            <DataTable.Cell align="center">{record.name}</DataTable.Cell>
+                            <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={{uri : record.display_photo}} /></DataTable.Cell>
+                            <DataTable.Cell align="center">Dr. {record.name}</DataTable.Cell>
                             <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
                             <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
                             {/* <DataTable.Cell numeric>                              

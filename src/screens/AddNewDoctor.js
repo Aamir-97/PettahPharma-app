@@ -5,6 +5,8 @@ import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import { requiredField } from '../helpers/requiredField';
+import { emailValidator } from '../helpers/emailValidator';
 
 
 import axios from 'axios'
@@ -106,15 +108,70 @@ export default function AddNewDoctor ({route, navigation}){
 
 
     useEffect(() => {
-        //   Date convertor
+        // Date convertor
       const dtt = new Date(date);
       const year = dtt.getFullYear() + '/';
       const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
       const day = ('0' + dtt.getDate()).slice(-2);
-
-      setDoctorDetails({...doctorDetails, dob : year+month+day});
-        
+      setDoctorDetails({...doctorDetails, dob : year+month+day});        
       },[date]);
+
+    //   check the required field
+
+      const checkRequired = () => {
+
+        const slmcNo = requiredField(doctorDetails.slmcNo)
+        const doctorName = requiredField(doctorDetails.doctorName)
+        const clinic = requiredField(doctorDetails.clinic)
+        const contactNumber = requiredField(doctorDetails.contactNumber)
+        // console.log(title , location , session, "check the required var.");
+        if (slmcNo || doctorName || clinic || contactNumber) {
+            Alert.alert(
+                "Attention.....!",
+                "Please fill the required field...!",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("Ok pressed") }
+                ]
+              )
+              return 
+        }
+        else {
+            checkEmail ();
+        }
+
+      }
+    
+    // Check for valid email
+
+      const checkEmail = () => {
+          if (doctorDetails.email) {
+            const email = emailValidator(doctorDetails.email)
+            if ( email ) {
+                Alert.alert(
+                    "Invalid email.....!",
+                    "Please enter the valid email ...!",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      { text: "OK", onPress: () => console.log("Ok pressed") }
+                    ]
+                  )
+                return 
+            } 
+            else {
+                saveDetails();
+            }
+          }
+          saveDetails();     
+      }
 
 
     return (
@@ -140,9 +197,25 @@ export default function AddNewDoctor ({route, navigation}){
                 </Button>
                 </View>
             </View>
+
+            <View style ={styles.sameRow}>
+                    <FontistoIcon
+                        name="star" 
+                        color={theme.colors.error}
+                        size={15}
+                    />
+                    <Text style={styles.requiredText}> - Field is required</Text>
+            </View>
  
             <View style ={styles.sameRow}>
-                <Text style = {styles.labelText}> SLMC No.:</Text>
+                <Text style = {styles.labelText}> SLMC No. : </Text>
+                    <FontistoIcon
+                        name="star" 
+                        color={theme.colors.error}
+                        size={8}
+                        style = {{marginTop : 10, marginLeft: -20, marginRight : 5}}
+                        
+                    />
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="Medical Counsil Number"
@@ -152,6 +225,13 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Doctor's Name :</Text>
+                    <FontistoIcon
+                        name="star" 
+                        color={theme.colors.error}
+                        size={8}
+                        style = {{marginTop : 10, marginLeft: -20, marginRight : 5}}
+                        
+                    />
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex:John"
@@ -162,6 +242,13 @@ export default function AddNewDoctor ({route, navigation}){
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Clinic :</Text>
+                    <FontistoIcon
+                        name="star" 
+                        color={theme.colors.error}
+                        size={8}
+                        style = {{marginTop : 10, marginLeft: -20, marginRight : 5}}
+                        
+                    />
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="Name of medical center"
@@ -172,11 +259,19 @@ export default function AddNewDoctor ({route, navigation}){
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Contact Number :</Text>
+                    <FontistoIcon
+                        name="star" 
+                        color={theme.colors.error}
+                        size={8}
+                        style = {{marginTop : 10, marginLeft: -20, marginRight : 5}}
+                        
+                    />
                 <TextInput 
                     style = {styles.InputField}
                     placeholder="ex: 0768921288"
                     onChangeText={(val) => setDoctorDetails({...doctorDetails, contactNumber:val})}
                     value={doctorDetails.contactNumber}
+                    keyboardType = 'number-pad'
                 />
             </View>
 
@@ -187,6 +282,7 @@ export default function AddNewDoctor ({route, navigation}){
                     placeholder="ex:john@gmail.com"
                     onChangeText={(val) => setDoctorDetails({...doctorDetails, email:val})}
                     value={doctorDetails.email}
+                    keyboardType = 'email-address'
                 />
             </View>
 
@@ -260,7 +356,7 @@ export default function AddNewDoctor ({route, navigation}){
             </View>
 
             <View style={{alignSelf: 'flex-end'}}>
-                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="content-save" mode="contained" onPress={() => {saveDetails()}}>
+                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="content-save" mode="contained" onPress={() => checkRequired()}>
                     Save 
                 </Button>
             </View>
@@ -348,6 +444,10 @@ const styles = StyleSheet.create ({
         color : theme.colors.primary,
         top : 10,
         marginRight : 20,
+    },
+
+    requiredText : {
+        color : 'red'
     },
 
 

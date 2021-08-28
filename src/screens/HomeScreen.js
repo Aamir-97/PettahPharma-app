@@ -194,18 +194,18 @@ export default function HomeScreen({ navigation }) {
 
         <View style = {styles.sameRow}>
           <View style={{alignItems: 'center'}}>
-            <Text> {reportCount} </Text>
-            <Text> Visit Report </Text>
+            <Text style={styles.countText}> {reportCount} </Text>
+            <Text style={styles.countTextLabel}> Visit Report </Text>
             <FontAwesome5Icon name= "file-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text> {expensesCount} </Text>
-            <Text> Claimed Expenses </Text>
+            <Text style={styles.countText}> {expensesCount} </Text>
+            <Text style={styles.countTextLabel}> Claimed Expenses </Text>
             <FontAwesome5Icon name= "money-bill-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageExpenses')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text> {leaveCount} </Text>
-            <Text> Leave Taken </Text>
+            <Text style={styles.countText}> {leaveCount} </Text>
+            <Text style={styles.countTextLabel}> Leave Taken </Text>
             <FontAwesome5Icon name= "adjust" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           </View>
         </View> 
@@ -213,18 +213,18 @@ export default function HomeScreen({ navigation }) {
 
         <View style = {styles.sameRow}>
           <View style={{alignItems: 'center'}}>
-            <Text> {doctorCount} </Text>
-            <Text> Total Doctors </Text>
+            <Text style={styles.countText}> {doctorCount} </Text>
+            <Text style={styles.countTextLabel}> Total Doctors </Text>
             <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('DoctorDetails')}></FontistoIcon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text> {completedTaskCount} </Text>
-            <Text> Completed Tasks </Text>
+            <Text style={styles.countText}> {completedTaskCount} </Text>
+            <Text style={styles.countTextLabel}> Completed Tasks </Text>
             <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text> {productsCount} </Text>
-            <Text> Total Products </Text>
+            <Text style={styles.countText}> {productsCount} </Text>
+            <Text style={styles.countTextLabel}> Total Products </Text>
             <FontAwesome5Icon name= "capsules" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ProductDetails')}></FontAwesome5Icon>
           </View>
         </View>
@@ -265,7 +265,7 @@ export default function HomeScreen({ navigation }) {
                     <ListItem bottomDivider>
                       <FontAwesome5Icon name='window-restore' size={22} color={theme.colors.primary}/>
                       <ListItem.Content>
-                        <ListItem.Title style={{color: theme.colors.primary}}>{record.title} - {record.type}</ListItem.Title>
+                        <ListItem.Title style={{color: theme.colors.primary, fontWeight : 'bold'}}>{record.title} - ({record.type})</ListItem.Title>
                         <ListItem.Subtitle style= {styles.Subtitle}>{year + month + day} - {record.location}</ListItem.Subtitle>
                         {/* <ListItem.Subtitle>{record.location}</ListItem.Subtitle> */}
                       </ListItem.Content>
@@ -290,8 +290,13 @@ const styles = StyleSheet.create ({
     width : '100%',
     minHeight : 300,
     padding: 15,
-    backgroundColor : '#E5E5E5',
+    // backgroundColor : theme.colors.surface,
+    backgroundColor : '#E7FFFF',
     borderRadius : 5,
+    shadowColor : '#D2F7F7',
+    elevation : 10,
+    borderColor : theme.colors.primary,
+    borderWidth : 1
   },
 
   TaskHeader : {
@@ -313,5 +318,14 @@ const styles = StyleSheet.create ({
     fontSize : 15,
     // alignSelf : 'center'
   },
+  countText : {
+    fontSize : 15,
+    fontWeight : 'bold',
+    color : theme.colors.primary
+  },
+  countTextLabel : {
+    fontSize : 15,
+    fontWeight : 'bold'
+  }
 })
 

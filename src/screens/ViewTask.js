@@ -112,6 +112,22 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
 
   }
 
+  const rejectConfirmation = () => { 
+    Alert.alert(
+        "Here You....!",
+        "Are you sure want to reject the task?",
+        [
+            {
+            text: "NO",
+            onPress: () => console.log("No Pressed"),
+            style: "cancel"
+            },
+            { text: "YES", onPress: () => rejectTask()}
+        ]
+        );
+
+  }
+
 
   
     return(
@@ -179,7 +195,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                                     />
                                 )}
                                 // goBack={navigation.goBack}
-                                onPress={() => rejectTask()} 
+                                onPress={() => rejectConfirmation()} 
                                 > Reject 
                             </Button>
                             <Button

@@ -464,6 +464,24 @@ app.post('/profileDetails',(req,res)=>{
     }); 
 });
 
+app.post('/Profile/ManagerDetails',(req,res)=>{
+
+    const manager_ID = req.body.manager_ID;
+    const sql = "SELECT * FROM salesmanager WHERE manager_ID=?";
+     
+    db.query(sql,[manager_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while GetProfile");
+              } if(result.length > 0){
+                res.send(result);
+              } 
+            //   else {
+            //     res.send({message : " Noo Profile Data In that Id "});
+            //   }     
+    }); 
+});
+
 app.put('/updateProfile',(req,res)=>{
 
     const rep_ID = req.body.rep_ID;

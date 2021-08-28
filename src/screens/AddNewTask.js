@@ -5,7 +5,9 @@ import { Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout'
 import { theme } from '../core/theme'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import DateTimePicker from '@react-native-community/datetimepicker';
+import DateTimePicker from '@react-native-community/datetimepicker'
+import { requiredField } from '../helpers/requiredField'
+import FontistoIcon from 'react-native-vector-icons/Fontisto'
 
 
 
@@ -103,19 +105,18 @@ export default function AddNewTask({navigation}){
         const day = ('0' + dtt.getDate()).slice(-2);
 
 
-
+    // useEffect for display the date formate in textfield
     useEffect(() => {
         //   Date convertor
       const dtt = new Date(date);
       const year = dtt.getFullYear() + '/';
       const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
       const day = ('0' + dtt.getDate()).slice(-2);
-
-      setSheduleFormDetails ({...scheduleFormDetails, date : year+month+day})
-        
+      setSheduleFormDetails ({...scheduleFormDetails, date : year+month+day})        
       },[date]);
 
       const checkAvailable = () =>{
+        //   console.log("checkAvailable function working...!");
           try {
             axios.post("http://10.0.2.2:3001/Task/CheckAvailability", {            
                 rep_ID : user.rep_ID,
@@ -137,14 +138,39 @@ export default function AddNewTask({navigation}){
                           },
                           { text: "OK", onPress: () => console.log("Ok pressed") }
                         ]
-                      );
-
+                      )
                 }
-
             })
           } catch (err) {
                 console.log(err, "Error while check availability for task");
           }
+
+      }
+
+      const checkRequired = () => {
+
+        const title = requiredField(scheduleFormDetails.title)
+        const location = requiredField(scheduleFormDetails.location)
+        // const date = requiredField({...scheduleFormDetails.date})
+        const session = requiredField(scheduleFormDetails.session)
+        // console.log(title , location , session, "check the required var.");
+        if (title || location || session) {
+            Alert.alert(
+                "Attention.....!",
+                "Please fill the required field...!",
+                [
+                  {
+                    text: "Cancel",
+                    // onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("Ok pressed") }
+                ]
+              )
+              return 
+        } else {
+            checkAvailable();
+        }
 
       }
 
@@ -171,7 +197,17 @@ export default function AddNewTask({navigation}){
                     style={styles.InputField} 
                     placeholder="Ex: Appoinment" 
                     onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, title:text})}} 
-                />
+                />  
+                    <View style = {styles.sameRow}> 
+                        <FontistoIcon
+                            name="star" 
+                            color={theme.colors.error}
+                            size={10}
+                            style= {{margin : 4}}
+                        />
+                        <Text style={{color : 'red'}}>Required field</Text>
+                    </View>                  
+
 
                 <TextInput 
                     label= 'Location'
@@ -183,9 +219,19 @@ export default function AddNewTask({navigation}){
                     onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, location:text})}} 
 
                  />
+                    <View style = {styles.sameRow}> 
+                        <FontistoIcon
+                            name="star" 
+                            color={theme.colors.error}
+                            size={10}
+                            style= {{margin : 4}}
+                        />
+                        <Text style={{color : 'red'}}>Required field</Text>
+                    </View>  
             
 
                         <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+
                             <View style={{flex : 2}}>
                                 <TextInput
                                     editable = {false}
@@ -197,6 +243,16 @@ export default function AddNewTask({navigation}){
                                     value= {year+month+day}
                                     onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, date:text})}} 
                                 />
+                                    <View style = {styles.sameRow}> 
+                                        <FontistoIcon
+                                            name="star" 
+                                            color={theme.colors.error}
+                                            size={10}
+                                            style= {{margin : 4}}
+                                        />
+                                        <Text style={{color : 'red'}}>Required field</Text>
+                                    </View> 
+
                             </View>
 
                             <View style={{flex : 2}}>
@@ -234,7 +290,17 @@ export default function AddNewTask({navigation}){
                             <Picker.Item label="Evening" value="Evening" />
                             <Picker.Item label="Full-Day" value="Full-Day" />
                         </Picker>
+
                     </View>
+                    <View style = {styles.sameRow}> 
+                            <FontistoIcon
+                                name="star" 
+                                color={theme.colors.error}
+                                size={10}
+                                style= {{margin : 4}}
+                            />
+                            <Text style={{color : 'red'}}>Required field</Text>
+                    </View> 
 
                 <TextInput 
                     label= 'Description'
@@ -252,7 +318,8 @@ export default function AddNewTask({navigation}){
                     icon = "alarm-multiple"
                     mode="contained" 
                     // onPress={() => SubmitTask()}>
-                    onPress={() => checkAvailable()}>
+                    // onPress={() => checkAvailable()}>
+                    onPress={() => checkRequired()}>
                         Schedule
                 </Button>
 
@@ -297,7 +364,7 @@ const styles = StyleSheet.create ({
     },
     sameRow : {
         flexDirection : 'row',
-        justifyContent: 'space-between',
+        // justifyContent: 'space-between',
     },
     CommentField : {
         height : 100,

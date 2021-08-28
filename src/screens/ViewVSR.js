@@ -82,6 +82,22 @@ export default function ViewVSR ({route, navigation}){
 
   }
 
+  const deleteConfirmation = () => { 
+    Alert.alert(
+        "Here You....!",
+        "Are you sure want to delete the report?",
+        [
+            {
+            text: "NO",
+            onPress: () => console.log("No Pressed"),
+            style: "cancel"
+            },
+            { text: "YES", onPress: () => deleteReport()}
+        ]
+        );
+
+  }
+
         //   Date convertor
         const dtt = new Date(reportDetails.date);
         const year = dtt.getFullYear() + '/';
@@ -155,7 +171,7 @@ export default function ViewVSR ({route, navigation}){
                                     />
                                 )}
                                 // goBack={navigation.goBack}
-                                onPress={() => deleteReport()} 
+                                onPress={() => deleteConfirmation()} 
                                 > Delete 
                             </Button>
                             <Button

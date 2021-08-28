@@ -6,6 +6,9 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import { emailValidator } from '../helpers/emailValidator'
+import DocumentPicker from 'react-native-document-picker'
+
 
 import axios from 'axios'
 
@@ -17,7 +20,7 @@ export default function Profile({ route , navigation}) {
 
 const [profileDetails , setProfileDetails] = React.useState({
   name : '',
-  display_photo : '',
+  display_photo : 'https://i.pravatar.cc/300',
   email : '',
   phone_no : '',
   address : '',
@@ -82,32 +85,93 @@ const [profileDetails , setProfileDetails] = React.useState({
     }
   }
 
+      // Check for valid email
+
+    const checkEmail = () => {
+          const email = emailValidator(profileDetails.email)
+          if ( email ) {
+              Alert.alert(
+                  "Invalid email.....!",
+                  "Please enter the valid email ...!",
+                  [
+                    {
+                      text: "Cancel",
+                      onPress: () => console.log("Cancel Pressed"),
+                      style: "cancel"
+                    },
+                    { text: "OK", onPress: () => console.log("Ok pressed") }
+                  ]
+                )
+              return 
+          } 
+          else {
+            submitForm();
+          }
+    
+    }
+
+
+
+        // Pick a single file
+      const profileImage = async () => {
+          try {
+              const res = await DocumentPicker.pickSingle({
+              type: [DocumentPicker.types.images],
+              })
+              console.log(
+              res.uri, 
+              res.type, // mime type
+              res.name,
+              res.size,
+              )
+              console.log(res);
+              setProfileDetails({...profileDetails, display_photo: res.uri});
+              // console.log("ithu eduthittu");
+          } catch (err) {
+              if (DocumentPicker.isCancel(err)) {
+              // User cancelled the picker, exit any dialogs or menus and move on
+              } else {
+              throw err
+              }
+          }
+          return <Text>Success</Text>
+  
+      }
+
 
   return (
     <SafeAreaView>
       <ScrollView> 
       <BackgroundLayout>
 
-
-
       <View style ={styles.profileContainer}> 
 
         <View style={{alignSelf : 'center'}}>
             <View style={styles.sameRow}>
-              <Avatar.Image style={{backgroundColor : 'transparent'}} size={80} source={require('../assets/avatarIcon.png')} />
+              <Avatar.Image style={{backgroundColor : 'transparent'}} size={60} source={require('../assets/avatarIcon.png')} />
               <View>
-              <Text style={styles.header}>Edit Profile </Text> 
-              <Text style={styles.subHeader}>Rep Id :  {rep_ID}</Text> 
+                <Text style={styles.header}>Edit Profile </Text> 
+                <Text style={styles.subHeader}>Rep Id :  {rep_ID}</Text> 
               </View>
             </View>
         </View>
 
         <View style ={styles.sameRow}>
-          <Image source={require ('../assets/aamirDp.jpeg')} style ={styles.displayPhoto} /> 
+          {/* <Image source={require ('../assets/aamirDp.jpeg')} style ={styles.displayPhoto} />  */}
+            {profileDetails.display_photo && (
+              <Image 
+                source= {{uri : profileDetails.display_photo }}
+                style = {styles.displayPhoto}
+                />
+              )
+            }
+
+          
           <View style={{alignSelf: 'center',marginLeft:20}}>
-            <Button icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
+            <Button icon="camera" mode="contained" onPress={() => profileImage()}>
                 Change 
             </Button>
+
           </View>
         </View>
 
@@ -123,10 +187,6 @@ const [profileDetails , setProfileDetails] = React.useState({
         />
           <View style={styles.InputField}>
             <Picker>
-                {/* selectedValue={selectedValue}
-                style={{ height: 50, width: 150 }}
-                onValueChange={(itemValue, itemIndex) => setSelectedValue(itemValue)} */}
-
                 <Picker.Item label="Gender" value="" />
                 <Picker.Item label="Male" value="1" />
                 <Picker.Item label="Female" value="2" />
@@ -198,7 +258,7 @@ const [profileDetails , setProfileDetails] = React.useState({
                       size={25}
                       />
                   )}
-                  onPress={() => submitForm()} 
+                  onPress={() => checkEmail()} 
                   > Update 
               </Button>
 
