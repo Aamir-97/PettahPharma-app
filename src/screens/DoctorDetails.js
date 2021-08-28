@@ -8,6 +8,8 @@ import BackButton from '../components/BackButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EntypoIcons from 'react-native-vector-icons/Entypo'
 import SearchInput, { createFilter } from 'react-native-search-filter';
+import { ListItem } from 'react-native-elements'
+
 
 import axios from 'axios';
 
@@ -64,20 +66,7 @@ export default function DoctorDetails({navigation}){
           console.log("Error While Get the doctor Details");
       }    
   },[doctorList]);
-
-
-//   const getDctorDetails = (rep_ID) => {
-//       try { 
-//           axios.post('http://10.0.2.2:3001/viewDoctorDetails',{
-//             rep_ID : rep_ID,
-//           }).then((response)=> {
-//                 setDoctorList(response.data)
-//           })
-//       } catch (err) {
-//           console.log("Error While Get the doctor Details");
-//       }
-
-//   };  
+  
 
   React.useEffect(() => {
     setPage(0);
@@ -107,6 +96,7 @@ export default function DoctorDetails({navigation}){
                 />
 
             </View>
+
             <Button
                 style= {styles.addButton}
                 mode='contained'
@@ -141,6 +131,13 @@ export default function DoctorDetails({navigation}){
                             <DataTable.Cell align="center">{record.name}</DataTable.Cell>
                             <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
                             <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
+                            {/* <DataTable.Cell numeric>                              
+                                <EntypoIcons
+                                  name="chevron-right" 
+                                  color={theme.colors.primary}
+                                  size={15}
+                                />
+                            </DataTable.Cell> */}
                         </DataTable.Row>
                     </TouchableOpacity>
                     )
@@ -159,6 +156,30 @@ export default function DoctorDetails({navigation}){
                     optionsLabel={'Rows per page'}
                 />
             </DataTable>
+
+            
+            {/* {filteredKey.map((record,i) => {
+                    return(
+                    <View key={record.doctor_id}>
+                    <TouchableOpacity                        
+                        onPress = {()=> doctorView(record.doctor_id)}
+                    >
+                      <ListItem
+                        // key={i}
+                        title={record.name}
+                        subtitle={record.clinic}
+                        subtitle={record.contact_no}
+                        leftAvatar={{ source: { uri: record.display_photo } }}
+                        bottomDivider
+                        chevron
+                      />
+                    </TouchableOpacity>
+                    </View>
+                    )
+              })
+            } */}
+
+
 
         </BackgroundLayout>
     </ScrollView>

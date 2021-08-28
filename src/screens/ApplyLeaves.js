@@ -1,5 +1,4 @@
 import React, {useState} from 'react'
-import Calendar from 'react-calendar'
 import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button, Alert} from 'react-native'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'

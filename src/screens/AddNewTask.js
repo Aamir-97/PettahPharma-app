@@ -1,10 +1,12 @@
 import React, { useState, Component, useEffect } from 'react'
 import { Text, ScrollView, Picker , View, StyleSheet, AsyncStorage, Alert, SafeAreaView} from 'react-native'
-import { TextInput } from 'react-native-paper'
+import { TextInput, IconButton } from 'react-native-paper'
 import { Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout'
 import { theme } from '../core/theme'
 import Icon from 'react-native-vector-icons/MaterialIcons'
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 
 import axios from 'axios'
@@ -24,7 +26,7 @@ export default function AddNewTask({navigation}){
           const profile  = JSON.parse(userProfile); 
           if (profile !== null ){
             setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });        
-            const rep_ID = profile.rep_ID;
+            // const rep_ID = profile.rep_ID;
             // Call any function
           }      
         } catch (e){
@@ -70,6 +72,82 @@ export default function AddNewTask({navigation}){
 
     };
 
+    const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+  
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setShow(Platform.OS === 'ios');
+      setDate(currentDate);
+
+    };
+  
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    };
+  
+    const showDatepicker = () => {
+      showMode('date');
+    };
+  
+    // const showTimepicker = () => {
+    //   showMode('time');
+    // };
+
+        //   Date convertor
+        const dtt = new Date(scheduleFormDetails.date);
+        const year = dtt.getFullYear() + '/';
+        const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+        const day = ('0' + dtt.getDate()).slice(-2);
+
+
+
+    useEffect(() => {
+        //   Date convertor
+      const dtt = new Date(date);
+      const year = dtt.getFullYear() + '/';
+      const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+      const day = ('0' + dtt.getDate()).slice(-2);
+
+      setSheduleFormDetails ({...scheduleFormDetails, date : year+month+day})
+        
+      },[date]);
+
+      const checkAvailable = () =>{
+          try {
+            axios.post("http://10.0.2.2:3001/Task/CheckAvailability", {            
+                rep_ID : user.rep_ID,
+                date : scheduleFormDetails.date,
+                session : scheduleFormDetails.session,
+            }).then((response)=>{
+                // console.log("Succesfully Inserted:!");
+                if (response.data.repAvailable === 1) {
+                    SubmitTask();
+                } else {
+                    Alert.alert(
+                        "Attention.....!",
+                        "You already on assigned...!",
+                        [
+                          {
+                            text: "Cancel",
+                            onPress: () => console.log("Cancel Pressed"),
+                            style: "cancel"
+                          },
+                          { text: "OK", onPress: () => console.log("Ok pressed") }
+                        ]
+                      );
+
+                }
+
+            })
+          } catch (err) {
+                console.log(err, "Error while check availability for task");
+          }
+
+      }
+
 
     return (
         <SafeAreaView>
@@ -106,21 +184,52 @@ export default function AddNewTask({navigation}){
 
                  />
             
-                    <TextInput 
-                        label= 'Date'
-                        mode= 'outlined'
-                        outlineColor = {theme.colors.primary}
-                        style={styles.InputField} 
-                        placeholder="Ex:(YYYY-MM-DD)" 
-                        onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, date:text})}} 
-                     />
 
-                    <View style={styles.InputField}>
+                        <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+                            <View style={{flex : 2}}>
+                                <TextInput
+                                    editable = {false}
+                                    label= 'Date'
+                                    mode= 'outlined'
+                                    outlineColor = {theme.colors.primary}
+                                    style={styles.InputField} 
+                                    // placeholder="Ex:(YYYY-MM-DD)"
+                                    value= {year+month+day}
+                                    onChangeText={(text) => {setSheduleFormDetails({...scheduleFormDetails, date:text})}} 
+                                />
+                            </View>
+
+                            <View style={{flex : 2}}>
+                                <IconButton
+                                    style = {{margin : -8}}
+                                    icon="calendar"
+                                    color= {theme.colors.primary}
+                                    size={45}
+                                    onPress={() => {showDatepicker()}}
+                                />
+                                <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
+
+                            </View>
+
+                            {show && (
+                                <DateTimePicker
+                                testID="dateTimePicker"
+                                value={date}
+                                mode={mode}
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChange}
+                                minimumDate = {new Date()}
+                                />
+                            )}
+                        </View>
+
+                    <View style={styles.dropDownField}>
                         <Picker 
                                 selectedValue={scheduleFormDetails.session}
                                 onValueChange={(itemValue, itemIndex) => setSheduleFormDetails({ ...scheduleFormDetails, session: itemValue })}
                                 >
-                            <Picker.Item label="Time Session" value="" />
+                            <Picker.Item label="Select Time Slot" value="" style = {{color : 'red'}}/>
                             <Picker.Item label="Morning" value="Morning" />
                             <Picker.Item label="Evening" value="Evening" />
                             <Picker.Item label="Full-Day" value="Full-Day" />
@@ -140,9 +249,11 @@ export default function AddNewTask({navigation}){
 
 
                 <Button 
+                    icon = "alarm-multiple"
                     mode="contained" 
-                    onPress={() => SubmitTask()}>
-                        Submit
+                    // onPress={() => SubmitTask()}>
+                    onPress={() => checkAvailable()}>
+                        Schedule
                 </Button>
 
             </View>
@@ -166,10 +277,22 @@ const styles = StyleSheet.create ({
         padding : 20,
     },
     InputField : {
-        alignSelf : 'stretch',
-        height : 50,
-        marginBottom : 10,
+        height : 45,
+        marginBottom : 5,
         fontSize : 16,
+        // borderColor : theme.colors.primary,
+        // borderWidth : 1,
+        // borderRadius : 5
+        
+    },
+    dropDownField : {
+        height : 45,
+        marginBottom : 5,
+        fontSize : 16,
+        borderColor : theme.colors.primary,
+        borderWidth : 1,
+        borderRadius : 5,
+        backgroundColor : '#F1F1F1'
         
     },
     sameRow : {
@@ -178,9 +301,9 @@ const styles = StyleSheet.create ({
     },
     CommentField : {
         height : 100,
-        alignSelf : 'stretch',
-        marginBottom : 30,
-        padding : 20,
+        // alignSelf : 'stretch',
+        marginBottom : 20,
+        // padding : 20,
         fontSize : 16,
 
     }

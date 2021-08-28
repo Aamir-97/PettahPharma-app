@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { DataTable, Searchbar, Avatar } from 'react-native-paper';
-import {Text, ScrollView, StyleSheet, View, Image } from 'react-native';
+import {Text, ScrollView, StyleSheet, View, Image, TouchableOpacity } from 'react-native';
 import BackgroundLayout from '../components/BackgroundLayout';
-import Button from '../components/Button';
 import BackButton from '../components/BackButton';
+import EntypoIcons from 'react-native-vector-icons/Entypo'
+import { theme } from '../core/theme';
+
 import SearchInput, { createFilter } from 'react-native-search-filter';
 
 import axios from 'axios';
@@ -17,12 +19,7 @@ export default function ProductDetails({navigation}){
 //   const [searchQuery, setSearchQuery] = React.useState('');
 //   const onChangeSearch = query => setSearchQuery(query);
 
-const [searchTerm, setSearchTerm] = useState('');
-// console.log(searchTerm);
-
-//   const [query, setSearchTerm] = React.useState('');
-//   const onChangeSearch = query => setSearchTerm(query);
-//   console.log(query);
+    const [searchTerm, setSearchTerm] = useState('');
 
   const [productList,setProductList]=useState([]);
 
@@ -86,7 +83,14 @@ const [searchTerm, setSearchTerm] = useState('');
                             <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/medicine/capsule.png')} /></DataTable.Cell>
                             <DataTable.Cell align='right'>{record.name}</DataTable.Cell>
                             <DataTable.Cell numeric>{record.volume}</DataTable.Cell>
-                            <DataTable.Cell numeric>{record.price}</DataTable.Cell>
+                            <DataTable.Cell numeric>{record.price}
+                                <EntypoIcons
+                                    name="chevron-right" 
+                                    color={theme.colors.primary}
+                                    size={15}
+                                />
+                            
+                            </DataTable.Cell>
                             {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
                         </DataTable.Row>
                     </TouchableOpacity>

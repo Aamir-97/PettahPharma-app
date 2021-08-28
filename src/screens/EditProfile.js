@@ -1,5 +1,4 @@
 import React, {useState, useEffect} from 'react'
-import Calendar from 'react-calendar'
 import { Text, View, Picker, SafeAreaView, ScrollView, StyleSheet, Image, Alert} from 'react-native'
 import { Button, Avatar, TextInput } from 'react-native-paper'
 import { theme } from '../core/theme'
@@ -18,7 +17,7 @@ export default function Profile({ route , navigation}) {
 
 const [profileDetails , setProfileDetails] = React.useState({
   name : '',
-  display_Photo : '',
+  display_photo : '',
   email : '',
   phone_no : '',
   address : '',
@@ -32,20 +31,14 @@ const [profileDetails , setProfileDetails] = React.useState({
           rep_ID : rep_ID,
       }).then((response)=>{
         const profile = response.data[0];
-        console.log("Hello......");
+        // console.log("Hello......");
         setProfileDetails({...profileDetails, 
           name : profile.name, 
-          display_Photo : profile.displayPhoto,
+          display_photo : profile.display_photo,
           email: profile.email, 
           phone_no : profile.phone_no, 
           address: profile.address, 
           password: profile.password
-          // name : response.data[0].name, 
-          // display_Photo : response.data[0].displayPhoto,
-          // email: response.data[0].email, 
-          // phone_no : response.data[0].phone_no, 
-          // address: response.data[0].address, 
-          // password: response.data[0].password
         })
       })
 
@@ -62,7 +55,7 @@ const [profileDetails , setProfileDetails] = React.useState({
       axios.put("http://10.0.2.2:3001/updateProfile", {
           rep_ID : rep_ID,
           name : profileDetails.name,
-          display_Photo : profileDetails.display_Photo,
+          display_photo : profileDetails.display_photo,
           email : profileDetails.email,
           phone_no : profileDetails.phone_no,
           address : profileDetails.address,
@@ -112,7 +105,7 @@ const [profileDetails , setProfileDetails] = React.useState({
         <View style ={styles.sameRow}>
           <Image source={require ('../assets/aamirDp.jpeg')} style ={styles.displayPhoto} /> 
           <View style={{alignSelf: 'center',marginLeft:20}}>
-            <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
+            <Button icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
                 Change 
             </Button>
           </View>
@@ -206,7 +199,7 @@ const [profileDetails , setProfileDetails] = React.useState({
                       />
                   )}
                   onPress={() => submitForm()} 
-                  > Submit 
+                  > Update 
               </Button>
 
             </View>

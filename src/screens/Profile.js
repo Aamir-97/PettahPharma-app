@@ -1,6 +1,5 @@
-import { bold } from 'ansi-colors';
 import React, { useState, useEffect } from 'react';
-import {Text, ScrollView, StyleSheet, View, TouchableHighlight, TouchableOpacity, Image, SafeAreaView, AsyncStorage} from 'react-native';
+import {Text, ScrollView, StyleSheet, View, TouchableOpacity, Image, SafeAreaView, AsyncStorage} from 'react-native';
 import BackgroundLayout from '../components/BackgroundLayout';
 import { Button } from 'react-native-paper';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
@@ -42,18 +41,18 @@ export default function Profile({navigation}){
             await axios.post("http://10.0.2.2:3001/profileDetails",{
                 rep_ID : profile.rep_ID,
             }).then((response)=>{
-                // const profile = response.data[0];
+                const profile = response.data[0];
                 // console.log(response.data[0].name);
                 setProfileDetails({...profileDetails, 
-                    name : response.data[0].name,
-                    display_photo : response.data[0].display_photo,
-                    email : response.data[0].email,
-                    phone_no : response.data[0].phone_no,
-                    address : response.data[0].address,
-                    working_area : response.data[0].working_area,
-                    rating : response.data[0].rating,
-                    manager_ID : response.data[0].manager_ID,
-                    joined : response.data[0].joined
+                    name : profile.name,
+                    display_photo : profile.display_photo,
+                    email : profile.email,
+                    phone_no : profile.phone_no,
+                    address : profile.address,
+                    working_area : profile.working_area,
+                    rating : profile.rating,
+                    manager_ID : profile.manager_ID,
+                    joined : profile.created_at
 
                 });
             });
@@ -62,7 +61,7 @@ export default function Profile({navigation}){
             console.log(e);
           }
         }
-        fetchData();     
+        fetchData();       
       },[]);
 
 
@@ -97,34 +96,54 @@ export default function Profile({navigation}){
         // console.log(rep_ID);
     }
 
+    const dtt = new Date(profileDetails.joined);
+    const year = dtt.getFullYear() + '/';
+    const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+    const day = ('0' + dtt.getDate()).slice(-2);
+
     return ( 
         <SafeAreaView>
             <ScrollView>
             <BackgroundLayout>
+                <View style={styles.sameRow}>
+                    <Button
+                        mode='text'
+                        icon={({color, size}) => (
+                            <FontAwesome5Icon
+                            name="angle-double-left" 
+                            color={theme.colors.primary}
+                            size={25}
+                            />
+                        )}
+                        onPress={() => navigation.goBack()} 
+                        // onPress={() => navigation.navigate('Home')} 
+                        > Back
+                    </Button>
+                    <View style={{marginLeft: '40%'}}></View>
+                    <Button 
+                        style = {{ alignSelf : 'flex-end'}}                     
+                        icon={({color, size}) => (
+                            <FontAwesome5Icon
+                            name="user-edit" 
+                            color= "#0000FF"
+                            size={20}
+                            />
+                        )} 
+                        mode="text" 
+                        color = "blue"
+                        labelStyle ={ styles.editButtonLabel}
+                        onPress={() => editProfile(user.rep_ID)}>
+                        Edit
+                    </Button>
 
-                <Button 
-                    style = {{ alignSelf : 'flex-end'}}                     
-                    icon={({color, size}) => (
-                        <FontAwesome5Icon
-                        name="user-edit" 
-                        color= {theme.colors.error}
-                        size={20}
-                        />
-                    )} 
-                    mode="text" 
-                    color = "blue"
-                    labelStyle ={ styles.editButtonLabel}
-                    onPress={() => editProfile(user.rep_ID)}>
-                    Edit
-                </Button>
+                </View>
+
+
 
                 <View>
                     <Image style={{padding:10, width:'100%',height:150, alignItems:'center'}} 
                         source ={{ uri: 'https://source.unsplash.com/1600x900/?portrait'}}>
                     </Image>
-                    {/* <TouchableOpacity>
-                        <Image source ={{ uri: 'https://source.unsplash.com/1600x900/?portrait'}} style = {{width:160, height: 160, marginTop:70, borderRadius: 100}}></Image>
-                    </TouchableOpacity> */}
                 </View>
 
                     <View style={{alignItems:'center'}}>                          
@@ -156,7 +175,7 @@ export default function Profile({navigation}){
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="network-wired" color={theme.colors.primary} size={25}></FontAwesome5Icon>
-                            <Text style={{fontSize:15, paddingLeft : 5}}>Joined At : { profileDetails.phone_no } </Text>
+                            <Text style={{fontSize:15, paddingLeft : 5}}>Joined At : {year + month + day} </Text>
                         </View>
 
 

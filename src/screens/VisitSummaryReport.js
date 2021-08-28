@@ -3,23 +3,24 @@ import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
 import {Text, ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
 import { theme } from '../core/theme';
 import BackgroundLayout from '../components/BackgroundLayout';
-// import Button from '../components/Button';
 import BackButton from '../components/BackButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EntypoIcons from 'react-native-vector-icons/Entypo'
+import SearchInput, { createFilter } from 'react-native-search-filter';
+
 
 import axios from 'axios';
 
-
+const Keys_to_filter = ['visit_type'];
 const optionsPerPage = [2, 3, 4, 5];
 
 export default function VisitSummaryReport({navigation}){
 
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = query => { setSearchQuery(query) }
+  // const [searchQuery, setSearchQuery] = React.useState('');
+  // const onChangeSearch = query => { setSearchQuery(query) }
   // console.log(searchQuery);
 
-//   const [searchTerm,setSearchTerm]=useState("");
+  const [searchTerm,setSearchTerm]=useState("");
 
 
   const [page, setPage] = React.useState(3);
@@ -27,6 +28,9 @@ export default function VisitSummaryReport({navigation}){
 
 
   const [productList, setProductList]=useState([]);
+
+  const filteredKey = productList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
+
 
 
 
@@ -72,9 +76,10 @@ export default function VisitSummaryReport({navigation}){
 
 
   const viewReport = (report_id) => {
-    navigation.navigate('')
-
+    navigation.navigate('ViewVSR',{report_id});
   }
+
+
 
   return (
     <ScrollView>
@@ -86,9 +91,9 @@ export default function VisitSummaryReport({navigation}){
                 <Searchbar
                     style= {styles.searchBar}
                     placeholder="Search"
-                    onChangeText={onChangeSearch}
-                    // onChangeText={(e)=>{setSearchTerm(e.target.value);}}
-                    value={searchQuery}
+                    // onChangeText={onChangeSearch}
+                    onChangeText={(text) => {setSearchTerm(text)} }
+                    value={searchTerm}
                 />
 
             </View>
@@ -112,27 +117,30 @@ export default function VisitSummaryReport({navigation}){
                     <DataTable.Title>Date</DataTable.Title>
                     <DataTable.Title>Visit Type</DataTable.Title>
                     <DataTable.Title numeric>Clinic/Doctor</DataTable.Title>
-                    <DataTable.Title numeric>Description</DataTable.Title>
+                    {/* <DataTable.Title numeric>Description</DataTable.Title> */}
                 </DataTable.Header>
 
-                {productList.filter(val=>{if(searchQuery===""){
-                            return val;
-                            }else if(
-                            val.visit_type.toLowerCase().includes(searchQuery.toLowerCase()));
-                            {
-                            return val;
-                            }
-                            }).map((record)=>{
-                            return(
+                {filteredKey.map((record,i) => {
+                    const dtt = new Date(record.date);
+                    const year = dtt.getFullYear() + '/';
+                    const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+                    const day = ('0' + dtt.getDate()).slice(-2);
+                    return(
                         <TouchableOpacity
                               key={record.report_id}
                               onPress = {() => viewReport(record.report_id)}
                         >
                           <DataTable.Row >
-                            <DataTable.Cell align="center">{record.date}</DataTable.Cell>
-                            <DataTable.Cell align="center">{record.visit_type}</DataTable.Cell>
-                            <DataTable.Cell align="center">{record.location}</DataTable.Cell>
-                            <DataTable.Cell align="center">{record.description}</DataTable.Cell>
+                            <DataTable.Cell align="center">{year + month + day}</DataTable.Cell>
+                            <DataTable.Cell align="center">{record.visit_type} Visit</DataTable.Cell>
+                            <DataTable.Cell align="center" numeric>{record.location}
+                                <EntypoIcons
+                                  name="chevron-right" 
+                                  color={theme.colors.primary}
+                                  size={15}
+                                />
+                            </DataTable.Cell>
+                            {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
                             {/* <DataTable.Cell numaric></DataTable.Cell> */}
                           </DataTable.Row>
                         </TouchableOpacity>

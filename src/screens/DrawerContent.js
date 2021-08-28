@@ -1,5 +1,5 @@
-import React from 'react';
-import { View, StyleSheet, TouchableOpacity } from 'react-native';
+import React, {useEffect} from 'react';
+import { View, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
 import {
     useTheme,
     Avatar,
@@ -16,10 +16,11 @@ import {
     DrawerItem
 } from '@react-navigation/drawer';
 import { theme } from '../core/theme'
-
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 
 import{ AuthContext } from '../components/context';
+
+import axios from 'axios'
 
 export function DrawerContent(props) {
 
@@ -34,6 +35,47 @@ export function DrawerContent(props) {
     // const toggleTheme = () => {
     //     setDarkTheme(!isDarkTheme);
     // }
+    const [profileDetails, setProfileDetails] = React.useState({
+        name : '',
+        display_photo : '',
+        working_area : '',
+        rating : '',
+        manager_ID : ''
+    });
+
+    const [user, setUser] = React.useState({ 
+        rep_ID: '', 
+        manager_ID: '',
+    });
+
+    useEffect(() => {
+        async function fetchData(){
+          try {
+            const userProfile = await AsyncStorage.getItem('user');
+            const profile  = JSON.parse(userProfile);
+            if (userProfile !== null){
+              setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+              
+                // Beck-end function
+                await axios.post("http://10.0.2.2:3001/profileDetails",{
+                    rep_ID : profile.rep_ID,
+                }).then((response)=>{
+                    const profile = response.data[0];
+                    setProfileDetails({...profileDetails, 
+                        name : profile.name,
+                        display_photo : profile.display_photo,
+                        working_area : profile.working_area,
+                        rating : profile.rating,
+                        manager_ID : profile.manager_ID
+                    });
+                });              
+            }
+          } catch (e){
+            console.log(e);
+          }
+        }
+        fetchData();     
+    },[]);
 
 
     return(
@@ -51,14 +93,14 @@ export function DrawerContent(props) {
                                 size={50}
                             />
                             <View style={{marginLeft:15, flexDirection:'column'}}>
-                                <Title style={styles.title}>Aamir Ali</Title>
-                                <Caption style={styles.caption}>Medical Rep-Colombo</Caption>
+                                <Title style={styles.title}>{profileDetails.name}</Title>
+                                <Caption style={styles.caption}>Medical Rep-{profileDetails.working_area}</Caption>
                             </View>
                         </TouchableOpacity>
 
                         <View style={styles.row}>
                             <View style={styles.section}>
-                                <Paragraph style={[styles.paragraph, styles.caption]}>4.5</Paragraph>
+                                <Paragraph style={[styles.paragraph, styles.caption]}>{profileDetails.rating}</Paragraph>
                                 <Caption style={styles.caption}>Rating</Caption>
                             </View>
                             <View style={styles.section}>

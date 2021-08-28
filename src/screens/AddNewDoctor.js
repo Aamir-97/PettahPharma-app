@@ -1,9 +1,11 @@
 import React, {useState, useEffect} from 'react';
 import { View, Text, ScrollView, TextInput, StyleSheet, Image, Alert, AsyncStorage} from 'react-native';
-import { Button } from 'react-native-paper'
+import { IconButton, Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
+import DateTimePicker from '@react-native-community/datetimepicker';
+
 
 import axios from 'axios'
 
@@ -41,7 +43,6 @@ export default function AddNewDoctor ({route, navigation}){
         clinicArea : '',
         dob : '',
         citations : '',
-        qualification : '',
         note : '',
     })
 
@@ -57,7 +58,6 @@ export default function AddNewDoctor ({route, navigation}){
             clinicArea: doctorDetails.clinicArea, 
             dob: doctorDetails.dob, 
             citations: doctorDetails.citations, 
-            qualification: doctorDetails.qualification, 
             note: doctorDetails.note,
             rep_ID : user.rep_ID 
         }).then((response)=>{
@@ -79,13 +79,50 @@ export default function AddNewDoctor ({route, navigation}){
 
     };
 
+    const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+  
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setShow(Platform.OS === 'ios');
+      setDate(currentDate);
+
+    };
+  
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    };
+  
+    const showDatepicker = () => {
+      showMode('date');
+    };
+  
+    // const showTimepicker = () => {
+    //   showMode('time');
+    // };
+
+
+
+    useEffect(() => {
+        //   Date convertor
+      const dtt = new Date(date);
+      const year = dtt.getFullYear() + '/';
+      const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+      const day = ('0' + dtt.getDate()).slice(-2);
+
+      setDoctorDetails({...doctorDetails, dob : year+month+day});
+        
+      },[date]);
+
 
     return (
         <ScrollView>
             <BackgroundLayout>
                 <View style={styles.center}>
                     <View style={styles.sameRow}>
-                    <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontistoIcon>
+                    <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary}></FontistoIcon>
                     <Text style={styles.header}>Enter the Doctor Details</Text> 
                     </View>
                 </View>
@@ -157,21 +194,50 @@ export default function AddNewDoctor ({route, navigation}){
                 <Text style = {styles.labelText}> Cilinic Area :</Text>
                 <TextInput 
                     style = {styles.InputField}
-                    placeholder="Location of clinic(Colombo)"
+                    placeholder="Location of clinic"
                     onChangeText={(val) => setDoctorDetails({...doctorDetails, clinicArea:val})}
                     value={doctorDetails.clinicArea}
                 />
             </View>
 
-            <View style ={styles.sameRow}>
-                <Text style = {styles.labelText}> Date of Birth :</Text>
-                <TextInput 
-                    style = {styles.InputField}
-                    placeholder="Choose date(ex:2021-5-10)"
-                    onChangeText={(val) => setDoctorDetails({...doctorDetails, dob:val})}
-                    value={doctorDetails.dob}
-                />
-            </View>
+                        <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+                            <View style={{flex : 2}}>
+                                <Text style = {styles.labelText}>Date of Birth :</Text> 
+                            </View>
+                            <View style={{flex : 2}}>
+                                <TextInput
+                                    editable = {false}
+                                    label= 'Date'
+                                    mode= 'outlined'
+                                    outlineColor = {theme.colors.primary}
+                                    style={styles.InputField} 
+                                    value= {doctorDetails.dob}
+                                />
+                            </View>
+
+                            <View style={{flex : 2}}>
+                                <IconButton
+                                    style = {{margin : -8}}
+                                    icon="calendar"
+                                    color= {theme.colors.primary}
+                                    size={45}
+                                    onPress={() => {showDatepicker()}}
+                                />
+                                <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
+
+                            </View>
+
+                            {show && (
+                                <DateTimePicker
+                                testID="dateTimePicker"
+                                value={date}
+                                mode={mode}
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChange}
+                                />
+                            )}
+                        </View>
 
             <View style ={styles.sameRow}>
                 <Text style = {styles.labelText}> Citations :</Text>
@@ -180,16 +246,6 @@ export default function AddNewDoctor ({route, navigation}){
                     placeholder="ex:General Doctor"
                     onChangeText={(val) => setDoctorDetails({...doctorDetails, citations:val})}
                     value={doctorDetails.citations}
-                />
-            </View>
-
-            <View style ={styles.sameRow}>
-                <Text style = {styles.labelText}> Qualification :</Text>
-                <TextInput 
-                    style = {styles.InputField}
-                    placeholder="ex: MBBS(sur.Eye)"
-                    onChangeText={(val) => setDoctorDetails({...doctorDetails, qualification:val})}
-                    value={doctorDetails.qualification}
                 />
             </View>
 
@@ -203,9 +259,11 @@ export default function AddNewDoctor ({route, navigation}){
                 />
             </View>
 
-            <Button mode="contained" onPress={() => {saveDetails()}}>
-                Save
-            </Button>
+            <View style={{alignSelf: 'flex-end'}}>
+                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="content-save" mode="contained" onPress={() => {saveDetails()}}>
+                    Save 
+                </Button>
+            </View>
 
 
             </View>
@@ -229,6 +287,7 @@ const styles = StyleSheet.create ({
         
     },
     visitSummaryForm : {
+        flex: 1,
         alignSelf : 'stretch',
         padding : 20,
         paddingTop : 0,
@@ -237,31 +296,32 @@ const styles = StyleSheet.create ({
         borderRadius : 5
     },
     InputField : {
-        alignSelf : 'stretch',
+        flex : 1,
+        width : '100%',
+        // alignSelf : 'stretch',
         height : 35,
         marginBottom : 10,
         borderBottomColor : '#009387',
         borderBottomWidth : 2,
-        fontSize : 16,
-        color : theme.colors.primary,
+        fontSize : 17,
+        // color : theme.colors.primary,
         
     },
     sameRow : {
         flexDirection : 'row',
-        width : '100%',
-        // justifyContent : 'space-between'
-        // alignContent : 'center'
-        // justifyContent : 'center'
     },
     CommentField : {
+        flex : 1,
         height : 100,
         borderColor : theme.colors.primary,
         borderWidth : 2,
         borderRadius : 5,
-        width : '60%',
+        width : '100%',
         marginBottom : 30,
         marginTop : 30,
         padding : 20,
+        fontSize : 17,
+
     },
     actionButton: {
         flexDirection : 'row',
@@ -283,7 +343,7 @@ const styles = StyleSheet.create ({
 
     },
     labelText : {
-        fontSize : 16,
+        fontSize : 18,
         fontWeight : 'bold',
         color : theme.colors.primary,
         top : 10,

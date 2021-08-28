@@ -35,8 +35,9 @@ import { View, ActivityIndicator, Alert } from 'react-native'
 import Profile from './src/screens/Profile'
 import EditProfile from './src/screens/EditProfile'
 import ViewTask from './src/screens/ViewTask'
-import ViewDoctor from './src/screens/ViewDoctor';
-import ViewProduct from './src/screens/ViewProduct';
+import ViewDoctor from './src/screens/ViewDoctor'
+import ViewProduct from './src/screens/ViewProduct'
+import ViewVSR from './src/screens/ViewVSR';
 
 
 const AuthStack = createStackNavigator();
@@ -106,6 +107,13 @@ const VisitSummaryReportStackScreen = ({navigation}) => {
       }} />
       <VisitSummaryReportStack.Screen  name="VSRForm" component={VSRForm} options={{
         title: "New Report",
+        // headerLeft: () => (
+        //   <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
+        // ),
+      }} />
+
+      <VisitSummaryReportStack.Screen  name="ViewVSR" component={ViewVSR} options={{
+        title: "Edit VS Report",
         // headerLeft: () => (
         //   <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         // ),
@@ -295,6 +303,8 @@ const ProfileStackScreen = ({navigation}) => {
       <ProfileStack.Screen  name="EditProfile" component={EditProfile} options={{
         title: "Edit Profile"
       }} />
+      <ProfileStack.Screen  name="Home" component={HomeScreen} />
+
 
     </ProfileStack.Navigator>
   )
@@ -383,7 +393,7 @@ export default function Routes() {
 
   const storeData = async (value) => {
     try {
-      console.log(value, "-----Value Assigned----");
+      // console.log(value, "-----Value Assigned----");
       await AsyncStorage.setItem('user',JSON.stringify(value));
     }catch (err) {
       console.log(err, "Error while storing the values.");
@@ -418,7 +428,7 @@ export default function Routes() {
     <AuthContext.Provider value={authContext} >
     <NavigationContainer>
     <Provider theme={theme}>          
-      { loginState.userToken == null ? (
+      { loginState.userToken !== null ? (
       <Drawer.Navigator 
                 // screenOptions={{
                 //   headerStyle: {

@@ -1,14 +1,20 @@
 import React from 'react'
-import { View, StyleSheet, KeyboardAvoidingView, Dimensions } from 'react-native'
+import { View, StyleSheet, KeyboardAvoidingView, Dimensions, ImageBackground } from 'react-native'
 import { theme } from '../core/theme'
 
 export default function BackgroundLayout({ children }) {
   return (
-      <View style={styles.background}>
+    <ImageBackground
+      source={require('../assets/background_dot.png')}
+      resizeMode="repeat"
+      style={styles.background}
+    >
+      <View>
       <KeyboardAvoidingView style={styles.container} behavior="padding">
         {children}
       </KeyboardAvoidingView>
       </View>
+    </ImageBackground>
   )
 }
 
@@ -19,6 +25,6 @@ const styles = StyleSheet.create({
     width: '100%',
     backgroundColor: '#fff',  
     minHeight: Dimensions.get('window').height,
-
+    // fontSize : 25
   },
 })

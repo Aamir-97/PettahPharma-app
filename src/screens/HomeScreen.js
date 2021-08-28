@@ -1,15 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Text, 
-          View, 
-          SafeAreaView,
-          ScrollView, 
-          Image, 
-          StyleSheet, 
-          Alert,
-          AsyncStorage,
-          TouchableOpacity
-        } from 'react-native'
-// import { Header } from 'react-native-elements'
+import { Text, View, SafeAreaView, ScrollView, Image, StyleSheet, Alert, AsyncStorage, TouchableOpacity } from 'react-native'
 import { Button }from 'react-native-paper'
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Styles from '../core/Styles'
@@ -37,6 +27,7 @@ export default function HomeScreen({ navigation }) {
   const [leaveCount, setLeaveCount] = React.useState('');
   const [doctorCount, setDoctorCount] = React.useState('');
   const [sheduledTaskCount, setSheduledTaskCount] = React.useState('');
+  const [completedTaskCount, setCompletedTaskCount] = React.useState('');
   const [productsCount, setProductsCount] = React.useState('');
 
 
@@ -137,6 +128,22 @@ export default function HomeScreen({ navigation }) {
 
   useEffect(() => {
     try{  
+      // to post sheduled task count
+      axios.post("http://10.0.2.2:3001/homePage/CompletedTaskCount",{
+        rep_ID : user.rep_ID, 
+      }).then((response)=>{
+        // setStateData({...stateData, SheduledTaskCount: response.data.SheduledTaskCount });
+        setCompletedTaskCount(response.data.CompletedTaskCount);
+
+      });
+    } catch (err) {
+      console.log(err);
+      console.log("Error while get schedule task count");
+    } 
+  },[completedTaskCount]);
+
+  useEffect(() => {
+    try{  
       // to post total products count
       axios.get("http://10.0.2.2:3001/homePage/productsCount").then((response)=>{
         // setStateData({...stateData, productsCount: response.data.productsCount });
@@ -148,26 +155,25 @@ export default function HomeScreen({ navigation }) {
     }   
   },[productsCount]);
 
-  // useEffect(() => {
-  //       async function fetchData(){
-  //       try{  
-  //         await axios.post("http://10.0.2.2:3001/homePage/viewTask",{
-  //           rep_ID : user.rep_ID,  
-  //       }).then((response)=>{
-  //         setTaskList(response.data);
-  //         // console.log({...taskList});
-  //       });
-  //       } catch (err) {    
-  //         console.log(err);
-  //         console.log("Error while getTask for view");
-  //       } 
-  //     } fetchData();
-  // },[user,taskList]);
+  useEffect(() => {
+        async function fetchData(){
+        try{  
+          await axios.post("http://10.0.2.2:3001/homePage/viewTask",{
+            rep_ID : user.rep_ID,  
+        }).then((response)=>{
+          setTaskList(response.data);
+        });
+        } catch (err) {    
+          console.log(err);
+          console.log("Error while getTask for view");  
+        } 
+      } fetchData();
+  },[user]);
 
-  // const viewTask = (task_id) =>{
-  //   navigation.navigate('ViewTask', {task_id});
+  const viewTask = (task_id) =>{
+    navigation.navigate('ViewTask', {task_id});
 
-  // }
+  }
 
     
 
@@ -179,7 +185,11 @@ export default function HomeScreen({ navigation }) {
       source ={require('../assets/logoWithoutName.png')} 
       />
       <Text style={Styles.header}>Good Morning, Aamir!</Text>
-      <Text style={{alignSelf : 'center'}}> You have 0 task or sheduled today {"\n"} </Text>
+      <View style={{alignSelf : 'center', flexDirection : 'row'}}>
+        <Text style = { styles.Subtitle}> You have </Text>
+        <Text style ={{ color: 'red', fontSize : 15} }> {sheduledTaskCount} </Text> 
+        <Text style = { styles.Subtitle}> task or sheduled today {"\n"} </Text>
+      </View>
   
 
         <View style = {styles.sameRow}>
@@ -198,7 +208,7 @@ export default function HomeScreen({ navigation }) {
             <Text> Leave Taken </Text>
             <FontAwesome5Icon name= "adjust" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           </View>
-        </View>
+        </View> 
 
 
         <View style = {styles.sameRow}>
@@ -208,9 +218,9 @@ export default function HomeScreen({ navigation }) {
             <FontistoIcon name= "doctor" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('DoctorDetails')}></FontistoIcon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text> {sheduledTaskCount} </Text>
-            <Text> Sheduled Task </Text>
-            <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ProductDetails')}></FontAwesome5Icon>
+            <Text> {completedTaskCount} </Text>
+            <Text> Completed Tasks </Text>
+            <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
             <Text> {productsCount} </Text>
@@ -242,7 +252,10 @@ export default function HomeScreen({ navigation }) {
 
           
           {taskList.map((record,i) => {
-                  let task_id = record.task_id;
+              const dtt = new Date(record.date);
+              const year = dtt.getFullYear() + '/';
+              const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+              const day = ('0' + dtt.getDate()).slice(-2);
                     return( 
                   <TouchableOpacity
                       key={record.task_id}
@@ -250,10 +263,11 @@ export default function HomeScreen({ navigation }) {
                       onPress = {() => viewTask(record.task_id)}
                   >          
                     <ListItem bottomDivider>
-                      <FontAwesome5Icon name='window-restore' />
+                      <FontAwesome5Icon name='window-restore' size={22} color={theme.colors.primary}/>
                       <ListItem.Content>
-                        <ListItem.Title>{record.title}</ListItem.Title>
-                        <ListItem.Subtitle>{record.date}</ListItem.Subtitle>
+                        <ListItem.Title style={{color: theme.colors.primary}}>{record.title} - {record.type}</ListItem.Title>
+                        <ListItem.Subtitle style= {styles.Subtitle}>{year + month + day} - {record.location}</ListItem.Subtitle>
+                        {/* <ListItem.Subtitle>{record.location}</ListItem.Subtitle> */}
                       </ListItem.Content>
                       <ListItem.Chevron />
                     </ListItem>  
@@ -294,6 +308,10 @@ const styles = StyleSheet.create ({
     justifyContent: 'space-between',
     marginBottom : 20,
     width : '100%'
+  },
+  Subtitle: {
+    fontSize : 15,
+    // alignSelf : 'center'
   },
 })
 

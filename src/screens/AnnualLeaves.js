@@ -1,5 +1,4 @@
 import React from 'react'
-import Background from '../components/Background'
 import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, Button} from 'react-native'
 import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'
