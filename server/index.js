@@ -77,7 +77,7 @@ app.post('/login',(req,res)=>{
               }     
             }); 
 });  
-
+  
 app.post("/newTask",(req, res) => {
     console.log(req);
 
@@ -486,6 +486,117 @@ app.get('/homePage/productsCount',(req,res)=>{
 
 // Start From Here Nimni..........................................................................................................................
 
+app.post("/applyLeave",(req,res)=>{
+    console.log(req);
+  
+    const rep_ID = req.body.rep_ID;
+    const leaveType = req.body.leaveType;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const description = req.body.description;
+    
+    const sqlApplyLeave = "INSERT INTO leaves (rep_ID,leave_Type,start_Date,end_Date,description) VALUES (?,?,?,?,?)";
+
+    db.query(sqlApplyLeave, [rep_ID,leaveType,startDate,endDate,description], (err,result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Error");
+        } else{
+            // console.log("Leave applied");
+            res.send(result);
+        }
+    })
+});
+//         console.log("Successful");
+//         res.send("Successfull");
+//     })
+//     console.log ("Error");
+// });         
+
+app.post('/viewApprovedLeaves',(req,res)=>{
+    const rep_ID = req.body.rep_ID;
+    // console.log(req.body.rep_ID);
+    //approved leaves
+    //if approved then status=1, if rejected then status=2
+    db.query('SELECT leave_Type, DATEDIFF(start_Date, end_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE status = 1 AND rep_ID = ?',[rep_ID],(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+});  
+
+app.get('/viewPendingLeaves',(_req,res)=>{
+    // console.log(req.body.rep_ID);
+    //pending leaves
+    //if approved then status=1, if rejected then status=2.......... pending leaves then status= 0 (default)
+    db.query('SELECT * FROM leaves WHERE status = 0 ORDER BY leave_ID DESC',(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+});  
+
+app.post('/claimExpenses',(req,res)=>{
+    console.log(req)
+    const rep_ID = req.body.rep_ID;
+    const expense_Type = req.body.expense_Type;
+    const location = req.body.location;
+    const bills = req.body.bills;
+    const amount = req.body.amount;
+    const description = req.body.description;
+    
+    const sqlClaimExpense = "INSERT INTO expenses (rep_ID,expense_Type,location,bills,amount,description) VALUES (?,?,?,?,?,?)";
+
+    db.query(sqlClaimExpense, [rep_ID,expense_Type,location,bills,amount,description], (err,result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Error");
+        } else{
+            // console.log("Expense claim submitted");
+            res.send(result);
+        }
+    })
+});        
+  
+
+// app.get('/viewExpenses', (_req, res) =>{
+//     //today expenses
+//     db.query('SELECT expense_Type, amount, SUM(amount) AS "Total" FROM expenses WHERE date = CURRENT_DATE', (err, result, _fields)=> {
+//       if(!err){
+//         res.send(result);
+//     }
+//     else {
+//     console.log(err);
+//     }
+// });
+// });
+
+app.get('/viewClaims',(_req,res)=>{
+
+    db.query('SELECT expense_ID, expense_Type, amount, description, date FROM expenses ORDER BY expense_ID DESC',(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+});
+  
+//////////////////////////////////////////////////////////////////////////////
+
+// // GET method route
+// app.get('/', function (req, res) {
+//     res.send('GET request to the homepage')
+//   })
+  
+//   // POST method route
+//   app.post('/', function (req, res) {
+//     res.send('POST request to the homepage')
+//   })
 
 
 

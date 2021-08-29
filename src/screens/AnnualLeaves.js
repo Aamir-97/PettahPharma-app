@@ -1,6 +1,6 @@
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import Background from '../components/Background'
-import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, Button} from 'react-native'
+import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage, Button} from 'react-native'
 import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'
 import { theme } from '../core/theme'
@@ -9,50 +9,119 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
-import {Card, Text, Paragraph } from 'react-native-paper';
+import {Text } from 'react-native-paper';
 import { DataTable } from 'react-native-paper';
 import axios from 'axios';
 
+const optionsPerPage = [2, 3, 4];
+
 export default function AnnualLeaves({ navigation }) {
  
-  // const [searchQuery, setSearchQuery] = React.useState('');
-  // const onChangeSearch = query => { setSearchQuery(query) }
-  // console.log(searchQuery);
+  const [searchQuery, setSearchQuery] = useState('');
+  const onChangeSearch = query => { setSearchQuery(query) }
+  console.log(searchQuery);
 
+//   const [searchTerm,setSearchTerm]=useState("");
+
+  const [page, setPage] = useState(3);
+  const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+
+  const [leaveList,setLeaveList]=useState([]);
+
+  const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+        }
+      } catch (e){
+        console.log(e);
+      }
+    }
+    fetchData();
+  },[]);
+
+  useEffect(()=>{
+    try{
+    axios.post('http://10.0.2.2:3001/viewApprovedLeaves',{
+      rep_ID : user.rep_ID,
+    }).then((response)=>{
+      setLeaveList(response.data)
+    })
+  } catch (err) {
+      console.log("Error while displaying approved leaves");
+  }
+},[leaveList]);
+
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+  
   return (
     <SafeAreaView>
       <ScrollView> 
       <BackgroundLayout>
         <View>
-        <DataTable>
-            <DataTable.Header>
-              <DataTable.Title>Type of Leaves</DataTable.Title>
-              <DataTable.Title numeric>Approved Leaves</DataTable.Title>
-              <DataTable.Title numeric>Pending Leaves</DataTable.Title>
-              <DataTable.Title numeric>Leaves Left</DataTable.Title>
-            </DataTable.Header>
+        <View style = {styles.sameRow}>
+        <View style={{alignItems: 'center'}}>
+          
+          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
+          <Text> Pending </Text>
+        </View>
+        <View style={{alignItems: 'center'}}>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
+          <Text> Approved </Text>
+        </View>
+        <View style={{alignItems: 'center'}}>
+          <FontAwesome5Icon name= "plus-circle" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
+          <Text> Apply </Text>
+        </View>
+      </View>
+          <DataTable>
+                <DataTable.Header>
+                    <DataTable.Title align = "center">Type of Leaves</DataTable.Title>
+                    <DataTable.Title align = "center">Duration</DataTable.Title>
+                    <DataTable.Title align = "center">Description</DataTable.Title>
+                    {/* <DataTable.Title align = "center">Status</DataTable.Title> */}
+                    {/* <DataTable.Title numeric>Sales Manager's Comment</DataTable.Title> */}
+                </DataTable.Header>
 
-            <DataTable.Row>
-              <DataTable.Cell>Time off</DataTable.Cell>
-              <DataTable.Cell numeric>15</DataTable.Cell>
-              <DataTable.Cell numeric>6</DataTable.Cell>
-              <DataTable.Cell numeric>7</DataTable.Cell>
-            </DataTable.Row>
+                {leaveList.filter(val=>{if(searchQuery===""){
+                            return val;
+                            }else if(
+                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                            { return val;
+                             } 
+                          }).map((record)=>{
+                            return(
+                    <DataTable.Row key={record.leave_ID}>
+                    <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.no_of_days}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.description}</DataTable.Cell>
+                    {/* <DataTable.Cell align="center">{record.status}</DataTable.Cell> */}
+                    {/* <DataTable.Cell align="center">{record.salesmanager_comment}</DataTable.Cell> */}
+                    
+                    </DataTable.Row>
+                    )})
+                }
 
-            <DataTable.Row>
-              <DataTable.Cell>Sick Leaves</DataTable.Cell>
-              <DataTable.Cell numeric>5</DataTable.Cell>
-              <DataTable.Cell numeric>6</DataTable.Cell>
-              <DataTable.Cell numeric>10</DataTable.Cell>
-            </DataTable.Row>
+                <DataTable.Pagination
+                    page={page}
+                    numberOfPages={3}
+                    onPageChange={(page) => setPage(page)}
+                    label="1-2 of 6"
+                    optionsPerPage={optionsPerPage}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                    showFastPagination
+                    optionsLabel={'Rows per page'}
+                />
+            </DataTable>
 
-            <DataTable.Row>
-              <DataTable.Cell>Unpaid Leaves</DataTable.Cell>
-              <DataTable.Cell numeric>2</DataTable.Cell>
-              <DataTable.Cell numeric>1</DataTable.Cell>
-              <DataTable.Cell numeric>-</DataTable.Cell>
-            </DataTable.Row>
-          </DataTable>
         </View>
       </BackgroundLayout>
       </ScrollView>
