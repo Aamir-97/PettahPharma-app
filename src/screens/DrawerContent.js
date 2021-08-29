@@ -75,7 +75,7 @@ export function DrawerContent(props) {
           }
         }
         fetchData();     
-    },[]);
+    },[profileDetails]);
 
 
     return(

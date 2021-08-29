@@ -2,12 +2,14 @@ import React, { useState, useEffect} from 'react'
 import { SafeAreaView, ScrollView, View, Text, StyleSheet,Image, Alert } from 'react-native'
 import {IconButton, Button } from 'react-native-paper'
 import BackgroundLayout from '../components/BackgroundLayout'
-import { Input } from 'react-native-elements';
+import { Input } from 'react-native-elements'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
-import { theme } from '../core/theme';
-import DateTimePicker from '@react-native-community/datetimepicker';
+import { theme } from '../core/theme'
+import DateTimePicker from '@react-native-community/datetimepicker'
+import DocumentPicker from 'react-native-document-picker'
+
 
 
 
@@ -20,7 +22,7 @@ export default function ViewDoctor ({route, navigation}){
     const {doctor_id}= route.params;
 
     const [doctorDetails, setDoctorDetails] = React.useState({
-        display_photo : '',
+        display_photo : 'https://i.pravatar.cc/300',
         slmc_no : '',
         name : '',
         clinic : '',
@@ -185,6 +187,32 @@ export default function ViewDoctor ({route, navigation}){
   
     }
 
+            // Pick a single file
+          const profileImage = async () => {
+              try {
+                  const res = await DocumentPicker.pickSingle({
+                  type: [DocumentPicker.types.images],
+                  })
+                  console.log(
+                  res.uri, 
+                  res.type, // mime type
+                  res.name,
+                  res.size,
+                  )
+                  console.log(res);
+                  setDoctorDetails({...doctorDetails, display_photo: res.uri});
+                  // console.log("ithu eduthittu");
+              } catch (err) {
+                  if (DocumentPicker.isCancel(err)) {
+                  // User cancelled the picker, exit any dialogs or menus and move on
+                  } else {
+                  throw err
+                  }
+              }
+              return <Text>Success</Text>
+      
+          }
+
 
 
     return(
@@ -215,9 +243,9 @@ export default function ViewDoctor ({route, navigation}){
                     <View style ={styles.profileContainer}> 
 
                         <View style ={styles.sameRow}>
-                            <Image source={require ('../assets/Doctors/vectorDoctor.png')} style ={styles.displayPhoto} /> 
+                            <Image source={{uri : doctorDetails.display_photo}} style ={styles.displayPhoto} /> 
                             <View style={{alignSelf: 'center',marginLeft:20}}>
-                            <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
+                            <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => profileImage()}>
                                 Change 
                             </Button>
                             </View>

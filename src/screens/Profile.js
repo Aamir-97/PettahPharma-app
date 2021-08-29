@@ -17,7 +17,7 @@ export default function Profile({navigation}){
 
     const [profileDetails, setProfileDetails] = React.useState({
         name : '',
-        display_photo : '',
+        display_photo : 'https://i.pravatar.cc/300',
         email : '',
         phone_no : '',
         address : '',
@@ -71,7 +71,7 @@ export default function Profile({navigation}){
           }
         }
         fetchData();       
-      },[]);
+      },[profileDetails]);
 
 
     //   useEffect for get manager details
@@ -168,12 +168,19 @@ export default function Profile({navigation}){
                     </Image>
                 </View>
 
-                    <View style={{alignItems:'center'}}>                          
+                    <View style={{alignItems:'center'}}>   
 
+                            {profileDetails.display_photo && (
                                 <Image 
                                     source= {{uri : profileDetails.display_photo }}
                                     style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}
-                                />
+                                    />
+                                )
+                            }                      
+                            {/* <Image 
+                                source= {{uri : profileDetails.display_photo }}
+                                style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}
+                            /> */}
 
                         <Text style={{fontSize:25, fontWeight:'bold', color: theme.colors.primary,  }}>{ profileDetails.name }</Text>
 

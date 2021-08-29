@@ -201,6 +201,7 @@ const [profileDetails , setProfileDetails] = React.useState({
             outlineColor =  {theme.colors.primary}
             // style = {styles.InputField}
             label="Email"
+            keyboardType = 'email-address'
             // placeholder = "Enter your mail id"
             value={profileDetails.email}
             onChangeText={(text) => setProfileDetails({...profileDetails,email:text})}
@@ -210,6 +211,7 @@ const [profileDetails , setProfileDetails] = React.useState({
             outlineColor =  {theme.colors.primary}
             // style = {styles.InputField}
             label="Contact Number"
+            keyboardType = 'number-pad'
             // placeholder = "Your phone number(Ex:011..)"
             value={profileDetails.phone_no}
             onChangeText={(text) => setProfileDetails({...profileDetails, phone_no:text})}

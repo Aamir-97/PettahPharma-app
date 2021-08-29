@@ -168,7 +168,7 @@ export default function HomeScreen({ navigation }) {
           console.log("Error while getTask for view");  
         } 
       } fetchData();
-  },[user]);
+  },[taskList]);
 
   const viewTask = (task_id) =>{
     navigation.navigate('ViewTask', {task_id});
@@ -188,7 +188,7 @@ export default function HomeScreen({ navigation }) {
       <View style={{alignSelf : 'center', flexDirection : 'row'}}>
         <Text style ={styles.countTextLabel}> You have </Text>
         <Text style ={{ color: 'red', fontSize : 15, fontWeight : 'bold'} }> {sheduledTaskCount} </Text> 
-        <Text style ={styles.countTextLabel}> task or sheduled today {"\n"} </Text>
+        <Text style ={styles.countTextLabel}> task or scheduled today {"\n"} </Text>
       </View>
   
 
@@ -233,7 +233,7 @@ export default function HomeScreen({ navigation }) {
         <View style ={styles.sheduleContainer}>
 
           <View style = {styles.sameRow}>
-            <Text style= {styles.TaskHeader}>Task and Shedules </Text>
+            <Text style= {styles.TaskHeader}>Task and Schedules </Text>
             <Button
                 // style= {styles.addButton}
                 mode='contained'

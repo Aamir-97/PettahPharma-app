@@ -11,7 +11,7 @@ import SearchInput, { createFilter } from 'react-native-search-filter';
 
 import axios from 'axios';
 
-const Keys_to_filter = ['visit_type'];
+const Keys_to_filter = ['visit_type', 'date'];
 const optionsPerPage = [2, 3, 4, 5];
 
 export default function VisitSummaryReport({navigation}){

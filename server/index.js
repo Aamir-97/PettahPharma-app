@@ -223,7 +223,7 @@ app.get('/homePage/productsCount',(_req,res)=>{
 app.post('/homePage/viewTask',(req,res)=>{  
    
     const rep_ID = req.body.rep_ID;
-    const sql = "SELECT * FROM task WHERE rep_ID=? and status='Pending'";
+    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending'";
      
     db.query(sql,[rep_ID],(err,result)=>{
             if(err){
@@ -316,9 +316,9 @@ app.post('/Task/CheckAvailability',(req,res)=>{
     const date = req.body.date;
     const session = req.body.session;
 
-    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?)";
+    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
      
-    db.query(sql,[rep_ID,date,date,session],(err,result)=>{
+    db.query(sql,[rep_ID,date,date,session,date],(err,result)=>{
             if(err){
                 res.send({err:err})
                 console.log("Error while Complete Task");  
