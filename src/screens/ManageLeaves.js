@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react'
-import Background from '../components/Background'
 import { Text, View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, Button, AsyncStorage} from 'react-native'
 import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'

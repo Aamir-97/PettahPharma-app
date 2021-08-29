@@ -236,7 +236,7 @@
 import React, { useState, useCallback, useContext } from "react";
 import { SafeAreaView, StyleSheet, ScrollView, View, Text, StatusBar, Button, ImageBackground, Image } from "react-native";
 
-import DocumentPicker from 'react-native-document-picker';
+// import DocumentPicker from 'react-native-document-picker';
 
 import NativeUploady, {
   UploadyContext,

@@ -1,43 +1,83 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
-import {Text, ScrollView, StyleSheet, View, AsyncStorage} from 'react-native';
+import {Text, ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
 import { theme } from '../core/theme';
 import BackgroundLayout from '../components/BackgroundLayout';
 // import Button from '../components/Button';
 import BackButton from '../components/BackButton'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EntypoIcons from 'react-native-vector-icons/Entypo'
+import SearchInput, { createFilter } from 'react-native-search-filter';
+import { ListItem } from 'react-native-elements'
+
 
 import axios from 'axios';
+
+const Keys_to_filter = ['name'];
 
 
 const optionsPerPage = [2, 3, 4];
 
 export default function DoctorDetails({navigation}){
 
-  const [searchQuery, setSearchQuery] = React.useState('');
-  const onChangeSearch = query => { setSearchQuery(query) }
-  console.log(searchQuery);
+//   const [searchQuery, setSearchQuery] = React.useState('');
+//   const onChangeSearch = query => { setSearchQuery(query) }
+//   console.log(searchQuery);
 
-//   const [searchTerm,setSearchTerm]=useState("");
+  const [searchTerm,setSearchTerm]=useState("");
 
 
   const [page, setPage] = React.useState(3);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
 
 
-  const [productList,setProductList]=useState([]);
+  const [doctorList,setDoctorList]=useState([]);
 
-  useEffect(()=>{
-    axios.get("http://10.0.2.2:3001/viewDoctorDetails").then((response)=>{
-      setProductList(response.data);
-    })
+  const [user, setUser] = React.useState({ 
+    rep_ID: '', 
+    manager_ID: '',
+  });
+
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (userProfile !== null){
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+        //   getDctorDetails(user.rep_ID);  
+        
+        }
+      } catch (e){
+        console.log(e);
+      }
+    }
+    fetchData();     
   },[]);
+
+  useEffect(() => {
+      try { 
+          axios.post('http://10.0.2.2:3001/viewDoctorDetails',{
+            rep_ID : user.rep_ID,
+          }).then((response)=> {
+                setDoctorList(response.data)
+          })
+      } catch (err) {
+          console.log("Error While Get the doctor Details");
+      }    
+  },[doctorList]);
+  
 
   React.useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
 
+  const doctorView = (doctor_id) => {
+    navigation.navigate('ViewDoctor', {doctor_id});
+    console.log(doctor_id);
+  }
+
+  const filteredKey = doctorList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
 
   return (
@@ -50,12 +90,13 @@ export default function DoctorDetails({navigation}){
                 <Searchbar
                     style= {styles.searchBar}
                     placeholder="Search"
-                    onChangeText={onChangeSearch}
-                    // onChangeText={(e)=>{setSearchTerm(e.target.value);}}
-                    value={searchQuery}
+                    // onChangeText={onChangeSearch}
+                    onChangeText={(text)=>{setSearchTerm(text)}}
+                    value={searchTerm}
                 />
 
             </View>
+
             <Button
                 style= {styles.addButton}
                 mode='contained'
@@ -79,22 +120,28 @@ export default function DoctorDetails({navigation}){
                     <DataTable.Title numeric>Contact</DataTable.Title>
                 </DataTable.Header>
 
-                {productList.filter(val=>{if(searchQuery===""){
-                            return val;
-                            }else if(
-                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                            {
-                            return val;
-                            }
-                            }).map((record)=>{
-                            return(
-                    <DataTable.Row key={record.doctor_id}>
-                    <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={require('../assets/Doctors/vectorDoctor.png')} /></DataTable.Cell>
-                    <DataTable.Cell align="center">{record.name}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
-                    </DataTable.Row>
-                    )})
+                {filteredKey.map((record,i) => {
+                    return(
+                    <TouchableOpacity
+                        key={record.doctor_id}
+                        onPress = {()=> doctorView(record.doctor_id)}
+                    >
+                        <DataTable.Row >
+                            <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={{uri : record.display_photo}} /></DataTable.Cell>
+                            <DataTable.Cell align="center">Dr. {record.name}</DataTable.Cell>
+                            <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
+                            <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
+                            {/* <DataTable.Cell numeric>                              
+                                <EntypoIcons
+                                  name="chevron-right" 
+                                  color={theme.colors.primary}
+                                  size={15}
+                                />
+                            </DataTable.Cell> */}
+                        </DataTable.Row>
+                    </TouchableOpacity>
+                    )
+                    })
                 }
 
                 <DataTable.Pagination
@@ -109,6 +156,30 @@ export default function DoctorDetails({navigation}){
                     optionsLabel={'Rows per page'}
                 />
             </DataTable>
+
+            
+            {/* {filteredKey.map((record,i) => {
+                    return(
+                    <View key={record.doctor_id}>
+                    <TouchableOpacity                        
+                        onPress = {()=> doctorView(record.doctor_id)}
+                    >
+                      <ListItem
+                        // key={i}
+                        title={record.name}
+                        subtitle={record.clinic}
+                        subtitle={record.contact_no}
+                        leftAvatar={{ source: { uri: record.display_photo } }}
+                        bottomDivider
+                        chevron
+                      />
+                    </TouchableOpacity>
+                    </View>
+                    )
+              })
+            } */}
+
+
 
         </BackgroundLayout>
     </ScrollView>
@@ -130,7 +201,6 @@ const styles= StyleSheet.create({
     addButton: {
         margin: 10,
         width : 200,
-        // height : 50,
         flexDirection : 'row',
         alignSelf : 'flex-end'
 

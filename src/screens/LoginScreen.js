@@ -18,52 +18,21 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 export default function LoginScreen({ navigation }) {
   const [email, setEmail] = useState({ value: '', error: '' });
   const [password, setPassword] = useState({ value: '', error: '' });
-  const [data, setData] = useState({
-    isValidEmail: true,
-    isValidPassword: true,
-  });
+
 
   const { signIn , setInfo } = React.useContext(AuthContext);
 
   const loginHandle= (email,password) => {
-    // console.log(email);
-    // console.log(password);
     const emailError = emailValidator(email)
     const passwordError = passwordValidator(password)
+    // console.log(emailError, passwordError);
     if (emailError || passwordError) {
       setEmail({ ...email, error: emailError })
       setPassword({ ...password, error: passwordError })
       return
     }
       signIn(email, password);
-      // setInfo();
   };
-
-  // const handleValidEmail= (val) => {
-  //   console.log(val)
-  //   const re = /\S+@\S+\.\S+/
-  //   if (!val) {
-  //     return setEmail({ value: '', error: 'Email Cannot be empty.' })
-  //   }
-  //   else if (!re.test(val)) {
-  //     return setEmail({ value: '', error: 'Enter the Valid Email Address' })
-  //   } else {
-  //     return setEmail({ value: val, error: '' })
-  //   }
-  // };
-
-  // const handleValidPassword= (val) => {
-  //   const re = /\S+@\S+\.\S+/
-  //   if (!val) {
-  //     return setPassword({ value: '', error: 'Password Cannot be empty.' })
-  //   }
-  //   else if (!re.test(val)) {
-  //     return setPassword({ value: '', error: 'Enter the Valid Password Address' })
-  //   } else {
-  //     return setPassword({ value: val, error: '' })
-  //   }
-  // };
-
 
 
   return (
@@ -80,8 +49,6 @@ export default function LoginScreen({ navigation }) {
         returnKeyType="next"
         value={email.value}
         onChangeText={(text) => setEmail({ value: text, error: '' })}
-        // onChangeText={text => handleValidEmail(text)}
-        // onEndEditing={(e)=> handleValidEmail(e.nativeEvent.Text)}
         error={!!email.error}
         errorText={email.error}
         autoCapitalize="none"
@@ -89,13 +56,12 @@ export default function LoginScreen({ navigation }) {
         textContentType="emailAddress"
         keyboardType="email-address"
       />
-      {/* <Text></Text> */}
+
       <TextInput
         label="Password"
         returnKeyType="done"
         value={password.value}
         onChangeText={(text) => setPassword({ value: text, error: '' })}
-        // onEndEditing={(e)=> handleValidPassword(e.nativeEvent.Text)}
         error={!!password.error}
         errorText={password.error}
         secureTextEntry

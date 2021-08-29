@@ -14,7 +14,7 @@ export default function TopNav(){
             <Image source={require ("../assets/logoWithoutName.png")} style={styles.logo} />
             <Text style ={{color : "white"}}>Pettah Pharma App</Text>
 
-            <Image source={require ('../assets/avatar.jpg')} style ={styles.avatarImage} />  
+            {/* <Image source={require ('../assets/avatar.jpg')} style ={styles.avatarImage} />   */}
 
             </View>
         </View>
