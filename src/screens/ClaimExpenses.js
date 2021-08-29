@@ -1,27 +1,24 @@
-import React, {useState} from 'react'
-import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet} from 'react-native'
+import React, {useState,useEffect} from 'react'
+import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet,AsyncStorage, Alert} from 'react-native'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
-import Image from '../components/Image'
-// import Currencyinput from '../components/Currencyinput'
-import ImagePicker from 'react-native-image-crop-picker';
 import { Button } from 'react-native-paper'
 import axios from 'axios';
-import UploadButton from '../components/UploadButton'
   
 export default function ClaimExpenses({ navigation }) {
 
-  const [rep_ID , setRepId] = React.useState('');
-  const [expense_Type , setExpenseType] = React.useState('');
-  const [location , setLocation] = React.useState('');
-  const [amount , setAmount] = React.useState('');
-  const [bills , setBills] = React.useState('');
-  const [description , setDescription] = React.useState('');
+  const [rep_ID , setRepId] = useState('');
+  const [expense_Type , setExpenseType] = useState('');
+  const [location , setLocation] = useState('');
+  const [amount , setAmount] = useState('');
+  const [bills , setBills] = useState('');
+  const [description , setDescription] = useState('');
   
   const saveDetails = () => { 
+    // console.log(expense_Type,location,amount,bills,description);
     axios.post("http://10.0.2.2:3001/claimexpenses", {
-      rep_ID: rep_ID, 
+      rep_ID: user.rep_ID, 
       expense_Type: expense_Type,
       location : location, 
       amount: amount, 
@@ -34,17 +31,28 @@ export default function ClaimExpenses({ navigation }) {
             "Database",
             "Claim form submitted...!",
             [
-              {
-                text: "Cancel",
-                onPress: () => console.log("Cancelled"),
-                style: "cancel"
-              },
+              { text: "Cancel", onPress: () => console.log("Cancelled"), style: "cancel" },
               { text: "Submit", onPress: () => console.log("Submitted") }
             ]
           );
     })
 
 };
+const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+useEffect(() => {
+  async function fetchData(){
+    try {
+      const userProfile = await AsyncStorage.getItem('user');
+      const profile  = JSON.parse(userProfile);
+      if (profile !== null){
+        setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+      }
+    } catch (e){
+      console.log(e);
+    }
+  }
+  fetchData();
+},[]);
 
   return (
     <SafeAreaView>
@@ -52,36 +60,40 @@ export default function ClaimExpenses({ navigation }) {
     <BackgroundLayout>
 
     <View style ={styles.expensesContainer}>
-      <Text style={styles.header}>Claim Form</Text> 
+      <Text style={styles.header}>Claim Apply Form</Text> 
+      {/* <Text style = {styles.labelText}>Medical Rep. ID</Text> */}
+      {/* <TextInput style={styles.InputField} placeholder="Med Rep ID"  onChangeText={(val) => setRepId(val)}
+                    value={rep_ID}/>   */}
+      
+      <Picker expense_Type={expense_Type}selectedValue = {expense_Type} style={styles.InputField} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)} >
+            <Picker.Item label="Expense Type" value="" />
+            <Picker.Item label="Accomodation" value="Accomodation" />
+            <Picker.Item label="Fuel" value="Fuel" />
+            <Picker.Item label="Daily Batta" value="Daily batta" />
+            <Picker.Item label="Other" value="Other" />
+        </Picker>
 
-      <TextInput style={styles.InputField} placeholder="Med Rep ID"  onChangeText={(val) => setRepId(val)}
-                    value={rep_ID}/>  
-      
-      <Picker> expense_Type={expense_Type} style={{ height: 50, width: 150 }} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)}
-            <Picker.Item label="Travel Expenses" value="1" />
-            <Picker.Item label="Accomodation" value="2" />
-            <Picker.Item label="Food and Drink" value="3" />
-      </Picker>
-      
+      <Text style = {styles.labelText}>Location</Text>
       <TextInput style={styles.InputField} placeholder="Location"  onChangeText={(val) => setLocation(val)}
                     value={location}/>
-      {/* <TextInput style={styles.InputField} placeholder="Upload Bills"  onChangeText={(val) => setBills(val)}
-                    value={bills}/> */}
-      {/* <Image icon="camera" mode="contained" onPress={(val) => setBills(val)}
-                    value={amount}>Upload Bills</Image> */}
-      <Image/>
-      {/* Upload Bills: <UploadButton onPress={(val) => setBills(val)}
-                    value={bills}/> */}
+
+      <Text style = {styles.labelText}>Upload Bills</Text>
+      <TextInput style={styles.InputField} placeholder="Upload Bills"  onChangeText={(val) => setBills(val)}
+                    value={bills}/> 
+
+      <Text style = {styles.labelText}>Amount</Text>
+      <TextInput style={styles.InputField} placeholder="Amount"  onChangeText={(val) => setAmount(val)}
+                    value={amount}/> 
+
+      <Text style = {styles.labelText}>Description</Text>
       <TextInput style={styles.comments} placeholder="Comments"  onChangeText={(val) => setDescription(val)}
                     value={description}/>
-         {/* <Currencyinput/>  */}
-        {/* <Image/> */}
+
       <View style = {styles.sameRow}>
-        <Button color = '#0A6466' title = 'submit' onPress={() => {saveDetails()}}></Button>
-        <Button color = '#0A6466' title = 'cancel' onPress={() => { alert('Cancelled') }}>Cancel</Button>
+        <Button mode= 'contained'color = '#0A6466' title = 'cancel' onPress={() => { alert('Cancelled') }}>Cancel</Button>
+        <Button mode= 'contained' color = '#0A6466' title = 'submit' onPress={() => {saveDetails()}}>submit</Button>
       </View>
     </View>
-
     </BackgroundLayout>
     </ScrollView>
   </SafeAreaView>
@@ -101,7 +113,6 @@ const styles = StyleSheet.create ({
     flex : 1,
     width : '100%',
     minHeight : 300,
-    // margin : 20,
     padding: 15,
     backgroundColor : '#E5E5E5',
     borderRadius : 5,
@@ -129,4 +140,8 @@ const styles = StyleSheet.create ({
     marginBottom : 20,
     width : '100%'
   },
+  labelText : {
+    fontSize : 16,
+    color : 'black',
+},
 })

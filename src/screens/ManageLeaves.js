@@ -8,17 +8,32 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
-import {Card} from 'react-native-paper';
+import {Card, DataTable} from 'react-native-paper';
+import axios from 'axios';
 
-
-
+const optionsPerPage = [2, 3, 4];
 
 export default function ManageLeaves({ navigation }) {
 
-  const [user, setUser] = React.useState({ 
-    rep_ID: '', 
-    manager_ID: '',
-  });
+  const [searchQuery, setSearchQuery] = useState('');
+  const onChangeSearch = query => { setSearchQuery(query) }
+  console.log(searchQuery);
+
+//   const [searchTerm,setSearchTerm]=useState("");
+
+  const [page, setPage] = useState(3);
+  const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+
+  const [pendingLeaveList,setPendingLeaveList]=useState([]);
+
+
+  useEffect(()=>{
+    axios.get("http://10.0.2.2:3001/viewPendingLeaves").then((response)=>{
+      setPendingLeaveList(response.data);
+    })
+  },[pendingLeaveList]);
+
+  const [user, setUser] = useState({ rep_ID: '', manager_ID: '', });
   
   useEffect(() => {
     async function fetchData(){
@@ -33,84 +48,106 @@ export default function ManageLeaves({ navigation }) {
       }
     }
     fetchData();
-  },[]);
-
-
+  },[user]);
+  
   return (
     <SafeAreaView>
       <ScrollView> 
       <BackgroundLayout>
-
       <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
-          <Text>{user.rep_ID}</Text>
+          {/* <Text>{user.rep_ID}</Text> */}
           <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
-          <Text> Requested </Text>
+          <Text> Pending </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Text>26</Text>
           <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
-          <Text> Annual </Text>
+          <Text> Approved </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <Text> </Text>
           <FontAwesome5Icon name= "plus-circle" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
           <Text> Apply </Text>
         </View>
       </View>
 
-      <View>
+      <DataTable>
+                <DataTable.Header>
+                    <DataTable.Title align = "center">Type of Leave</DataTable.Title>
+                    <DataTable.Title align = "center">Duration</DataTable.Title>
+                    <DataTable.Title align = "center">Description </DataTable.Title>
+                    {/* <DataTable.Title align = "center">Status</DataTable.Title> */}
+                    {/* <DataTable.Title numeric>Sales Manager's Comment</DataTable.Title> */}
+                </DataTable.Header>
+
+                {pendingLeaveList.filter(val=>{if(searchQuery===""){
+                            return val;
+                            }else if(
+                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
+                            { return val;
+                             } 
+                          }).map((record)=>{
+                            return(
+                    <DataTable.Row key={record.leave_ID}>
+                    <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.no_of_days}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.description}</DataTable.Cell>
+                    {/* <DataTable.Cell align="center">{record.status}</DataTable.Cell> */}
+                    {/* <DataTable.Cell align="center">{record.salesmanager_comment}</DataTable.Cell> */}
+                    
+                    </DataTable.Row>
+                    )})
+                }
+
+                <DataTable.Pagination
+                    page={page}
+                    numberOfPages={3}
+                    onPageChange={(page) => setPage(page)}
+                    label="1-2 of 6"
+                    optionsPerPage={optionsPerPage}
+                    itemsPerPage={itemsPerPage}
+                    setItemsPerPage={setItemsPerPage}
+                    showFastPagination
+                    optionsLabel={'Rows per page'}
+                />
+            </DataTable>
+
+      {/* <View>
+        
       <Card style={ styles.card }>
-        <Card.Title title="Request for Time Off" subtitle="7 days July 21-28 2021" />
+        <Card.Title title="Off"/>
         <Card.Content >
           <View style = {styles.sameRow}>
           <FontAwesome5Icon name= "tired" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          <View style = {styles.sameColumn}>
-          <Text>John Smith</Text>
-          <Text>ID-MR2987</Text>
-          </View>
-          <View style = {styles.sameColumn}>
-          <Text>Leaves left</Text>
-          <Text>9/10</Text>
-          </View>
           </View>
         </Card.Content>
       </Card>
       <View style={{borderBottomWidth : 1,  marginBottom : 15, }}></View>
       <Card style={ styles.card }>
-        <Card.Title title="Sick Leave" subtitle="2 days July 11-12 2021" />
+        <Card.Title title="Medical Leaves"/>
         <Card.Content >
           <View style = {styles.sameRow} >
           <FontAwesome5Icon name= "frown" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          <View style = {styles.sameColumn}>
-          <Text>John Smith</Text>
-          <Text>ID-MR2987</Text>
           </View>
-          <View style = {styles.sameColumn}>
-          <Text>Leaves left</Text>
-          <Text>9/10</Text>
-          </View>
+        </Card.Content>
+      </Card>
+      <View style={{borderBottomWidth : 1,  marginBottom : 15, }}/>
+      <Card.Title title="Casual Leaves"/>
+        <Card.Content >
+          <View style = {styles.sameRow}>
+          <FontAwesome5Icon name= "tired" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
           </View>
         </Card.Content>
       </Card>
       <View style={{borderBottomWidth : 1,  marginBottom : 15, }}></View>
       <Card style={ styles.card }>
-        <Card.Title title="Paid Vacation" subtitle="7 days July 21-28 2021" />
+        <Card.Title title="Annual Leaves"  />
         <Card.Content>
           <View style = {styles.sameRow}>
           <FontAwesome5Icon name= "hand-holding-usd" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          <View style = {styles.sameColumn}>
-          <Text>John Smith</Text>
-          <Text>ID-MR2987</Text>
-          </View>
-          <View style = {styles.sameColumn}>
-          <Text>Leaves left</Text>
-          <Text>9/10</Text>
-          </View>
           </View>
         </Card.Content>
       </Card>
-      </View>
+      </View> */}
 
       </BackgroundLayout>
       </ScrollView>
