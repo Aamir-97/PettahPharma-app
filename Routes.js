@@ -37,6 +37,9 @@ import EditProfile from './src/screens/EditProfile'
 import ViewTask from './src/screens/ViewTask'
 import ViewDoctor from './src/screens/ViewDoctor'
 import ViewProduct from './src/screens/ViewProduct'
+import ViewExpense from './src/screens/ViewExpense'
+import ViewApprovedLeave from './src/screens/ViewApprovedLeave'
+import ViewPendingLeave from './src/screens/ViewPendingLeave'
 import ViewVSR from './src/screens/ViewVSR';
 
 
@@ -219,6 +222,13 @@ const ManageLeavesStackScreen = ({navigation}) => {
         title: "Annual Leaves"
       }} />
 
+      <ManageLeavesStack.Screen  name="ViewApprovedLeave" component={ViewApprovedLeave} options={{
+        title: "Approved Leave Details"
+      }} />
+      <ManageLeavesStack.Screen  name="ViewPendingLeave" component={ViewPendingLeave} options={{
+        title: "Pending Leave Details"
+      }} />
+
     </ManageLeavesStack.Navigator>
   )
 };
@@ -272,6 +282,10 @@ const ManageExpensesStackScreen = ({navigation}) => {
       }}/>
       <ManageExpensesStack.Screen name="ClaimExpenses" component={ClaimExpenses} options={{
         title: "Claim Expenses"
+      }} />
+
+      <ManageExpensesStack.Screen  name="ViewExpense" component={ViewExpense} options={{
+        title: "Expense Details"
       }} />
 
     </ManageExpensesStack.Navigator>

@@ -12,6 +12,7 @@ import BackgroundLayout from '../components/BackgroundLayout'
 import { Text } from 'react-native-paper'
 import { DataTable } from 'react-native-paper'
 import axios from 'axios';
+import { color } from 'react-native-elements/dist/helpers'
 
 const optionsPerPage = [2, 3, 4];
 
@@ -60,6 +61,13 @@ export default function AnnualLeaves({ navigation }) {
   useEffect(() => {
     setPage(0);
   }, [itemsPerPage]);
+
+  const ViewApprovedLeave = (leave_ID) => {
+    navigation.navigate('ViewApprovedLeave', {leave_ID});
+  //   console.log("leave passed to the ViewApprovedLeave function");
+}
+
+
   
   return (
     <SafeAreaView>
@@ -69,25 +77,23 @@ export default function AnnualLeaves({ navigation }) {
         <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
           
-          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
-          <Text> Pending </Text>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color= "#D2F7F7" onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
+          <Text color ="#D2F7F7"> Pending </Text>
         </View>
         <View style={{alignItems: 'center'}}>
           <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
           <Text> Approved </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "plus-circle" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
+          <FontAwesome5Icon name= "plus-circle" size= {40} color= "#D2F7F7" onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
           <Text> Apply </Text>
         </View>
       </View>
-          <DataTable>
+          <DataTable >
                 <DataTable.Header>
                     <DataTable.Title align = "center">Type of Leaves</DataTable.Title>
                     <DataTable.Title align = "center">Duration</DataTable.Title>
                     <DataTable.Title align = "center">Description</DataTable.Title>
-                    {/* <DataTable.Title align = "center">Status</DataTable.Title> */}
-                    {/* <DataTable.Title numeric>Sales Manager's Comment</DataTable.Title> */}
                 </DataTable.Header>
 
                 {leaveList.filter(val=>{if(searchQuery===""){
@@ -98,13 +104,10 @@ export default function AnnualLeaves({ navigation }) {
                              } 
                           }).map((record)=>{
                             return(
-                    <DataTable.Row key={record.leave_ID}>
+                    <DataTable.Row key={record.leave_ID} onPress = {()=> ViewApprovedLeave(record.leave_ID)}>
                     <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.no_of_days}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.no_of_days} days</DataTable.Cell>
                     <DataTable.Cell align="center">{record.description}</DataTable.Cell>
-                    {/* <DataTable.Cell align="center">{record.status}</DataTable.Cell> */}
-                    {/* <DataTable.Cell align="center">{record.salesmanager_comment}</DataTable.Cell> */}
-                    
                     </DataTable.Row>
                     )})
                 }
@@ -137,7 +140,7 @@ const styles = StyleSheet.create ({
     marginTop : 5,
     width : '100%'
   },
-  card: {
+  DataTable: {
     backgroundColor :"#D2F7F7",
   },
   sameColumn : {

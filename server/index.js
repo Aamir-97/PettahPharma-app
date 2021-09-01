@@ -903,7 +903,7 @@ app.get('/ViewCategory', (_req, res) =>{
 
 
 // Start From Here Nimni..........................................................................................................................
-
+/* Manage Leaves*/
 app.post("/applyLeave",(req,res)=>{
     console.log(req);
   
@@ -936,7 +936,7 @@ app.post('/viewApprovedLeaves',(req,res)=>{
     // console.log(req.body.rep_ID);
     //approved leaves
     //if approved then status=1, if rejected then status=2
-    db.query('SELECT leave_Type, DATEDIFF(start_Date, end_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE status = 1 AND rep_ID = ?',[rep_ID],(err,result,_fields)=>{
+    db.query('SELECT leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE status = 1 AND rep_ID = ?',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{
@@ -949,7 +949,7 @@ app.get('/viewPendingLeaves',(_req,res)=>{
     // console.log(req.body.rep_ID);
     //pending leaves
     //if approved then status=1, if rejected then status=2.......... pending leaves then status= 0 (default)
-    db.query('SELECT * FROM leaves WHERE status = 0 ORDER BY leave_ID DESC',(err,result,_fields)=>{
+    db.query('SELECT leave_ID, leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment, status FROM leaves WHERE status = 0 ORDER BY leave_ID DESC',(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{
@@ -957,6 +957,44 @@ app.get('/viewPendingLeaves',(_req,res)=>{
         }
     });
 });  
+
+app.post('/ManageLeaves/ViewApprovedLeave',(req,res)=>{
+    const leave_ID = req.body.leave_ID;   
+    // const leave_Type = req.body.leave_Type;
+    // const start_Date = req.body.start_Date;
+    // const end_Date = req.body.end_Date;
+    // const no_of_days =req.body.no_of_days;
+    // const salesmanager_comment = req.body.salesmanager_comment;
+    // const description = req.body.description;
+
+    const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status = 1";
+    
+    db.query(sql,[leave_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while getting approved leave details");
+              } if(result){
+                res.send(result);
+              } 
+    });
+});
+
+app.post('/ManageLeaves/ViewPending',(req,res)=>{
+    const leave_ID = req.body.leave_ID;   
+
+    const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status = 0";
+    
+    db.query(sql,[leave_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while getting pending leave details");
+              } if(result){
+                res.send(result);
+              } 
+    });
+});
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/* Manage Expenses */
 
 app.post('/claimExpenses',(req,res)=>{
     console.log(req)
@@ -981,17 +1019,16 @@ app.post('/claimExpenses',(req,res)=>{
 });        
   
 
-// app.get('/viewExpenses', (_req, res) =>{
-//     //today expenses
-//     db.query('SELECT expense_Type, amount, SUM(amount) AS "Total" FROM expenses WHERE date = CURRENT_DATE', (err, result, _fields)=> {
-//       if(!err){
-//         res.send(result);
-//     }
-//     else {
-//     console.log(err);
-//     }
-// });
-// });
+app.get('/ViewCategory', (_req, res) =>{
+    //total expenses by category
+    db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses GROUP BY expense_Type', (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);  
+    }
+  });
+});
 
 app.get('/viewClaims',(_req,res)=>{
 
@@ -1001,6 +1038,21 @@ app.get('/viewClaims',(_req,res)=>{
         }else{
         console.log(err);
         }
+    });
+});
+
+app.post('/ManageExpenses/ViewExpense',(req,res)=>{
+    const expense_ID = req.body.expense_ID;   
+
+    const sql = "SELECT expense_Type, amount, date, location, description, salesmanager_comment, CASE WHEN status = 0 THEN 'Pending' WHEN status = 1 THEN 'Claim Accepted' ELSE 'The claim rejected' END AS status FROM expenses WHERE expense_ID = ?";
+    
+    db.query(sql,[expense_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while getting expense details");
+              } if(result){
+                res.send(result);
+              } 
     });
 });
   

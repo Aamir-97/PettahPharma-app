@@ -16,17 +16,6 @@ const optionsPerPage = [2, 3, 4];
 
 export default function ManageExpenses({ navigation }) {
 
-  const[dailybatta, setDailybatta] = useState('');
-  const[accomodations, setAccomodations] = useState('');
-  const[fuel,setFuel] = useState('');
-  const[other,setOther] = useState('');
-
-  // useEffect(()=>{
-  //   axios.get("http://10.0.2.2:3001/viewExpenses").then((response)=>{
-  //     set(response.data);
-  //   })
-  // },[]);
-
   const [searchQuery, setSearchQuery] = useState('');
   const onChangeSearch = query => { setSearchQuery(query) }
   console.log(searchQuery);
@@ -35,6 +24,14 @@ export default function ManageExpenses({ navigation }) {
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
 
   const [expensesList,setExpensesList]=useState([]);
+
+  const [category, setCategory] = useState({
+    dailybatta : '',
+    fuel : '',
+    accomodations : '',
+    other : '',
+    total : '',
+})
 
   useEffect(()=>{
     axios.get("http://10.0.2.2:3001/viewClaims").then((response)=>{
@@ -66,14 +63,28 @@ export default function ManageExpenses({ navigation }) {
   useEffect(() => {
     async function fetchData(){
       try {
-        axios.post("")        
-        
+        axios.post("http://10.0.2.2:3001/ViewCategory",{
+            expense_ID : expense_ID,  
+          }).then((response)=>{
+            setCategory({...category,
+              dailybatta : response.data[0].dailybatta,
+              accomodations : response.data[0].accomodations,
+              fuel : response.data[0].fuel,
+              other : response.data[0].other,      
+          });
+          });
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[expensesList]);
+  },[]);
+  
+
+  const ViewExpense = (expense_ID) => {
+    navigation.navigate('ViewExpense', {expense_ID});
+  //   console.log("expense passed to the ViewExpense function");
+}
 
   return (
     <SafeAreaView>
@@ -90,26 +101,33 @@ export default function ManageExpenses({ navigation }) {
       
       <Card style={ styles.card }>
         <Card.Title title="Total Expenses by Category"/>
-        <View style={{ marginBottom : 25 }}></View>
+        <View style={{ marginBottom : 20 }}></View>
         <Card.Content >
-          <View style = {styles.sameColumn}>
-          <View style={{  marginBottom : 25, }}></View>
-          <Text>Daily Batta : {dailybatta}</Text>
-          <Text>Accomodations :  {accomodations}</Text>
-          <Text>Fuel :  {fuel}</Text>
-          <Text>Other :  {other}</Text>
+          <View style={{  marginBottom : 4 }}></View>
+          <View style= {styles.sameRow}>
+              <Text style={styles.textLable}>Daily Batta : </Text>
+              <Text style={styles.text}>Rs. {category.dailybatta}.00</Text>
+          </View>
+          <View style= {styles.sameRow}>
+              <Text style={styles.textLable}>Accomodations : </Text>
+              <Text style={styles.text}>Rs. {category.accomodations}.00</Text>
+          </View>
+          <View style= {styles.sameRow}>
+              <Text style={styles.textLable}>Fuel : </Text>
+              <Text style={styles.text}>Rs. {category.fuel}.00</Text>
+          </View>
+          <View style= {styles.sameRow}>
+              <Text style={styles.textLable}>Other : </Text>
+              <Text style={styles.text}>Rs. {category.other}.00</Text>
           </View>
         </Card.Content>
       </Card>
 
        <DataTable>
             <DataTable.Header>
-              <DataTable.Title >Type of Expenses</DataTable.Title>
-              {/* <DataTable.Title >Location</DataTable.Title> */}
+              <DataTable.Title >Type of Expense</DataTable.Title>
               <DataTable.Title >Amount</DataTable.Title>
               <DataTable.Title >Date</DataTable.Title>
-              {/* <DataTable.Title >Sales Manager Comments</DataTable.Title> */}
-              {/* <DataTable.Title>Expense Status</DataTable.Title> */}
             </DataTable.Header>
 
             {expensesList.filter(val=>{if(searchQuery===""){
@@ -125,13 +143,10 @@ export default function ManageExpenses({ navigation }) {
                               const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
                               const day = ('0' + dtt.getDate()).slice(-2);
                             return(
-                    <DataTable.Row key={record.expense_ID}>
+                    <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
                     <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
-                    {/* <DataTable.Cell align="center">{record.location}</DataTable.Cell> */}
-                    <DataTable.Cell align = "center">{record.amount}</DataTable.Cell>
+                    <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
                     <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
-                    {/* <DataTable.Cell align="center">{record.salesmanager_comment}</DataTable.Cell> */}
-                    {/* <DataTable.Cell align="center">{record.expense_status}</DataTable.Cell> */}
                     </DataTable.Row>
                     )})
                 }
@@ -165,11 +180,20 @@ const styles = StyleSheet.create ({
   },
   card: {
     backgroundColor :"#D2F7F7",
+    flex : 1,
+    width : '100%',
+    height : '80%',
+    padding: 5,
+    borderRadius : 5,
+    shadowColor : 'gray',
+    elevation : 10,
+    marginTop : 20,
   },
-  image: {
-    width: 250,
-    height: 250,
-    marginBottom: 8,
+  title: {
+    fontSize : 18,
+    marginBottom : 10,
+    fontWeight : 'bold',
+    color : theme.colors.primary,
   },
   sameColumn : {
     flexDirection : 'column',
@@ -177,5 +201,13 @@ const styles = StyleSheet.create ({
     height : '9%',
     marginTop : 5,
     marginBottom : 5
-  }
+  },
+  text : {
+      fontSize : 16,
+  },
+  textLable : {
+      fontSize : 18,
+      marginBottom : 10,
+      fontWeight : 'bold',
+  },
 })

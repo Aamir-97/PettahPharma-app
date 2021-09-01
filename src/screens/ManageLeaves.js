@@ -49,6 +49,11 @@ export default function ManageLeaves({ navigation }) {
     }
     fetchData();
   },[user]);
+
+  const ViewPendingLeave = (leave_ID) => {
+    navigation.navigate('ViewPendingLeave', {leave_ID});
+  //   console.log("leave passed to the ViewPendingLeave function");
+}
   
   return (
     <SafeAreaView>
@@ -56,16 +61,15 @@ export default function ManageLeaves({ navigation }) {
       <BackgroundLayout>
       <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
-          {/* <Text>{user.rep_ID}</Text> */}
           <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           <Text> Pending </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
           <Text> Approved </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "plus-circle" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
+          <FontAwesome5Icon name= "plus-circle" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
           <Text> Apply </Text>
         </View>
       </View>
@@ -75,8 +79,6 @@ export default function ManageLeaves({ navigation }) {
                     <DataTable.Title align = "center">Type of Leave</DataTable.Title>
                     <DataTable.Title align = "center">Duration</DataTable.Title>
                     <DataTable.Title align = "center">Description </DataTable.Title>
-                    {/* <DataTable.Title align = "center">Status</DataTable.Title> */}
-                    {/* <DataTable.Title numeric>Sales Manager's Comment</DataTable.Title> */}
                 </DataTable.Header>
 
                 {pendingLeaveList.filter(val=>{if(searchQuery===""){
@@ -87,12 +89,10 @@ export default function ManageLeaves({ navigation }) {
                              } 
                           }).map((record)=>{
                             return(
-                    <DataTable.Row key={record.leave_ID}>
+                    <DataTable.Row key={record.leave_ID} onPress = {()=> ViewPendingLeave(record.leave_ID)}>
                     <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.no_of_days}</DataTable.Cell>
+                    <DataTable.Cell align="center">{record.no_of_days} days</DataTable.Cell>
                     <DataTable.Cell align="center">{record.description}</DataTable.Cell>
-                    {/* <DataTable.Cell align="center">{record.status}</DataTable.Cell> */}
-                    {/* <DataTable.Cell align="center">{record.salesmanager_comment}</DataTable.Cell> */}
                     
                     </DataTable.Row>
                     )})
