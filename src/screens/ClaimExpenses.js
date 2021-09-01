@@ -4,6 +4,7 @@ import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import { Button } from 'react-native-paper'
+import DocumentPicker from 'react-native-document-picker'
 import axios from 'axios';
   
 export default function ClaimExpenses({ navigation }) {
@@ -54,6 +55,31 @@ useEffect(() => {
   fetchData();
 },[]);
 
+const uploadBills = async () => {
+  try {
+      const res = await DocumentPicker.pickSingle({
+      type: [DocumentPicker.types.images],
+      })
+      console.log(
+      res.uri, 
+      res.type, // mime type
+      res.name,
+      res.size,
+      )
+      console.log(res);
+      setBills({...profileDetails, display_photo: res.uri});
+      
+  } catch (err) {
+      if (DocumentPicker.isCancel(err)) {
+      // User cancelled the picker, exit any dialogs or menus and move on
+      } else {
+      throw err
+      }
+  }
+  return <Text>Success</Text>
+
+}
+
   return (
     <SafeAreaView>
     <ScrollView> 
@@ -61,9 +87,6 @@ useEffect(() => {
 
     <View style ={styles.expensesContainer}>
       <Text style={styles.header}>Claim Apply Form</Text> 
-      {/* <Text style = {styles.labelText}>Medical Rep. ID</Text> */}
-      {/* <TextInput style={styles.InputField} placeholder="Med Rep ID"  onChangeText={(val) => setRepId(val)}
-                    value={rep_ID}/>   */}
       
       <Picker expense_Type={expense_Type}selectedValue = {expense_Type} style={styles.InputField} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)} >
             <Picker.Item label="Expense Type" value="" />
@@ -78,15 +101,16 @@ useEffect(() => {
                     value={location}/>
 
       <Text style = {styles.labelText}>Upload Bills</Text>
-      <TextInput style={styles.InputField} placeholder="Upload Bills"  onChangeText={(val) => setBills(val)}
-                    value={bills}/> 
+      <View style={{alignSelf: 'center',marginLeft:20}}>
+            <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills}> Upload </Button>
+      </View>
 
       <Text style = {styles.labelText}>Amount</Text>
       <TextInput style={styles.InputField} placeholder="Amount"  onChangeText={(val) => setAmount(val)}
                     value={amount}/> 
 
       <Text style = {styles.labelText}>Description</Text>
-      <TextInput style={styles.comments} placeholder="Comments"  onChangeText={(val) => setDescription(val)}
+      <TextInput style={styles.comments} placeholder="Description"  onChangeText={(val) => setDescription(val)}
                     value={description}/>
 
       <View style = {styles.sameRow}>
@@ -116,6 +140,11 @@ const styles = StyleSheet.create ({
     padding: 15,
     backgroundColor : '#E5E5E5',
     borderRadius : 5,
+    height : '100%',
+    backgroundColor : theme.colors.surface,
+    shadowColor : 'gray',
+    elevation : 10,
+    marginTop : 20,
 
   },
   InputField : {

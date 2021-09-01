@@ -1,12 +1,11 @@
 import React, {useState, useEffect} from 'react'
-import Calendar from 'react-calendar'
 import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button, Alert,AsyncStorage} from 'react-native'
 import { theme } from '../core/theme'
+import { requiredField } from '../helpers/requiredField'
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import axios from 'axios'
-import DatePicker from 'react-native-date-picker'
 
 
 export default function ApplyLeaves({ navigation }) {
@@ -34,6 +33,33 @@ export default function ApplyLeaves({ navigation }) {
     fetchData();
   },[]);
 
+
+  const checkRequired = () => {
+
+    const leaveType = requiredField(leaveType)
+    const startDate = requiredField(startDate)
+    const endDate = requiredField(endDate)
+    if (leaveType || startDate || endDate ) {
+        Alert.alert(
+            "Attention.....!",
+            "Please fill the required field...!",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => console.log("Ok pressed") }
+            ]
+          )
+          return 
+    }
+    else {
+        saveDetails ();
+    }
+
+  }
+
   const saveDetails = () =>{
     axios.post("http://10.0.2.2:3001/applyLeave", { 
       rep_ID : user.rep_ID,
@@ -58,11 +84,11 @@ export default function ApplyLeaves({ navigation }) {
       <View style = {styles.sameRow}>
       
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           <Text> Pending </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
           <Text> Approved </Text>
         </View>
         <View style={{alignItems: 'center'}}>
@@ -72,7 +98,7 @@ export default function ApplyLeaves({ navigation }) {
       </View>
 
       <View style ={styles.leaveContainer}>
-        {/* <Calendar/> */}
+
         <Text style={styles.header}>Leave Apply Form</Text> 
 
         <Picker leaveType={leaveType} style={styles.InputField}
@@ -84,14 +110,14 @@ export default function ApplyLeaves({ navigation }) {
             <Picker.Item label="Casual Leave" value="Casual Leave" />
         </Picker>
         
-        <View style = {styles.sameRow}>
+        <View>
         <Text style = {styles.labelText}>Start Date </Text>
         <TextInput style={styles.InputField} onChangeText={(text) => setStartDate(text) } value={startDate}/>
 
         {/* <DatePicker date={startDate} onDateChange={setStartDate} /> */}
         </View>
 
-        <View style = {styles.sameRow}>
+        <View >
 
         <Text style = {styles.labelText}>End Date</Text>
         <TextInput style={styles.InputField} onChangeText={(text) => setEndDate(text) } value={endDate}/>
@@ -127,10 +153,13 @@ const styles = StyleSheet.create ({
   leaveContainer : {
     flex : 1,
     width : '100%',
-    minHeight : 300,
     padding: 15,
-    backgroundColor : '#E5E5E5',
     borderRadius : 5,
+    height : '100%',
+    backgroundColor : theme.colors.surface,
+    shadowColor : 'gray',
+    elevation : 10,
+    marginTop : 20,
 
   },
   InputField : {
