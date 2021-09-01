@@ -9,8 +9,8 @@ import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
-import {Text } from 'react-native-paper';
-import { DataTable } from 'react-native-paper';
+import { Text } from 'react-native-paper'
+import { DataTable } from 'react-native-paper'
 import axios from 'axios';
 
 const optionsPerPage = [2, 3, 4];

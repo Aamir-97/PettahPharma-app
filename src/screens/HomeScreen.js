@@ -168,7 +168,7 @@ export default function HomeScreen({ navigation }) {
           console.log("Error while getTask for view");  
         } 
       } fetchData();
-  },[taskList]);
+  },[user,taskList]);
 
   const viewTask = (task_id) =>{
     navigation.navigate('ViewTask', {task_id});

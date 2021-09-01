@@ -4,7 +4,6 @@ import { Button, Avatar, TextInput } from 'react-native-paper'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
-import ImagePicker from 'react-native-image-crop-picker';
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { emailValidator } from '../helpers/emailValidator'
 import DocumentPicker from 'react-native-document-picker'

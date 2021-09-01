@@ -19,7 +19,7 @@ export default function ProductDetails({navigation}){
 //   const [searchQuery, setSearchQuery] = React.useState('');
 //   const onChangeSearch = query => setSearchQuery(query);
 
-    const [searchTerm, setSearchTerm] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [productList,setProductList]=useState([]);
 

@@ -18,9 +18,9 @@ const PORT = 3001;
 // })
 
 const db = mysql.createConnection({
-    user : "root",
-    host : "localhost",
-    password: "",
+    user : "admin",
+    host : "pettahpharma-db.cjrpsgnfuucd.us-east-2.rds.amazonaws.com",
+    password: "pharmadb2021",
     database: "pettahpharma"
 });
 
@@ -297,7 +297,7 @@ app.get('/homePage/productsCount',(_req,res)=>{
 app.post('/homePage/viewTask',(req,res)=>{  
    
     const rep_ID = req.body.rep_ID;
-    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending'";
+    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending' ORDER BY date DESC";
      
     db.query(sql,[rep_ID],(err,result)=>{
             if(err){
@@ -701,6 +701,18 @@ app.post('/deleteDoctor',(req,res)=>{
               }     
     }); 
 }); 
+
+app.get('/ViewCategory', (_req, res) =>{
+    //total expenses by category
+    db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses GROUP BY expense_Type', (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);
+    }
+  });
+});
+
 
 
 

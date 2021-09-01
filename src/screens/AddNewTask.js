@@ -44,6 +44,7 @@ export default function AddNewTask({navigation}){
         date : '',
         session : '',
         description : '',
+        // created_at : new Date(now()),
     })
   
 
@@ -56,6 +57,7 @@ export default function AddNewTask({navigation}){
             description: scheduleFormDetails.description,
             manager_ID : user.manager_ID,
             rep_ID: user.rep_ID, 
+
         }).then((response)=>{
             // console.log("Succesfully Inserted:!");
             Alert.alert(

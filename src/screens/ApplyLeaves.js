@@ -1,12 +1,10 @@
 import React, {useState, useEffect} from 'react'
-import Calendar from 'react-calendar'
 import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button, Alert,AsyncStorage} from 'react-native'
 import { theme } from '../core/theme'
 // import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import axios from 'axios'
-import DatePicker from 'react-native-date-picker'
 
 
 export default function ApplyLeaves({ navigation }) {
