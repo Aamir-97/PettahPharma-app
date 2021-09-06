@@ -24,16 +24,51 @@ export default function ManageLeaves({ navigation }) {
   const [page, setPage] = useState(3);
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
 
+  const [user, setUser] = useState({ rep_ID: '', manager_ID: '', });
+
   const [pendingLeaveList,setPendingLeaveList]=useState([]);
 
+  const [pendingleaveCount, setPendingLeaveCount] = useState('');
+  const [totalleaveCount, setTotalLeaveCount] = useState('');
 
+  useEffect(() => {
+    try{  
+      axios.post("http://10.0.2.2:3001/ManageLeaves/pendingleaveCount",{
+        rep_ID : user.rep_ID, 
+      }).then((response)=>{
+        setPendingLeaveCount(response.data.pendingleaveCount);
+      });
+    } catch (err) {
+      console.log(err);
+      console.log("Error while getting Pending Leave count");
+    } 
+  },[pendingleaveCount]);
+
+  useEffect(() => {
+    try{  
+      axios.post("http://10.0.2.2:3001/ManageLeaves/totalleaveCount",{
+        rep_ID : user.rep_ID, 
+      }).then((response)=>{
+        setTotalLeaveCount(response.data.totalleaveCount);
+      });
+    } catch (err) {
+      console.log(err);
+      console.log("Error while getting Total Leave count");
+    } 
+  },[totalleaveCount]);
+
+  //view pending leaves
   useEffect(()=>{
-    axios.get("http://10.0.2.2:3001/viewPendingLeaves").then((response)=>{
+    try{
+    axios.get("http://10.0.2.2:3001/viewPendingLeaves",{
+      rep_ID:user.rep_ID,
+    }).then((response)=>{
       setPendingLeaveList(response.data);
     })
-  },[pendingLeaveList]);
-
-  const [user, setUser] = useState({ rep_ID: '', manager_ID: '', });
+  } catch (err){
+      console.log("Error while displaying pending leaves");
+  }
+},[pendingLeaveList]);
   
   useEffect(() => {
     async function fetchData(){
@@ -50,6 +85,10 @@ export default function ManageLeaves({ navigation }) {
     fetchData();
   },[user]);
 
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
+
   const ViewPendingLeave = (leave_ID) => {
     navigation.navigate('ViewPendingLeave', {leave_ID});
   //   console.log("leave passed to the ViewPendingLeave function");
@@ -61,15 +100,18 @@ export default function ManageLeaves({ navigation }) {
       <BackgroundLayout>
       <View style = {styles.sameRow}>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
+        <Text style={styles.countText}> {pendingleaveCount} </Text>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           <Text> Pending </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
-          <Text> Approved </Text>
+        <Text style={styles.countText}> {totalleaveCount} </Text>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
+          <Text> Approved / Rejected </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "plus-circle" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
+        <Text/>
+          <FontAwesome5Icon name= "plus-circle" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
           <Text> Apply </Text>
         </View>
       </View>
@@ -165,6 +207,11 @@ const styles = StyleSheet.create ({
   },
   card: {
     backgroundColor :"#D2F7F7",
+  },
+  countText : {
+    fontSize : 15,
+    fontWeight : 'bold',
+    color : theme.colors.primary
   },
   sameColumn : {
     flexDirection : 'column',

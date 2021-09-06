@@ -37,12 +37,12 @@ db.connect((err)=>{
     {
         console.log(err);
     }
-    else
+    else  
     {
         console.log('Database Connected...');
     }
 });
-
+  
 app.get ("/", (_req, res) => {
     res.send("Web Server is working Perfectly...!")
 });
@@ -56,7 +56,7 @@ app.post('/login',(req,res)=>{
     const password = req.body.password;
 
     const sqlLogin = "SELECT * FROM medicalrep WHERE email=? AND password=?";
-     
+       
     db.query(sqlLogin,[email,password],(err,result)=>{
             if(err){
                 res.send({err:err})
@@ -392,7 +392,7 @@ app.post('/Task/CheckAvailability',(req,res)=>{
     const date = req.body.date;
     const session = req.body.session;
 
-    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
+    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=? AND end_Date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
      
     db.query(sql,[rep_ID,date,date,session,date],(err,result)=>{
             if(err){
@@ -904,17 +904,7 @@ app.get('/ViewCategory', (_req, res) =>{
 
 
 // Start From Here Nimni..........................................................................................................................
-/* Manage Leaves*/
-app.post("/applyLeave",(req,res)=>{
-    console.log(req);
-  
-    const rep_ID = req.body.rep_ID;
-    const leaveType = req.body.leaveType;
-    const startDate = req.body.startDate;
-    const endDate = req.body.endDate;
-    const description = req.body.description;
-    
-    const sqlApplyLeave = "INSERT INTO leaves (rep_ID,leave_Type,start_Date,end_Date,description) VALUES (?,?,?,?,?)";
+
 
     db.query(sqlApplyLeave, [rep_ID,leaveType,startDate,endDate,description], (err,result)=>{
         if(err){
@@ -932,20 +922,11 @@ app.post("/applyLeave",(req,res)=>{
 //     console.log ("Error");
 // });           
 
-app.post('/viewApprovedLeaves',(req,res)=>{
-    const rep_ID = req.body.rep_ID;
-    // console.log(req.body.rep_ID);
-    //approved leaves
-    //if approved then status=1, if rejected then status=2
-    db.query('SELECT leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE status = 1 AND rep_ID = ?',[rep_ID],(err,result,_fields)=>{
-        if(!err){
-            res.send(result);
-        }else{
-        console.log(err);
-        }
-    });
-});  
 
+
+
+//-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+//Manage Leaves Page - Pending Leaves
 app.get('/viewPendingLeaves',(_req,res)=>{
     // console.log(req.body.rep_ID);
     //pending leaves
@@ -959,15 +940,72 @@ app.get('/viewPendingLeaves',(_req,res)=>{
     });
 });  
 
-app.post('/ManageLeaves/ViewApprovedLeave',(req,res)=>{
+app.post('/ManageLeaves/ViewPendingLeave',(req,res)=>{
     const leave_ID = req.body.leave_ID;   
-    // const leave_Type = req.body.leave_Type;
-    // const start_Date = req.body.start_Date;
-    // const end_Date = req.body.end_Date;
-    // const no_of_days =req.body.no_of_days;
-    // const salesmanager_comment = req.body.salesmanager_comment;
-    // const description = req.body.description;
+    const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status = 0";
+    
+    db.query(sql,[leave_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while getting pending leave details");
+              } if(result){
+                res.send(result);
+              } 
+    });
+});
 
+
+app.post('/ManageLeaves/totalleaveCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(leave_ID) AS totalleaveCount FROM leaves WHERE status !=0 AND rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while totalleaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    totalleaveCount: result[0].totalleaveCount,
+                });
+              } 
+    }); 
+}); 
+
+app.post('/ManageLeaves/pendingleaveCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(leave_ID) AS pendingleaveCount FROM leaves WHERE status = 0 AND rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while pendingleaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    pendingleaveCount: result[0].pendingleaveCount,
+                });
+              } 
+    }); 
+}); 
+//----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/* Annual Leaves Page - View approved and rejected leaves*/
+app.post('/viewLeaves',(req,res)=>{
+    const rep_ID = req.body.rep_ID;
+    // console.log(req.body.rep_ID);
+    //approved leaves
+    //if approved then status=1, if rejected then status=2
+    db.query("SELECT leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment, CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status FROM leaves WHERE status !=0 AND rep_ID = ?",[rep_ID],(err,result,_fields)=>{
+        if(!err){
+            res.send(result);
+        }else{
+        console.log(err);
+        }
+    });
+});  
+
+app.post('/AnnualLeaves/ViewApprovedLeave',(req,res)=>{
+    const leave_ID = req.body.leave_ID;   
     const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status = 1";
     
     db.query(sql,[leave_ID],(err,result)=>{
@@ -980,20 +1018,115 @@ app.post('/ManageLeaves/ViewApprovedLeave',(req,res)=>{
     });
 });
 
-app.post('/ManageLeaves/ViewPending',(req,res)=>{
-    const leave_ID = req.body.leave_ID;   
+app.post('/AnnualLeaves/totalleaveCount',(req,res)=>{
 
-    const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status = 0";
-    
-    db.query(sql,[leave_ID],(err,result)=>{
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(leave_ID) AS totalleaveCount FROM leaves WHERE status !=0  AND rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
             if(err){
                 res.send({err:err})
-                console.log("Error while getting pending leave details");
-              } if(result){
-                res.send(result);
+                console.log("Error while totalleaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    totalleaveCount: result[0].totalleaveCount,
+                });
+              }  
+    }); 
+}); 
+
+app.post('/AnnualLeaves/pendingleaveCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(leave_ID) AS pendingleaveCount FROM leaves WHERE status = 0 AND rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while pendingleaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    pendingleaveCount: result[0].pendingleaveCount,
+                });
               } 
-    });
-});
+    }); 
+}); 
+//-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+/* Apply Leaves Page */
+app.post("/applyLeave",(req,res)=>{
+    console.log(req);
+  
+    const rep_ID = req.body.rep_ID;
+    const leaveType = req.body.leaveType;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+    const description = req.body.description;
+    
+    const sqlApplyLeave = "INSERT INTO leaves (rep_ID,leave_Type,start_Date,end_Date,description) VALUES (?,?,?,?,?)";
+
+    db.query(sqlApplyLeave, [rep_ID,leaveType,startDate,endDate,description], (err,result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Error");
+        } else{
+            // console.log("Leave applied");
+            res.send(result);    
+        }    
+    })
+});  
+
+// app.post('/ApplyLeaves/CheckAvailability',(req,res)=>{ 
+//     const rep_ID = req.body.rep_ID;
+//     const startDate = req.body.startDate;
+//     const endDate = req.body.endDate;
+
+//     const sql = "SELECT COUNT(rep_ID) AS leaveAvailable FROM leaves WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
+     
+//     db.query(sql,[rep_ID,startDate,endDate],(err,result)=>{
+//             if(err){
+//                 res.send({err:err})
+//                 console.log("Error while on leave");  
+//               } if(result){
+//                 res.send({
+//                     leaveAvailable: result[0].leaveAvailable,
+//                 });
+//               }    
+//     }); 
+// });   
+
+app.post('/ApplyLeaves/totalleaveCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(leave_ID) AS totalleaveCount FROM leaves WHERE status !=0 AND rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while totalleaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    totalleaveCount: result[0].totalleaveCount,
+                });
+              } 
+    }); 
+}); 
+
+app.post('/ApplyLeaves/pendingleaveCount',(req,res)=>{
+
+    const rep_ID = req.body.rep_ID;
+    const sqlLogin = "SELECT COUNT(leave_ID) AS pendingleaveCount FROM leaves WHERE status = 0 AND rep_ID=?";
+     
+    db.query(sqlLogin,[rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while pendingleaveCount ");
+              } if(result.length > 0){
+                res.send({
+                    pendingleaveCount: result[0].pendingleaveCount,
+                });
+              } 
+    }); 
+}); 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 /* Manage Expenses */  
 
@@ -1087,7 +1220,6 @@ app.post('/Expenses/Total', (req, res) =>{
     }
   });
 });
-
 
 app.post('/ViewExpenses',(req,res)=>{
     const rep_ID = req.body.rep_ID;

@@ -1,8 +1,9 @@
 import React, {useState, useEffect} from 'react'
-import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Button, Alert,AsyncStorage} from 'react-native'
+import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet, Alert,AsyncStorage, Button } from 'react-native'
 import { theme } from '../core/theme'
 import { requiredField } from '../helpers/requiredField'
-// import DateTimePicker from '@react-native-community/datetimepicker';
+import { IconButton} from 'react-native-paper'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import axios from 'axios'
@@ -10,11 +11,10 @@ import axios from 'axios'
 
 export default function ApplyLeaves({ navigation }) {
 
-  const [rep_ID , setRepId] = useState('');
   const [leaveType,setLeaveType] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
   const [description,setDescription] = useState('');
+  const [startDate,setStartDate] = useState('');
+  const [endDate,setEndDate] = useState('');
 
   const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
   
@@ -31,34 +31,154 @@ export default function ApplyLeaves({ navigation }) {
       }
     }
     fetchData();
+  },[user]);
+
+  const [pendingleaveCount, setPendingLeaveCount] = useState('');
+  const [totalleaveCount, setTotalLeaveCount] = useState('');
+
+  useEffect(() => {
+    try{  
+      axios.post("http://10.0.2.2:3001/ApplyLeaves/pendingleaveCount",{
+        rep_ID : user.rep_ID, 
+      }).then((response)=>{
+        setPendingLeaveCount(response.data.pendingleaveCount);
+      });
+    } catch (err) {
+      console.log(err);
+      console.log("Error while get  Pending Leave count");
+    } 
+  },[pendingleaveCount]);
+
+  useEffect(() => {
+    try{  
+      axios.post("http://10.0.2.2:3001/ApplyLeaves/totalleaveCount",{
+        rep_ID : user.rep_ID, 
+      }).then((response)=>{
+        setTotalLeaveCount(response.data.totalleaveCount);
+      });
+    } catch (err) {
+      console.log(err);
+      console.log("Error while getting Total Leave count");
+    } 
+  },[totalleaveCount]);
+//----------------------------------------------------------------------------------------------------------------
+  const [dates, setDates] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState('false');
+
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || dates;
+      setShow(Platform.OS ==='ios');
+      setDates(currentDate);
+    };
+
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    };
+
+    const showDatepicker = () => {
+      showMode('dates');
+    };
+
+    useEffect(() => {
+      const dtt = new Date(dates);
+      const year = dtt.getFullYear() + '/';
+      const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+      const day = ('0' + dtt.getDate()).slice(-2);
+      setStartDate( year+month+day);        
+      },[]);
+
+
+
+//------------------------------------------------------------------------------------------------------------------
+  const [date, setDate] = useState(new Date());
+
+  const [mode2, setMode2] = useState('date');
+  const [show2, setShow2] = useState(false);
+
+  const onChange2 = (event, selectedDate) => {
+    const currentDate = selectedDate || date;
+    setShow2(Platform.OS === 'ios');
+    setDate(currentDate);
+
+  };
+
+  const showMode2 = (currentMode) => {
+    setShow2(true);
+    setMode2(currentMode);
+  };
+
+  const showDatepicker2 = () => {
+    showMode2('date');
+  };
+  
+
+  useEffect(() => {
+  const dtt = new Date(date);
+  const year = dtt.getFullYear() + '/';
+  const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+  const day = ('0' + dtt.getDate()).slice(-2);
+  setEndDate(year+month+day);        
   },[]);
+//---------------------------------------------------------------------------------------------------------------------------
+  // const checkRequired = () => {
 
+  //   const leaveType = requiredField(leaveType)
+  //   const startDate = requiredField(startDate)
+  //   const endDate = requiredField(endDate)
 
-  const checkRequired = () => {
+  //   if (leaveType || startDate || endDate ) {
+  //       Alert.alert(
+  //           "Attention.....!",
+  //           "Please fill the required field...!",
+  //           [
+  //             {
+  //               text: "Cancel",
+  //               onPress: () => console.log("Cancel Pressed"),
+  //               style: "cancel"
+  //             },
+  //             { text: "OK", onPress: () => console.log("Ok pressed") }
+  //           ]
+  //         )
+  //         return 
+  //   }
+  //   else {
+  //      // checkAvailable();
+  //   }
+  // }
 
-    const leaveType = requiredField(leaveType)
-    const startDate = requiredField(startDate)
-    const endDate = requiredField(endDate)
-    if (leaveType || startDate || endDate ) {
-        Alert.alert(
-            "Attention.....!",
-            "Please fill the required field...!",
-            [
-              {
-                text: "Cancel",
-                onPress: () => console.log("Cancel Pressed"),
-                style: "cancel"
-              },
-              { text: "OK", onPress: () => console.log("Ok pressed") }
-            ]
-          )
-          return 
-    }
-    else {
-        saveDetails ();
-    }
+  // const checkAvailable = () =>{
+  //   //   console.log("checkAvailable function working...!");
+  //     try {
+  //       axios.post("http://10.0.2.2:3001/ApplyLeaves/CheckAvailability", {            
+  //           rep_ID : user.rep_ID,
+  //           startDate : startDate,
+  //           endDate : endDate,
+  //       }).then((response)=>{
+  //           // console.log("Succesfully Inserted:!");
+  //           if (response.data.leaveAvailable === 1) {
+  //               SubmitTask();
+  //           } else {
+  //               Alert.alert(
+  //                   "Attention.....!",
+  //                   "You already applied for leave...!",
+  //                   [
+  //                     {
+  //                       text: "Cancel",
+  //                       onPress: () => console.log("Cancel Pressed"),
+  //                       style: "cancel"
+  //                     },
+  //                     { text: "OK", onPress: () => console.log("Ok pressed") }
+  //                   ]
+  //                 )
+  //           }
+  //       })
+  //     } catch (err) {
+  //           console.log(err, "Error while check availability for leave");
+  //     }
 
-  }
+  // }
 
   const saveDetails = () =>{
     axios.post("http://10.0.2.2:3001/applyLeave", { 
@@ -84,15 +204,18 @@ export default function ApplyLeaves({ navigation }) {
       <View style = {styles.sameRow}>
       
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
+        <Text style={styles.countText}> {pendingleaveCount} </Text>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color=  {theme.colors.primary}onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           <Text> Pending </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "circle-notch" size= {40} color="#D2F7F7" onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
-          <Text> Approved </Text>
+        <Text style={styles.countText}> {totalleaveCount} </Text>
+          <FontAwesome5Icon name= "circle-notch" size= {40} color= {theme.colors.primary} onPress= {() => navigation.navigate('AnnualLeaves')}></FontAwesome5Icon>
+          <Text> Approved / Rejected </Text>
         </View>
         <View style={{alignItems: 'center'}}>
-          <FontAwesome5Icon name= "plus-circle" size= {40} color={theme.colors.primary} onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
+        <Text/>
+          <FontAwesome5Icon name= "plus-circle" size= {40} color= "#D2F7F7" onPress= {() => navigation.navigate('ApplyLeaves')}></FontAwesome5Icon>
           <Text> Apply </Text>
         </View>
       </View>
@@ -110,19 +233,53 @@ export default function ApplyLeaves({ navigation }) {
             <Picker.Item label="Casual Leave" value="Casual Leave" />
         </Picker>
         
-        <View>
-        <Text style = {styles.labelText}>Start Date </Text>
-        <TextInput style={styles.InputField} onChangeText={(text) => setStartDate(text) } value={startDate}/>
+        {/* <View> */}
+        {/* <Text style = {styles.labelText}>Start Date </Text> */}
+        {/* <TextInput style={styles.InputField} onChangeText={(text) => setStartDate(text) } value={startDate}/> */}
 
         {/* <DatePicker date={startDate} onDateChange={setStartDate} /> */}
-        </View>
+        {/* </View> */}
 
-        <View >
+        {/* <View > */}
 
-        <Text style = {styles.labelText}>End Date</Text>
-        <TextInput style={styles.InputField} onChangeText={(text) => setEndDate(text) } value={endDate}/>
+        {/* <Text style = {styles.labelText}>End Date</Text> */}
+        {/* <TextInput style={styles.InputField} onChangeText={(text) => setEndDate(text) } value={endDate}/> */}
         {/* <DatePicker date={endDate} onDateChange={setEndDate} /> */}
-        </View>
+        {/* </View> */}
+
+        <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+                <View style={{flex : 2}}>
+                    <Text style = {styles.labelText}>Start Date :</Text> 
+                </View>
+                <View style={{flex : 2}}>
+                    <TextInput editable = {false} label= 'Date' mode= 'outlined' outlineColor = {theme.colors.primary} style={styles.InputField}  value= {startDate}/>
+                </View>
+
+                <View style={{flex : 2}}>
+                    <IconButton style = {{margin : -8}} icon="calendar" color= {theme.colors.primary} size={45} onPress={() => {showDatepicker()}} />
+                </View>
+
+                {show && (
+                    <DateTimePicker testID="dateTimePicker" value={dates} mode={mode} is24Hour={true} display="default" onChange={onChange} />
+                )}
+            </View>
+
+            <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+                <View style={{flex : 2}}>
+                    <Text style = {styles.labelText}>End Date :</Text> 
+                </View>
+                <View style={{flex : 2}}>
+                    <TextInput editable = {false} label= 'Date' mode= 'outlined' outlineColor = {theme.colors.primary} style={styles.InputField}  value= {endDate}/>
+                </View>
+
+                <View style={{flex : 2}}>
+                    <IconButton style = {{margin : -8}} icon="calendar" color= {theme.colors.primary} size={45} onPress={() => {showDatepicker2()}} />
+                </View>
+
+                {show2 && (
+                    <DateTimePicker testID="dateTimePicker" value={date} mode={mode2} is24Hour={true} display="default" onChange={onChange2} />
+                )}
+            </View>
 
         
         <Text style = {styles.labelText}>Description :</Text>
@@ -184,8 +341,14 @@ const styles = StyleSheet.create ({
     marginBottom : 20,
     width : '100%'
   },
+  countText : {
+    fontSize : 15,
+    fontWeight : 'bold',
+    color : theme.colors.primary
+  },
   labelText : {
     fontSize : 16,
-    color : 'black',
+    fontWeight : 'bold',
+    color : theme.colors.primary,
   },
 })

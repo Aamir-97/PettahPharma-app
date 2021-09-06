@@ -19,6 +19,16 @@ export default function ViewPendingLeave ({route, navigation}){
         end_Date : ''
     })
 
+const dtt = new Date(pendingLeaveDetails.start_Date);
+const year = dtt.getFullYear() + '/';
+const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+const day = ('0' + dtt.getDate()).slice(-2);
+
+const dtt2 = new Date(pendingLeaveDetails.end_Date);
+const year2 = dtt2.getFullYear() + '/';
+const month2 = ('0' + (dtt2.getMonth() + 1)).slice(-2) + '/';
+const day2 = ('0' + dtt2.getDate()).slice(-2);
+
     useEffect(() => {
         async function fetchData(){
         try{  
@@ -31,7 +41,7 @@ export default function ViewPendingLeave ({route, navigation}){
             end_Date : response.data[0].end_Date,
             no_of_days : response.data[0].no_of_days,
             salesmanager_comment : response.data[0].salesmanager_comment,
-            description : response.data[0].description,      
+            description : response.data[0].description,  
         });
         });
         } catch (err) {    
@@ -58,11 +68,11 @@ export default function ViewPendingLeave ({route, navigation}){
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Start Dtae : </Text>
-                            <Text style={styles.text}>{pendingLeaveDetails.start_Date}</Text>
+                            <Text style={styles.text}>{year + month + day}</Text>
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>End Date : </Text>
-                            <Text style={styles.text}>{pendingLeaveDetails.end_Date}</Text>
+                            <Text style={styles.text}>{year2 + month2 + day2}</Text>
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Duration : </Text>
