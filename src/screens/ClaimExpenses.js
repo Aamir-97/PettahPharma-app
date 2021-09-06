@@ -1,33 +1,57 @@
 import React, {useState,useEffect} from 'react'
-import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet,AsyncStorage, Alert} from 'react-native'
+import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet,AsyncStorage, Alert, PermissionsAndroid, Image} from 'react-native'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
+import DateTimePicker from '@react-native-community/datetimepicker';
+import Icon from 'react-native-vector-icons/AntDesign'
 import BackgroundLayout from '../components/BackgroundLayout'
-import { Button } from 'react-native-paper'
+import { Button, IconButton } from 'react-native-paper'
 import DocumentPicker from 'react-native-document-picker'
+import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
   
 export default function ClaimExpenses({ navigation }) {
 
-  const [rep_ID , setRepId] = useState('');
   const [expense_Type , setExpenseType] = useState('');
-  const [location , setLocation] = useState('');
+  // const [location , setLocation] = useState({log : 0.0000 , lat : 0.0000});
+  const [location , setLocation] = useState({
+    latitude : 0,
+    longitude : 0
+  });
+  const [exp_date , setExpDate] = React.useState('');
   const [amount , setAmount] = useState('');
   const [bills , setBills] = useState('');
   const [description , setDescription] = useState('');
+
+  const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+        }
+      } catch (e){
+        console.log(e);
+      }
+    }
+    fetchData();
+  },[user]);
   
   const saveDetails = () => { 
     // console.log(expense_Type,location,amount,bills,description);
-    axios.post("http://10.0.2.2:3001/claimexpenses", {
+    axios.post("http://10.0.2.2:3001/ClaimExpenses", {
       rep_ID: user.rep_ID, 
       expense_Type: expense_Type,
-      location : location, 
+      date : exp_date, 
+      location : location.latitude+location.longitude, 
       amount: amount, 
       bills: bills, 
       description: description, 
     }).then(()=>{
-        console.log(expense_ID);
-        console.log("Succesfully Inserted:!");
+        // console.log(expense_ID);
+        // console.log("Succesfully Inserted:!");
         Alert.alert(
             "Database",
             "Claim form submitted...!",
@@ -39,21 +63,7 @@ export default function ClaimExpenses({ navigation }) {
     })
 
 };
-const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
-useEffect(() => {
-  async function fetchData(){
-    try {
-      const userProfile = await AsyncStorage.getItem('user');
-      const profile  = JSON.parse(userProfile);
-      if (profile !== null){
-        setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
-      }
-    } catch (e){
-      console.log(e);
-    }
-  }
-  fetchData();
-},[]);
+
 
 const uploadBills = async () => {
   try {
@@ -66,8 +76,8 @@ const uploadBills = async () => {
       res.name,
       res.size,
       )
-      console.log(res);
-      setBills({...profileDetails, display_photo: res.uri});
+      // console.log(res);
+      setBills(res.uri);
       
   } catch (err) {
       if (DocumentPicker.isCancel(err)) {
@@ -80,13 +90,101 @@ const uploadBills = async () => {
 
 }
 
+
+    // date picker
+
+    const [date, setDate] = useState(new Date());
+    const [mode, setMode] = useState('date');
+    const [show, setShow] = useState(false);
+  
+    const onChange = (event, selectedDate) => {
+      const currentDate = selectedDate || date;
+      setShow(Platform.OS === 'ios');
+      setDate(currentDate);
+
+    };
+  
+    const showMode = (currentMode) => {
+      setShow(true);
+      setMode(currentMode);
+    };
+  
+    const showDatepicker = () => {
+      showMode('date');
+    };
+  
+    // const showTimepicker = () => {
+    //   showMode('time');
+    // };
+
+
+
+    useEffect(() => {
+        // Date convertor
+      const dtt = new Date(date);
+      const year = dtt.getFullYear() + '/';
+      const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+      const day = ('0' + dtt.getDate()).slice(-2);
+      setExpDate(year+month+day);        
+      },[date]);
+
+
+      const componentDidMount= () => {
+        // if (hasLocationPermission) {
+          Geolocation.getCurrentPosition(
+              (position) => {
+                // console.log(position);
+                // console.log(position.coords.latitude);
+                setLocation ({...location, latitude : position.coords.latitude,longitude : position.coords.longitude})
+              },
+              (error) => {
+                // See error code charts below.
+                console.log(error.code, error.message);
+              },
+              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
+          );
+        // }
+      }
+
+
+      // const requestLocationPermission = async () => {
+      //   try {
+      //     const granted = await PermissionsAndroid.request(
+      //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
+      //       {
+      //         title: "Pettah Pharma location Permission",
+      //         message:
+      //           "Pettah Pharma needs access to your location " +
+      //           "so you can set the expense's location.",
+      //         buttonNeutral: "Ask Me Later",
+      //         buttonNegative: "Cancel",
+      //         buttonPositive: "OK"
+      //       }
+      //     );
+      //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
+      //       console.log("You can use the location");
+      //       componentDidMount();
+      //     } else {
+      //       console.log("Camera permission denied");
+      //     }
+      //   } catch (err) {
+      //     console.warn(err);
+      //   }
+      // };
+      
+
+
   return (
     <SafeAreaView>
     <ScrollView> 
     <BackgroundLayout>
 
     <View style ={styles.expensesContainer}>
-      <Text style={styles.header}>Claim Apply Form</Text> 
+      <View style={styles.sameRow}>
+        <Icon name="form" size={35} color={theme.colors.primary} />
+        <Text style={styles.header}>Expense Claiming Form</Text>
+      </View>
+
       
       <Picker expense_Type={expense_Type}selectedValue = {expense_Type} style={styles.InputField} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)} >
             <Picker.Item label="Expense Type" value="" />
@@ -94,28 +192,90 @@ const uploadBills = async () => {
             <Picker.Item label="Fuel" value="Fuel" />
             <Picker.Item label="Daily Batta" value="Daily batta" />
             <Picker.Item label="Other" value="Other" />
-        </Picker>
+      </Picker>
+      <View style={{borderWidth : 0.5, borderTopColor: theme.colors.primary, marginTop : -22, marginBottom : 22}}></View>
 
-      <Text style = {styles.labelText}>Location</Text>
-      <TextInput style={styles.InputField} placeholder="Location"  onChangeText={(val) => setLocation(val)}
-                    value={location}/>
+      {/* <Text style = {styles.labelText}> </Text>
+      <TextInput style={styles.InputField} placeholder="Select the Location"  onChangeText={(val) => setLocation(val)}
+                    value={location}/> */}
 
-      <Text style = {styles.labelText}>Upload Bills</Text>
-      <View style={{alignSelf: 'center',marginLeft:20}}>
-            <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills}> Upload </Button>
+      <Text style = {styles.labelText}>Location : </Text>
+      <View style={{alignSelf: 'flex-start',margin:12}}>
+            <Button icon="camera" mode="contained" onPress={componentDidMount} value={location}> Add Location </Button>
+            {/* <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills}> Add Location </Button> */}
       </View>
 
-      <Text style = {styles.labelText}>Amount</Text>
-      <TextInput style={styles.InputField} placeholder="Amount"  onChangeText={(val) => setAmount(val)}
+      <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
+                <View style={{flex : 2}}>
+                    <Text style = {styles.labelText}>Date :</Text> 
+                </View>
+                <View style={{flex : 2}}>
+                    <TextInput
+                        editable = {false}
+                        label= 'Date'
+                        mode= 'outlined'
+                        outlineColor = {theme.colors.primary}
+                        style={styles.InputField} 
+                        value= {exp_date}
+                    />
+                </View>
+
+                <View style={{flex : 2}}>
+                    <IconButton
+                        style = {{margin : -8}}
+                        icon="calendar"
+                        color= {theme.colors.primary}
+                        size={45}
+                        onPress={() => {showDatepicker()}}
+                    />
+                    <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
+
+                </View>
+
+                {show && (
+                    <DateTimePicker
+                    testID="dateTimePicker"
+                    value={date}
+                    mode={mode}
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChange}
+                    />
+                )}
+            </View>
+
+      <Text style = {styles.labelText}>Upload Bills : </Text>
+      <View style={{flex: 3, flexDirection : 'row'}}>
+        <View style={{flex: 3}}>
+              <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills} style={{width : 120,margin : 10}}> Upload </Button>
+        </View>
+        {/* <View style={{flex : 3 }}> */}
+          <Text style={{flex : 3 }}>
+          {bills && (
+              <Image 
+                source= {{uri : bills }}
+                style = {styles.displayPhoto}
+                />
+              )
+            }
+            </Text>  
+        {/* </View> */}
+
+
+      </View>
+
+
+      <Text style = {styles.labelText}>Amount(Rs.) : </Text>
+      <TextInput style={styles.InputField} placeholder="Enter amount"  onChangeText={(val) => setAmount(val)}
                     value={amount}/> 
 
-      <Text style = {styles.labelText}>Description</Text>
+      <Text style = {styles.labelText}>Description : </Text>
       <TextInput style={styles.comments} placeholder="Description"  onChangeText={(val) => setDescription(val)}
                     value={description}/>
 
       <View style = {styles.sameRow}>
-        <Button mode= 'contained'color = '#0A6466' title = 'cancel' onPress={() => { alert('Cancelled') }}>Cancel</Button>
-        <Button mode= 'contained' color = '#0A6466' title = 'submit' onPress={() => {saveDetails()}}>submit</Button>
+        <Button icon="cancel" mode= 'contained' color = '#0A6466' style={{backgroundColor:'red'}} title = 'cancel' onPress={() => { alert('Cancelled') }}>Cancel</Button>
+        <Button icon="send" mode= 'contained' color = '#0A6466' title = 'submit' style={{marginLeft : 10}} onPress={() => {saveDetails()}}>submit</Button>
       </View>
     </View>
     </BackgroundLayout>
@@ -126,7 +286,7 @@ const uploadBills = async () => {
 
 const styles = StyleSheet.create ({
   header : {
-    fontSize : 20,
+    fontSize : 22,
     fontWeight : 'bold',
     alignSelf : 'center',
     marginBottom : 30,
@@ -136,25 +296,19 @@ const styles = StyleSheet.create ({
   expensesContainer : {
     flex : 1,
     width : '100%',
-    minHeight : 300,
     padding: 15,
-    backgroundColor : '#E5E5E5',
-    borderRadius : 5,
-    height : '100%',
     backgroundColor : theme.colors.surface,
+    borderRadius : 5,
     shadowColor : 'gray',
     elevation : 10,
-    marginTop : 20,
-
-  },
+},
   InputField : {
     alignSelf : 'stretch',
     height : 35,
-    marginBottom : 25,
+    marginBottom : 20,
     borderBottomColor : '#009387',
     borderBottomWidth : 1,
-    fontSize : 16,
-    
+    fontSize : 16,    
 },
   comments : {
     height : 100,
@@ -165,12 +319,19 @@ const styles = StyleSheet.create ({
 },
   sameRow : {
     flexDirection : 'row',
-    justifyContent: 'space-between',
-    marginBottom : 20,
-    width : '100%'
-  },
+    alignSelf : 'center'
+    // justifyContent: 'space-between',
+    // marginBottom : 20,
+    // width : '100%'
+},
   labelText : {
     fontSize : 16,
     color : 'black',
+},
+displayPhoto: {
+  height : 150 ,
+  width : 150,
+  borderRadius : 20 ,
+  marginTop : -50
 },
 })

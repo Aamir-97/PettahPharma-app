@@ -276,6 +276,7 @@ const ManageExpensesStackScreen = ({navigation}) => {
     }}
     >
       <ManageExpensesStack.Screen name="ManageExpenses" component={ManageExpenses} options= { {
+        title : 'Manage Expenses',
         headerLeft: () => (
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )
@@ -382,8 +383,8 @@ export default function Routes() {
             storeData(user);
             dispatch({ type : 'LOGIN', id: rep_ID, man_ID: manager_ID,  token: userToken  });
 
-          } else {
-            Alert.alert("Credetials miss match!","Invalid User name or password");
+          } else if (response.data.message) {
+            Alert.alert(response.data.message, "Check your email and password...!");
           }
         });
       } catch (e){
@@ -394,7 +395,7 @@ export default function Routes() {
     signOut: async() => {
       try {
         loginState.userToken = 'medicalrep';
-        // await AsyncStorage.removeItem('userToken')
+        await AsyncStorage.removeItem('userToken'); 
         await AsyncStorage.clear();
       } catch (e){
         console.log(e);
@@ -403,7 +404,7 @@ export default function Routes() {
 
     },
 
-  }),[]);
+  }),[loginState.userToken]);
 
   const storeData = async (value) => {
     try {

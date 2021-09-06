@@ -67,7 +67,9 @@ app.post('/login',(req,res)=>{
                     rep_ID: result[0].rep_ID,
                     manager_ID : result[0].manager_ID,
                 })
-              }     
+              } else {
+                  res.send({message : 'Invalid Credentials...!'})
+              } 
             }); 
 });  
 
@@ -851,8 +853,7 @@ app.get('/ViewCategory', (_req, res) =>{
 
 
 
-
-
+  
 
 
 
@@ -903,6 +904,23 @@ app.get('/ViewCategory', (_req, res) =>{
 
 
 // Start From Here Nimni..........................................................................................................................
+
+
+    db.query(sqlApplyLeave, [rep_ID,leaveType,startDate,endDate,description], (err,result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Error");
+        } else{
+            // console.log("Leave applied");
+            res.send(result);
+        }
+    })
+});
+//         console.log("Successful");
+//         res.send("Successfull");
+//     })
+//     console.log ("Error");
+// });           
 
 
 
@@ -1110,34 +1128,91 @@ app.post('/ApplyLeaves/pendingleaveCount',(req,res)=>{
     }); 
 }); 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-/* Manage Expenses */
+/* Manage Expenses */  
 
-app.post('/claimExpenses',(req,res)=>{
-    console.log(req)
+app.post('/ClaimExpenses',(req,res)=>{
+    // console.log(req)
     const rep_ID = req.body.rep_ID;
     const expense_Type = req.body.expense_Type;
+    const date = req.body.date;
     const location = req.body.location;
-    const bills = req.body.bills;
+    const bills = req.body.bills;  
     const amount = req.body.amount;
     const description = req.body.description;
     
-    const sqlClaimExpense = "INSERT INTO expenses (rep_ID,expense_Type,location,bills,amount,description) VALUES (?,?,?,?,?,?)";
+    const sqlClaimExpense = "INSERT INTO expenses (rep_ID,expense_Type,date,location,bills,amount,description) VALUES (?,?,?,?,?,?,?)";
 
-    db.query(sqlClaimExpense, [rep_ID,expense_Type,location,bills,amount,description], (err,result)=>{
+    db.query(sqlClaimExpense, [rep_ID,expense_Type,date,location,bills,amount,description], (err,result)=>{
         if(err){
             console.log(err);
-            console.log ("Error");
-        } else{
+            console.log ("Error while claim expenses");
+        } else{  
             // console.log("Expense claim submitted");
             res.send(result);
         }
-    })
+    })  
 });        
   
 
-app.get('/ViewCategory', (_req, res) =>{
+app.post('/ViewExpensesByCategory', (req, res) =>{
+    const rep_ID = req.body.rep_ID;
     //total expenses by category
-    db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses GROUP BY expense_Type', (err, result, _fields)=> {
+    db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? GROUP BY expense_Type', [rep_ID], (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);  
+    }
+  });
+});
+app.post('/Expenses/DailyBatta', (req, res) =>{
+    const rep_ID = req.body.rep_ID;
+    //total expenses by category
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Daily batta"', [rep_ID], (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);  
+    }
+  });
+});
+app.post('/Expenses/Accomodation', (req, res) =>{
+    const rep_ID = req.body.rep_ID;
+    //total expenses by category
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Accommodation"', [rep_ID], (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);  
+    }
+  });
+});
+app.post('/Expenses/Fuel', (req, res) =>{
+    const rep_ID = req.body.rep_ID;
+    //total expenses by category
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Fuel"', [rep_ID], (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);  
+    }
+  });
+});
+app.post('/Expenses/Other', (req, res) =>{
+    const rep_ID = req.body.rep_ID;
+    //total expenses by category
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Other"', [rep_ID], (err, result, _fields)=> {
+      if(!err){
+        res.send(result);
+    }else {
+    console.log(err);  
+    }
+  });
+});
+app.post('/Expenses/Total', (req, res) =>{
+    const rep_ID = req.body.rep_ID;
+    //total expenses by category
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ?', [rep_ID], (err, result, _fields)=> {
       if(!err){
         res.send(result);
     }else {
@@ -1146,10 +1221,9 @@ app.get('/ViewCategory', (_req, res) =>{
   });
 });
 
-app.post('/viewClaims',(req,res)=>{
-const rep_ID = req.body.rep_ID;
-
-    db.query('SELECT expense_ID, expense_Type, amount, description, date FROM expenses  WHERE rep_ID = ? ORDER BY expense_ID DESC',[rep_ID ],(err,result,_fields)=>{
+app.post('/ViewExpenses',(req,res)=>{
+    const rep_ID = req.body.rep_ID;
+    db.query('SELECT * FROM expenses WHERE rep_ID=? ORDER BY date DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{

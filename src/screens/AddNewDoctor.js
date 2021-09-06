@@ -82,6 +82,8 @@ export default function AddNewDoctor ({route, navigation}){
 
     };
 
+    // date picker
+
     const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
     const [show, setShow] = useState(false);
@@ -394,13 +396,24 @@ const styles = StyleSheet.create ({
         
     },
     visitSummaryForm : {
-        flex: 1,
-        alignSelf : 'stretch',
-        padding : 20,
-        paddingTop : 0,
-        borderColor : theme.colors.primary,
-        borderWidth : 2,
-        borderRadius : 5
+        // flex: 1,
+        // alignSelf : 'stretch',
+        // padding : 20,
+        // paddingTop : 0,
+        // borderColor : theme.colors.primary,
+        // borderWidth : 2,
+        // borderRadius : 5,
+        // shadowColor : 'gray',
+        // elevation : 10
+        flex : 1,
+        width : '100%',
+        height : '100%',
+        padding: 15,
+        backgroundColor : theme.colors.surface,
+        borderRadius : 5,
+        shadowColor : 'gray',
+        elevation : 10
+
     },
     InputField : {
         flex : 1,

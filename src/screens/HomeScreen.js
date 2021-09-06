@@ -204,7 +204,7 @@ export default function HomeScreen({ navigation }) {
             <FontAwesome5Icon name= "money-bill-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageExpenses')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.countText}> {leaveCount} </Text>
+            <Text style={styles.countText}> {leaveCount}/40 </Text>
             <Text style={styles.countTextLabel}> Leave Taken </Text>
             <FontAwesome5Icon name= "adjust" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageLeaves')}></FontAwesome5Icon>
           </View>
@@ -290,8 +290,8 @@ const styles = StyleSheet.create ({
     width : '100%',
     minHeight : 300,
     padding: 15,
-    // backgroundColor : theme.colors.surface,
-    backgroundColor : '#E7FFFF',
+    backgroundColor : theme.colors.surface,
+    // backgroundColor : '#E7FFFF',
     borderRadius : 5,
     shadowColor : '#D2F7F7',
     elevation : 10,

@@ -1,12 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Picker, Alert, AsyncStorage, Platform, TextInput} from 'react-native';
-import { Button } from 'react-native-paper'
+import { IconButton, Button } from 'react-native-paper'
 import NumericInput from 'react-native-numeric-input'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
 import Icon from 'react-native-vector-icons/Feather'
 import DateTimePicker from '@react-native-community/datetimepicker';
+import FontistoIcon from 'react-native-vector-icons/Fontisto';
+import { requiredField } from '../helpers/requiredField';
+
+
 
 import axios from 'axios';
 
@@ -81,7 +85,7 @@ export default function VSRForm ({navigation}){
     };
 
     const submitForm = () => {
-        console.log("Submit form funtion is working")
+        // console.log("Submit form funtion is working");
         axios.post("http://10.0.2.2:3001/vsr/submitForm", {
             visit_type: formDetails.visit_type, 
             location: formDetails.location,
@@ -95,19 +99,22 @@ export default function VSRForm ({navigation}){
             manager_ID : user.manager_ID,
         }).then((response)=>{
             // console.log(slmcNo);
-            console.log("Succesfully Inserted:!");
-            Alert.alert(
-                "Database",
-                "New VSR Form Successfully inserted...!",
-                [
-                  {
-                    text: "Cancel",
-                    onPress: () => console.log("Cancel Pressed"),
-                    style: "cancel"
-                  },
-                  { text: "OK", onPress: () => {navigation.navigate('VisitSummaryReport')} }
-                ]
-              );
+            // console.log("Succesfully Inserted:!");
+            if (response){
+                Alert.alert(
+                    "Database",
+                    "New VSR Form Successfully inserted...!",
+                    [
+                      {
+                        text: "Cancel",
+                        onPress: () => console.log("Cancel Pressed"),
+                        style: "cancel"
+                      },
+                      { text: "OK", onPress: () => {navigation.navigate('VisitSummaryReport')} }
+                    ]
+                  );
+            }
+
         })
 
     };
@@ -155,6 +162,32 @@ export default function VSRForm ({navigation}){
         
       },[date]); 
 
+
+    const checkRequired = () => {
+        // console.log("required function is working");
+        const visit_type = requiredField(formDetails.visit_type)
+        const location = requiredField(formDetails.location)
+        const date = requiredField(formDetails.date)
+        if (visit_type || location || date ) {
+            Alert.alert(
+                "Attention.....!",
+                "Please fill the required field...!",
+                [
+                  {
+                    text: "Cancel",
+                    onPress: () => console.log("Cancel Pressed"),
+                    style: "cancel"
+                  },
+                  { text: "OK", onPress: () => console.log("Ok pressed") }
+                ]
+              )
+              return 
+        }
+        else {
+            submitForm ();
+        }
+      }
+
     return (
         <SafeAreaProvider>
         <ScrollView>
@@ -167,21 +200,41 @@ export default function VSRForm ({navigation}){
                     </View>
                 </View>
 
+                <View style ={styles.sameRow}>
+                    <FontistoIcon
+                        name="star" 
+                        color={theme.colors.error}
+                        size={14}
+                    />
+                    <Text style={styles.requiredText}> - Field is required</Text>
+                </View>
+
+
 
                 {/* VSRForm */}
 
                 <View style={styles.visitSummaryForm}>
-                    <View style={styles.InputField}>
-                        <Picker 
-                                selectedValue={formDetails.visit_type}
-                                onValueChange={(itemValue, itemIndex) => setFormDetails({ ...formDetails, visit_type: itemValue })}
-                                >
-                            <Picker.Item label="Visit type" value="" />
-                            <Picker.Item label="Ragular" value="Ragular" />
-                            <Picker.Item label="Promotion Visit" value="Promotion Visit" />
-                            <Picker.Item label="Appoinment" value="Appoinment" />
-                        </Picker>
-                    </View>
+                    {/* <View style={{flexDirection : 'row', width : '100%'}}> */}
+                        <View style={styles.InputField}>
+                            <Picker 
+                                    selectedValue={formDetails.visit_type}
+                                    onValueChange={(itemValue, itemIndex) => setFormDetails({ ...formDetails, visit_type: itemValue })}
+                                    >
+                                <Picker.Item label="Visit type" value="" />
+                                <Picker.Item label="Ragular Visit" value="Ragular" />
+                                <Picker.Item label="Promotion Visit" value="Promotion" />
+                                <Picker.Item label="Appoinment Visit" value="Appoinment" />
+                            </Picker>
+
+                            <FontistoIcon
+                                name="star" 
+                                color={theme.colors.error}
+                                size={8}
+                                style = {{marginTop : 10, marginLeft: -20, marginRight : 5}}                                    
+                            />
+                        </View>
+                    {/* </View> */}
+
 
                     <TextInput 
                         style={styles.InputField} 
@@ -229,7 +282,7 @@ export default function VSRForm ({navigation}){
                                 />
                             </View>
 
-                            <View style={{flex : 2}}>
+                            {/* <View style={{flex : 2}}>
                                 <Button 
                                     uppercase = ''
                                     icon="calendar" 
@@ -237,6 +290,25 @@ export default function VSRForm ({navigation}){
                                     onPress={() => {showDatepicker()}}>
                                     Calender  
                                 </Button>
+                            </View> */}
+
+                            <View style={{flex : 2}}>
+                                <IconButton
+                                    style = {{margin : -8}}
+                                    icon="calendar"
+                                    color= {theme.colors.primary}
+                                    size={45}
+                                    onPress={() => {showDatepicker()}}
+                                />
+                                <View style={{flex : 2, flexDirection : 'row'}}>
+                                <FontistoIcon
+                                    name="star" 
+                                    color={theme.colors.error}
+                                    size={8}
+                                    style = {{marginTop : 2}}                                            
+                                />
+                                <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
+                                </View>
 
                             </View>
 
@@ -248,7 +320,7 @@ export default function VSRForm ({navigation}){
                                 is24Hour={true}
                                 display="default"
                                 onChange={onChange}
-                                minimumDate = {new Date()}
+                                // minimumDate = {new Date()}
                                 />
                             )}
                         </View>
@@ -297,7 +369,7 @@ export default function VSRForm ({navigation}){
                     />
 
                     <View style={{alignSelf: 'flex-end'}}>
-                        <Button icon="content-save" mode="contained" onPress={() => {submitForm()}}>
+                        <Button icon="content-save" size={35} mode="contained" onPress={() => {checkRequired()}}>
                             Submit 
                         </Button>
                     </View>
@@ -323,12 +395,20 @@ const styles = StyleSheet.create ({
         
     },
     visitSummaryForm : {
-        alignSelf : 'stretch',
+        // alignSelf : 'stretch',
         // margin : 20,
-        padding : 20,
-        borderColor : theme.colors.primary,
-        borderWidth : 2,
-        borderRadius : 5
+        // padding : 20,
+        // borderColor : theme.colors.primary,
+        // borderWidth : 2,
+        // borderRadius : 5
+        flex : 1,
+        width : '100%',
+        height : '100%',
+        padding: 15,
+        backgroundColor : theme.colors.surface,
+        borderRadius : 5,
+        shadowColor : 'gray',
+        elevation : 10
     },
     InputField : {
         paddingLeft : 5,
@@ -342,8 +422,6 @@ const styles = StyleSheet.create ({
     },
     sameRow : {
         flexDirection : 'row',
-        // alignSelf : 'center',
-        // justifyContent : 'space-between'
     },
     CommentField : {
         paddingLeft : 5,
