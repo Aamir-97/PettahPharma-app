@@ -17,7 +17,17 @@ export default function ViewApprovedLeave ({route, navigation}){
         salesmanager_comment : '',
         start_Date : '',
         end_Date : ''
-    })
+    });
+
+const dtt = new Date(approvedLeaveDetails.start_Date);
+const year = dtt.getFullYear() + '/';
+const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+const day = ('0' + dtt.getDate()).slice(-2);
+
+const dtt2 = new Date(approvedLeaveDetails.end_Date);
+const year2 = dtt2.getFullYear() + '/';
+const month2 = ('0' + (dtt2.getMonth() + 1)).slice(-2) + '/';
+const day2 = ('0' + dtt2.getDate()).slice(-2);
 
     useEffect(() => {
         async function fetchData(){
@@ -59,11 +69,11 @@ export default function ViewApprovedLeave ({route, navigation}){
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Start Date : </Text>
-                            <Text style={styles.text}>{approvedLeaveDetails.start_Date}</Text>
+                            <Text style={styles.text}>{year + month + day}</Text>
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>End Date : </Text>
-                            <Text style={styles.text}>{approvedLeaveDetails.end_Date}</Text>
+                            <Text style={styles.text}>{year2 + month2 + day2}</Text>
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Duration : </Text>
