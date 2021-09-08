@@ -68,7 +68,7 @@ export default function ManageLeaves({ navigation }) {
   } catch (err){
       console.log("Error while displaying pending leaves");
   }
-},[pendingLeaveList]);
+},[user]);
   
   useEffect(() => {
     async function fetchData(){
