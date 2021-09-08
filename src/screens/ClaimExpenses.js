@@ -1,27 +1,28 @@
 import React, {useState,useEffect} from 'react'
-import { Text, View, Picker, SafeAreaView, ScrollView,TextInput, StyleSheet,AsyncStorage, Alert, PermissionsAndroid, Image} from 'react-native'
+import { Text, View, Picker, SafeAreaView, ScrollView, StyleSheet,AsyncStorage, Alert, PermissionsAndroid, Image} from 'react-native'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import Icon from 'react-native-vector-icons/AntDesign'
 import BackgroundLayout from '../components/BackgroundLayout'
-import { Button, IconButton } from 'react-native-paper'
+import { Button, IconButton,TextInput } from 'react-native-paper'
 import DocumentPicker from 'react-native-document-picker'
 import Geolocation from 'react-native-geolocation-service';
 import axios from 'axios';
   
 export default function ClaimExpenses({ navigation }) {
 
-  const [expense_Type , setExpenseType] = useState('');
+  const [expense_Type , setExpenseType] = React.useState('');
+  const [location , setLocation] = React.useState('');
   // const [location , setLocation] = useState({log : 0.0000 , lat : 0.0000});
-  const [location , setLocation] = useState({
-    latitude : 0,
-    longitude : 0
-  });
+  // const [location , setLocation] = useState({
+  //   latitude : 0,
+  //   longitude : 0
+  // });
   const [exp_date , setExpDate] = React.useState('');
-  const [amount , setAmount] = useState('');
-  const [bills , setBills] = useState('');
-  const [description , setDescription] = useState('');
+  const [amount , setAmount] = React.useState('');
+  const [bills , setBills] = React.useState('');
+  const [description , setDescription] = React.useState('');
 
   const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
   useEffect(() => {
@@ -101,7 +102,7 @@ const uploadBills = async () => {
       const currentDate = selectedDate || date;
       setShow(Platform.OS === 'ios');
       setDate(currentDate);
-
+      // setShow(false);
     };
   
     const showMode = (currentMode) => {
@@ -110,6 +111,8 @@ const uploadBills = async () => {
     };
   
     const showDatepicker = () => {
+      // setShow(true);
+      // setMode('date');
       showMode('date');
     };
   
@@ -200,14 +203,21 @@ const uploadBills = async () => {
                     value={location}/> */}
 
       <Text style = {styles.labelText}>Location : </Text>
-      <View style={{alignSelf: 'flex-start',margin:12}}>
-            <Button icon="camera" mode="contained" onPress={componentDidMount} value={location}> Add Location </Button>
+      <Text style={styles.subLabel}>(Set Current Location By click the button)</Text>
+      <View style={{flexDirection: 'row', alignSelf: 'flex-start',margin:12}}>
+            <Button icon="location-enter" mode="contained" onPress={componentDidMount} value={location}> SET </Button>
+            <Text>
+            {location && (
+                <Text style = {{fontSize : 16, color: theme.colors.primary, fontWeight : 'bold'}}> Location is uploaded.. </Text>
+            
+              )}
+            </Text>
             {/* <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills}> Add Location </Button> */}
       </View>
 
       <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
                 <View style={{flex : 2}}>
-                    <Text style = {styles.labelText}>Date :</Text> 
+                    <Text style = {styles.labelText}>Date : </Text> 
                 </View>
                 <View style={{flex : 2}}>
                     <TextInput
@@ -215,6 +225,7 @@ const uploadBills = async () => {
                         label= 'Date'
                         mode= 'outlined'
                         outlineColor = {theme.colors.primary}
+                        width = {150}
                         style={styles.InputField} 
                         value= {exp_date}
                     />
@@ -226,9 +237,9 @@ const uploadBills = async () => {
                         icon="calendar"
                         color= {theme.colors.primary}
                         size={45}
-                        onPress={() => {showDatepicker()}}
+                        // onPress={() => {showDatepicker()}}
                     />
-                    <Text style = {{color : 'red', fontSize : 10}} > Click Calendar</Text>
+                    <Text style = {styles.subLabel} > Click Calendar</Text>
 
                 </View>
 
@@ -239,35 +250,41 @@ const uploadBills = async () => {
                     mode={mode}
                     is24Hour={true}
                     display="default"
+                    // onChange = {(event, selectedDate) => console.log(selectedDate)}
                     onChange={onChange}
+                    // onChange={(event, selectedDate) => {
+                    //   setDate(selectedDate);
+                    // }}
                     />
                 )}
             </View>
 
-      <Text style = {styles.labelText}>Upload Bills : </Text>
-      <View style={{flex: 3, flexDirection : 'row'}}>
-        <View style={{flex: 3}}>
-              <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills} style={{width : 120,margin : 10}}> Upload </Button>
-        </View>
-        {/* <View style={{flex : 3 }}> */}
-          <Text style={{flex : 3 }}>
+
+      <View style={{flexDirection : 'row', alignSelf : 'flex-start'}}>
+        <Text style = {styles.labelText}>Upload Bills : </Text>
+        <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills} style={{width : 120,margin : 10}}> Upload </Button>
+      </View>
+
+ 
           {bills && (
               <Image 
                 source= {{uri : bills }}
-                style = {styles.displayPhoto}
+                style = {styles.billPhoto}
                 />
               )
             }
-            </Text>  
-        {/* </View> */}
 
 
-      </View>
 
 
       <Text style = {styles.labelText}>Amount(Rs.) : </Text>
-      <TextInput style={styles.InputField} placeholder="Enter amount"  onChangeText={(val) => setAmount(val)}
-                    value={amount}/> 
+      <TextInput 
+        style={styles.InputField} 
+        placeholder="Enter amount"  
+        onChangeText={(val) => setAmount(val)}
+        value={amount}
+        keyboardType = 'number-pad'
+      /> 
 
       <Text style = {styles.labelText}>Description : </Text>
       <TextInput style={styles.comments} placeholder="Description"  onChangeText={(val) => setDescription(val)}
@@ -308,14 +325,17 @@ const styles = StyleSheet.create ({
     marginBottom : 20,
     borderBottomColor : '#009387',
     borderBottomWidth : 1,
-    fontSize : 16,    
+    fontSize : 16,  
+    backgroundColor : theme.colors.surface  
 },
   comments : {
     height : 100,
     borderColor : '#0A6466',
     borderWidth : 1,
     marginBottom : 30,
-    padding : 20
+    padding : 20,
+    backgroundColor : theme.colors.surface  
+
 },
   sameRow : {
     flexDirection : 'row',
@@ -325,13 +345,18 @@ const styles = StyleSheet.create ({
     // width : '100%'
 },
   labelText : {
-    fontSize : 16,
-    color : 'black',
+    fontSize : 18,
+    fontWeight : 'bold',
+    color : theme.colors.primary,
 },
-displayPhoto: {
+billPhoto: {
   height : 150 ,
   width : 150,
-  borderRadius : 20 ,
-  marginTop : -50
+  borderRadius : 10 ,
+  margin : 10,
 },
+subLabel : {
+  color : 'red',
+  fontWeight : 'bold',
+  fontSize : 12}
 })

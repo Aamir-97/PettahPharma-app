@@ -40,11 +40,11 @@ export default function ManageExpenses({ navigation }) {
 
   const [expensesList,setExpensesList]=useState([]);
 
-  const [dailybatta, setDailyBatta] = useState(0);
-  const [fuel, setFuel] = useState(0);
-  const [accomodations, setAccomodation] = useState(0);
-  const [other, setOther] = useState(0);
-  const [total, setTotal] = useState(0);
+  const [dailybatta, setDailyBatta] = useState('');
+  const [fuel, setFuel] = useState('');
+  const [accomodations, setAccomodation] = useState('');
+  const [other, setOther] = useState('');
+  const [total, setTotal] = useState('');
 
 
   useEffect(()=>{
@@ -224,7 +224,7 @@ export default function ManageExpenses({ navigation }) {
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
                                   <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
-                                  <DataTable.Cell numeric><Text style={{color:theme.colors.secondary, fontWeight: 'bold'}}>Pending</Text></DataTable.Cell>
+                                  <DataTable.Cell numeric><Text style={{color:'blue', fontWeight: 'bold'}}>Pending</Text></DataTable.Cell>
                                   </DataTable.Row>
                                 )                                
                               } else if (record.status===1){

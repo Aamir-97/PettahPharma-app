@@ -73,81 +73,6 @@ app.post('/login',(req,res)=>{
             }); 
 });  
 
-
-app.post("/newTask",(req, res) => {
-    console.log(req);
-
-    const title = req.body.title;
-    const location = req.body.location;
-    const date = req.body.date ;
-    const session =req.body.session;
-    const description = req.body.description;
-    
-
-    const sqlNewTask = "INSERT INTO task(title, location, date, session, description) VALUES (?,?,?,?,?)";
-
-    db.query(sqlNewTask, [title,location,date,session,description], (err,_result)=>{
-        if(err){
-            console.log(err);
-            console.log ("Somthing Error");
-        } else{
-            console.log("Task is Inserted");
-            res.send("Task is inserted");
-        }
-
-    })
-
-});
-
-app.post("/doctor/addNewDoctor", (req, res) => {
-    console.log(req);
-    const displayPhoto = req.body.displayPhoto;
-    const slmcNo = req.body.slmcNo;
-    const doctorName = req.body.doctorName;
-    const clinic = req.body.clinic;
-    const contactNumber = req.body.contactNumber;
-    const email = req.body.email;
-    const clinicArea = req.body.clinicArea;
-    const dob = req.body.dob;
-    const citation = req.body.citation;
-    const qualification = req.body.qualification;
-    const note = req.body.note;
-
-    const sqlInsertDoctor =  "INSERT INTO doctor_details( display_photo, slmc_no, name, clinic, contact_no, email, area, dob, citation, qualification, note) VALUES (?,?,?,?,?,?,?,?,?,?,?)" ;
-
-    db.query(sqlInsertDoctor,[displayPhoto,slmcNo,doctorName,clinic,contactNumber,email,clinicArea,dob,citation,qualification,note], (err,_result)=> {
-        if(err){
-            console.log(err);
-            console.log ("Somthing Error");
-        } else{
-            console.log("New Doctor is Inserted");
-            res.send("New Doctor is inserted");
-        }
-    })
-});
-
-app.get('/viewproduct',(_req,res)=>{
-    db.query('SELECT * FROM product ',(err,result,_fields)=>{
-        if(!err){
-            res.send(result);
-        }else{
-        console.log(err);
-        }
-    });
-});
-
-
-app.get('/viewDoctorDetails',(_req,res)=>{
-    db.query('SELECT * FROM doctor_details ',(err,result,_fields)=>{
-        if(!err){
-            res.send(result);
-        }else{
-        console.log(err);
-        }
-    });
-});
-
-
 // Home Page Back-end
 app.post('/homePage/reportCount',(req,res)=>{
     // console.log(req.body.rep_ID);
@@ -312,6 +237,31 @@ app.post('/homePage/viewTask',(req,res)=>{
 }); 
 
 // Task Handling Back-end
+
+app.post("/newTask",(req, res) => {
+    console.log(req);
+
+    const title = req.body.title;
+    const location = req.body.location;
+    const date = req.body.date ;
+    const session =req.body.session;
+    const description = req.body.description;
+    
+
+    const sqlNewTask = "INSERT INTO task(title, location, date, session, description) VALUES (?,?,?,?,?)";
+
+    db.query(sqlNewTask, [title,location,date,session,description], (err,_result)=>{
+        if(err){
+            console.log(err);
+            console.log ("Somthing Error");
+        } else{
+            console.log("Task is Inserted");
+            res.send("Task is inserted");
+        }
+
+    })
+
+});
 
 app.post("/task/submitScheduleForm",(req, res) => {
     // console.log(req);
@@ -704,16 +654,16 @@ app.post('/deleteDoctor',(req,res)=>{
     }); 
 }); 
 
-app.get('/ViewCategory', (_req, res) =>{
-    //total expenses by category
-    db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses GROUP BY expense_Type', (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);
-    }
-  });
-});
+// app.get('/ViewCategory', (_req, res) =>{
+//     //total expenses by category
+//     db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses GROUP BY expense_Type', (err, result, _fields)=> {
+//       if(!err){
+//         res.send(result);
+//     }else {
+//     console.log(err);
+//     }
+//   });
+// });
 
 
 
@@ -904,25 +854,7 @@ app.get('/ViewCategory', (_req, res) =>{
 
 
 // Start From Here Nimni..........................................................................................................................
-
-
-    db.query(sqlApplyLeave, [rep_ID,leaveType,startDate,endDate,description], (err,result)=>{
-        if(err){
-            console.log(err);
-            console.log ("Error");
-        } else{
-            // console.log("Leave applied");
-            res.send(result);
-        }
-    })
-});
-//         console.log("Successful");
-//         res.send("Successfull");
-//     })
-//     console.log ("Error");
-// });           
-
-
+      
 
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
