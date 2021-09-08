@@ -1,7 +1,10 @@
 import React, { useState, useEffect} from 'react'
-import { SafeAreaView, ScrollView, View, Text, StyleSheet } from 'react-native'
+import { SafeAreaView, ScrollView, View, Text, StyleSheet, Alert } from 'react-native'
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme'
+import { Button } from 'react-native-paper'
+import Icon from 'react-native-vector-icons/MaterialIcons'
+
 
 import axios from 'axios';
 
@@ -49,7 +52,48 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
           console.log("Error while get Pending Leave details for View");  
         } 
       } fetchData();
-  },[]);
+  },[pendingLeaveDetails]);
+
+  const deleteLeave = () => {
+    try{  
+        axios.post("http://10.0.2.2:3001/ManageLeaves/DeleteLeave",{
+          leave_ID : leave_ID,  
+      }).then((response)=>{
+            Alert.alert(
+            "Database Leaves Table",
+            "Pending leave Details successfully removed...!",
+            [
+                {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+                },
+                { text: "OK", onPress: () => {navigation.navigate('ManageLeaves')}}
+            ]
+            );     
+         });
+      } catch (err) {    
+        console.log(err);
+        console.log("Error while getting pending leave details for View");  
+      }
+
+  }
+
+  const deleteConfirmation = () => { 
+    Alert.alert(
+        "Here You....!",
+        "Are you sure want to delete the application?",
+        [
+            {
+            text: "NO",
+            onPress: () => console.log("No Pressed"),
+            style: "cancel"
+            },
+            { text: "YES", onPress: () => deleteLeave()}
+        ]
+        );
+
+  }
 
   
     return(
@@ -58,7 +102,8 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                 <BackgroundLayout>
 
                     <View style={{alignSelf :'center'}}>
-                        <View style={styles.sameRow}><Text style={styles.header}>Pending Leave</Text> 
+                        <View style={styles.sameRow}>
+                            <Text style={styles.header}>Pending Leave</Text> 
                         </View>
                     </View>
                     <View style ={styles.pendingContainer}> 
@@ -85,6 +130,14 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                             <Text style={styles.textLable}>Description : </Text>
                             <Text style={styles.CommentField}>{pendingLeaveDetails.description}</Text>
 
+                            <View style={{alignSelf : 'center', marginTop : 10}}>
+                            <View style = {styles.sameRow}>
+                            <Button style= {styles.cancelButton} mode='contained' icon={({color, size}) => ( <Icon name="delete-forever"  color={theme.colors.surface} size={25} /> )} onPress={() => deleteConfirmation()}  > Delete 
+                            </Button>
+                            {/* <Button disabled style= {styles.submitButton} mode='contained' icon={({color, size}) => ( <Icon name="rotate-right" color={theme.colors.surface} size={25} /> )} onPress={() => submitForm()} > Update </Button> */}
+
+                            </View>
+                        </View>
                     </View>
                 </BackgroundLayout>
 
@@ -141,5 +194,9 @@ const styles = StyleSheet.create ({
         padding : 20,
         fontSize : 17,
 
+    },
+    cancelButton : {
+        backgroundColor : 'red',
+        marginRight : 5,
     },
   })

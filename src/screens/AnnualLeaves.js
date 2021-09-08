@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage, Button} from 'react-native'
+import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage, TouchableOpacity,Button} from 'react-native'
 import Styles from '../core/Styles'
 import TopNav from '../components/TopNav'
 import { theme } from '../core/theme'
@@ -68,7 +68,7 @@ export default function AnnualLeaves({ navigation }) {
   } catch (err) {
       console.log("Error while displaying leaves");
   }
-},[leaveList]);
+},[user]);
 
   useEffect(() => {
     setPage(0);
@@ -89,9 +89,9 @@ export default function AnnualLeaves({ navigation }) {
     fetchData();
   },[user]);
   
-  const ViewApprovedLeave = (leave_ID) => {
-    navigation.navigate('ViewApprovedLeave', {leave_ID});
-  //   console.log("leave passed to the ViewApprovedLeave function");
+  const ViewLeave = (leave_ID) => {
+    navigation.navigate('ViewLeave', {leave_ID});
+  //   console.log("leave passed to the ViewLeave function");
 }
 
 
@@ -123,7 +123,7 @@ export default function AnnualLeaves({ navigation }) {
                     <DataTable.Title align = "center">Type of Leaves</DataTable.Title>
                     <DataTable.Title align = "center">Duration</DataTable.Title>
                     <DataTable.Title align = "center">Leave Status</DataTable.Title>
-                    <DataTable.Title align = "center">Description</DataTable.Title>
+                    {/* <DataTable.Title align = "center">Description</DataTable.Title> */}
                 </DataTable.Header>
 
                 {leaveList.filter(val=>{if(searchQuery===""){
@@ -134,12 +134,14 @@ export default function AnnualLeaves({ navigation }) {
                              } 
                           }).map((record)=>{
                             return(
-                    <DataTable.Row key={record.leave_ID} onPress = {()=> ViewApprovedLeave(record.leave_ID)}>
+                              <TouchableOpacity key={record.leave_ID} onPress = {()=> ViewLeave(record.leave_ID)}>
+                    <DataTable.Row >
                     <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
                     <DataTable.Cell align="center">{record.no_of_days} days</DataTable.Cell>
                     <DataTable.Cell align="center">{record.status}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.description}</DataTable.Cell>
+                    {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
                     </DataTable.Row>
+                    </TouchableOpacity>
                     )})
                 }
 

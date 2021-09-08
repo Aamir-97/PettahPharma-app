@@ -905,26 +905,6 @@ app.get('/ViewCategory', (_req, res) =>{
 
 // Start From Here Nimni..........................................................................................................................
 
-
-    db.query(sqlApplyLeave, [rep_ID,leaveType,startDate,endDate,description], (err,result)=>{
-        if(err){
-            console.log(err);
-            console.log ("Error");
-        } else{
-            // console.log("Leave applied");
-            res.send(result);
-        }
-    })
-});
-//         console.log("Successful");
-//         res.send("Successfull");
-//     })
-//     console.log ("Error");
-// });           
-
-
-
-
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Manage Leaves Page - Pending Leaves
 app.get('/viewPendingLeaves',(_req,res)=>{
@@ -951,7 +931,7 @@ app.post('/ManageLeaves/ViewPendingLeave',(req,res)=>{
               } if(result){
                 res.send(result);
               } 
-    });
+    });  
 });
 
 
@@ -988,6 +968,21 @@ app.post('/ManageLeaves/pendingleaveCount',(req,res)=>{
               } 
     }); 
 }); 
+
+app.post('/ManageLeaves/DeleteLeave',(req,res)=>{
+    const leave_ID = req.body.leave_ID;
+
+    const sql = "DELETE FROM `leaves` WHERE leave_ID=?";
+     
+    db.query(sql,[leave_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Deleting Pending leave");
+              } if(result){
+                res.send(result);
+              }     
+    }); 
+}); 
 //----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 /* Annual Leaves Page - View approved and rejected leaves*/
 app.post('/viewLeaves',(req,res)=>{
@@ -995,7 +990,7 @@ app.post('/viewLeaves',(req,res)=>{
     // console.log(req.body.rep_ID);
     //approved leaves
     //if approved then status=1, if rejected then status=2
-    db.query("SELECT leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment, CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status FROM leaves WHERE status !=0 AND rep_ID = ?",[rep_ID],(err,result,_fields)=>{
+    db.query("SELECT leave_ID,leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status FROM leaves WHERE status !=0 AND rep_ID = ?",[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{
@@ -1004,14 +999,14 @@ app.post('/viewLeaves',(req,res)=>{
     });
 });  
 
-app.post('/AnnualLeaves/ViewApprovedLeave',(req,res)=>{
+app.post('/AnnualLeaves/ViewLeave',(req,res)=>{
     const leave_ID = req.body.leave_ID;   
-    const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status = 1";
+    const sql = "SELECT leave_Type, start_Date, end_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status, description, salesmanager_comment FROM leaves WHERE leave_ID = ? AND status != 0";
     
     db.query(sql,[leave_ID],(err,result)=>{
             if(err){
                 res.send({err:err})
-                console.log("Error while getting approved leave details");
+                console.log("Error while getting leave details");
               } if(result){
                 res.send(result);
               } 

@@ -38,7 +38,7 @@ import ViewTask from './src/screens/ViewTask'
 import ViewDoctor from './src/screens/ViewDoctor'
 import ViewProduct from './src/screens/ViewProduct'
 import ViewExpense from './src/screens/ViewExpense'
-import ViewApprovedLeave from './src/screens/ViewApprovedLeave'
+import ViewLeave from './src/screens/ViewLeave'
 import ViewPendingLeave from './src/screens/ViewPendingLeave'
 import ViewVSR from './src/screens/ViewVSR';
 
@@ -222,8 +222,8 @@ const ManageLeavesStackScreen = ({navigation}) => {
         title: "Annual Leaves"
       }} />
 
-      <ManageLeavesStack.Screen  name="ViewApprovedLeave" component={ViewApprovedLeave} options={{
-        title: "Approved Leave Details"
+      <ManageLeavesStack.Screen  name="ViewLeave" component={ViewLeave} options={{
+        title: "Leave Details"
       }} />
       <ManageLeavesStack.Screen  name="ViewPendingLeave" component={ViewPendingLeave} options={{
         title: "Pending Leave Details"
