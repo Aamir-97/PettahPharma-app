@@ -25,6 +25,7 @@ export default function ClaimExpenses({ navigation }) {
   const [description , setDescription] = React.useState('');
 
   const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+
   useEffect(() => {
     async function fetchData(){
       try {
@@ -46,7 +47,8 @@ export default function ClaimExpenses({ navigation }) {
       rep_ID: user.rep_ID, 
       expense_Type: expense_Type,
       date : exp_date, 
-      location : location.latitude+location.longitude, 
+      location : location, 
+      // location : location.latitude+location.longitude, 
       amount: amount, 
       bills: bills, 
       description: description, 
@@ -63,33 +65,31 @@ export default function ClaimExpenses({ navigation }) {
           );
     })
 
-};
+  };
 
-
-const uploadBills = async () => {
-  try {
-      const res = await DocumentPicker.pickSingle({
-      type: [DocumentPicker.types.images],
-      })
-      console.log(
-      res.uri, 
-      res.type, // mime type
-      res.name,
-      res.size,
-      )
-      // console.log(res);
-      setBills(res.uri);
-      
-  } catch (err) {
-      if (DocumentPicker.isCancel(err)) {
-      // User cancelled the picker, exit any dialogs or menus and move on
-      } else {
-      throw err
-      }
+  const uploadBills = async () => {
+    try {
+        const res = await DocumentPicker.pickSingle({
+        type: [DocumentPicker.types.images],
+        })
+        console.log(
+        res.uri, 
+        res.type, // mime type
+        res.name,
+        res.size,
+        )
+        // console.log(res);
+        setBills(res.uri);
+        
+    } catch (err) {
+        if (DocumentPicker.isCancel(err)) {
+        // User cancelled the picker, exit any dialogs or menus and move on
+        } else {
+        throw err
+        }
+    }
+    return <Text>Success</Text>
   }
-  return <Text>Success</Text>
-
-}
 
 
     // date picker
@@ -189,13 +189,13 @@ const uploadBills = async () => {
       </View>
 
       
-      <Picker expense_Type={expense_Type}selectedValue = {expense_Type} style={styles.InputField} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)} >
+        <Picker expense_Type={expense_Type}selectedValue = {expense_Type} style={styles.InputField} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)} >
             <Picker.Item label="Expense Type" value="" />
             <Picker.Item label="Accomodation" value="Accomodation" />
             <Picker.Item label="Fuel" value="Fuel" />
             <Picker.Item label="Daily Batta" value="Daily batta" />
             <Picker.Item label="Other" value="Other" />
-      </Picker>
+        </Picker>
       <View style={{borderWidth : 0.5, borderTopColor: theme.colors.primary, marginTop : -22, marginBottom : 22}}></View>
 
       {/* <Text style = {styles.labelText}> </Text>
@@ -237,7 +237,7 @@ const uploadBills = async () => {
                         icon="calendar"
                         color= {theme.colors.primary}
                         size={45}
-                        // onPress={() => {showDatepicker()}}
+                        onPress={() => {showDatepicker()}}
                     />
                     <Text style = {styles.subLabel} > Click Calendar</Text>
 
@@ -250,7 +250,6 @@ const uploadBills = async () => {
                     mode={mode}
                     is24Hour={true}
                     display="default"
-                    // onChange = {(event, selectedDate) => console.log(selectedDate)}
                     onChange={onChange}
                     // onChange={(event, selectedDate) => {
                     //   setDate(selectedDate);
@@ -265,17 +264,15 @@ const uploadBills = async () => {
         <Button icon="camera" mode="contained" onPress={(val) => uploadBills(val)} value={bills} style={{width : 120,margin : 10}}> Upload </Button>
       </View>
 
- 
-          {bills && (
+        {/* <Text> */}
+            {bills && (
               <Image 
                 source= {{uri : bills }}
                 style = {styles.billPhoto}
                 />
               )
             }
-
-
-
+        {/* </Text> */}
 
       <Text style = {styles.labelText}>Amount(Rs.) : </Text>
       <TextInput 
@@ -309,7 +306,7 @@ const styles = StyleSheet.create ({
     marginBottom : 30,
     color : theme.colors.primary
     
-},
+  },
   expensesContainer : {
     flex : 1,
     width : '100%',
@@ -318,7 +315,7 @@ const styles = StyleSheet.create ({
     borderRadius : 5,
     shadowColor : 'gray',
     elevation : 10,
-},
+  },
   InputField : {
     alignSelf : 'stretch',
     height : 35,
@@ -327,7 +324,7 @@ const styles = StyleSheet.create ({
     borderBottomWidth : 1,
     fontSize : 16,  
     backgroundColor : theme.colors.surface  
-},
+  },
   comments : {
     height : 100,
     borderColor : '#0A6466',
@@ -336,27 +333,28 @@ const styles = StyleSheet.create ({
     padding : 20,
     backgroundColor : theme.colors.surface  
 
-},
+  },
   sameRow : {
     flexDirection : 'row',
     alignSelf : 'center'
     // justifyContent: 'space-between',
     // marginBottom : 20,
     // width : '100%'
-},
+  },
   labelText : {
     fontSize : 18,
     fontWeight : 'bold',
     color : theme.colors.primary,
-},
-billPhoto: {
-  height : 150 ,
-  width : 150,
-  borderRadius : 10 ,
-  margin : 10,
-},
-subLabel : {
-  color : 'red',
-  fontWeight : 'bold',
-  fontSize : 12}
+  },
+  billPhoto: {
+    height : 150 ,
+    width : 150,
+    borderRadius : 10 ,
+    margin : 10,
+  },
+  subLabel : {
+    color : 'red',
+    fontWeight : 'bold',
+    fontSize : 12
+  },
 })

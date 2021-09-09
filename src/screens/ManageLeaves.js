@@ -15,9 +15,9 @@ const optionsPerPage = [2, 3, 4];
 
 export default function ManageLeaves({ navigation }) {
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = query => { setSearchQuery(query) }
-  console.log(searchQuery);
+  // const [searchQuery, setSearchQuery] = useState('');
+  // const onChangeSearch = query => { setSearchQuery(query) }
+  // console.log(searchQuery);
 
 //   const [searchTerm,setSearchTerm]=useState("");
 
@@ -30,6 +30,22 @@ export default function ManageLeaves({ navigation }) {
 
   const [pendingleaveCount, setPendingLeaveCount] = useState('');
   const [totalleaveCount, setTotalLeaveCount] = useState('');
+
+    
+  useEffect(() => {
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+        }
+      } catch (e){
+        console.log(e);
+      }
+    }
+    fetchData();
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -60,7 +76,7 @@ export default function ManageLeaves({ navigation }) {
   //view pending leaves
   useEffect(()=>{
     try{
-    axios.get("http://10.0.2.2:3001/viewPendingLeaves",{
+    axios.post("http://10.0.2.2:3001/viewPendingLeaves",{
       rep_ID:user.rep_ID,
     }).then((response)=>{
       setPendingLeaveList(response.data);
@@ -68,22 +84,8 @@ export default function ManageLeaves({ navigation }) {
   } catch (err){
       console.log("Error while displaying pending leaves");
   }
-},[user]);
-  
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[user]);
+},[]);
+
 
   useEffect(() => {
     setPage(0);

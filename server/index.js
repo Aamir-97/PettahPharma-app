@@ -857,11 +857,12 @@ app.post('/deleteDoctor',(req,res)=>{
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Manage Leaves Page - Pending Leaves
-app.get('/viewPendingLeaves',(_req,res)=>{
+app.post('/viewPendingLeaves',(req,res)=>{
     // console.log(req.body.rep_ID);
     //pending leaves
+    const rep_ID = req.body.rep_ID;
     //if approved then status=1, if rejected then status=2.......... pending leaves then status= 0 (default)
-    db.query('SELECT leave_ID, leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, description, salesmanager_comment, status FROM leaves WHERE status = 0 ORDER BY leave_ID DESC',(err,result,_fields)=>{
+    db.query('SELECT leave_ID, leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days FROM leaves WHERE rep_ID=? AND status = 0 ORDER BY leave_ID DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{

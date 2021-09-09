@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Text, View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage} from 'react-native'
-import { Button, Card, DataTable } from 'react-native-paper'
+import { Button, Searchbar, Card, DataTable } from 'react-native-paper'
 import { theme } from '../core/theme'
 // import Icon from 'react-native-vector-icons/Ionicons'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
+import BackButton from '../components/BackButton'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 import axios from 'axios';
+import SearchInput, { createFilter } from 'react-native-search-filter';
 
+const Keys_to_filter = ['leave_type', 'date'];
 const optionsPerPage = [2, 3, 4];
 
 export default function ManageExpenses({ navigation }) {
@@ -31,9 +34,9 @@ export default function ManageExpenses({ navigation }) {
     fetchData();
   },[]);
 
-  const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = query => { setSearchQuery(query) }
-  console.log(searchQuery);
+  // const [searchQuery, setSearchQuery] = useState('');
+  // const onChangeSearch = query => { setSearchQuery(query) }
+  // console.log(searchQuery);
 
   const [page, setPage] = useState(3);
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
@@ -45,6 +48,10 @@ export default function ManageExpenses({ navigation }) {
   const [accomodations, setAccomodation] = useState('');
   const [other, setOther] = useState('');
   const [total, setTotal] = useState('');
+
+  const [searchTerm,setSearchTerm]=useState("");
+  const filteredKey = expensesList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
+
 
 
   useEffect(()=>{
@@ -145,6 +152,19 @@ export default function ManageExpenses({ navigation }) {
     <SafeAreaView>
       <ScrollView> 
       <BackgroundLayout>
+            <View style= {styles.sameRow}>
+                <View style={{top:-20}}>
+                <BackButton goBack={navigation.goBack} />
+                </View>                
+                <Searchbar
+                    style= {styles.searchBar}
+                    placeholder="Search"
+                    // onChangeText={onChangeSearch}
+                    onChangeText={(text) => {setSearchTerm(text)} }
+                    value={searchTerm}
+                />
+
+            </View>
 
         <View style={{flexDirection : "row", alignSelf:'flex-end'}}>
             <Button
@@ -205,19 +225,11 @@ export default function ManageExpenses({ navigation }) {
               <DataTable.Title numeric>Status</DataTable.Title>
             </DataTable.Header>
 
-            {expensesList.filter(val=>{if(searchQuery===""){
-                            return val;
-                            }else if(
-                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                            {
-                            return val;
-                            }
-                            }).map((record)=>{
-                              const dtt = new Date(record.date);
-                              const year = dtt.getFullYear() + '/';
-                              const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
-                              const day = ('0' + dtt.getDate()).slice(-2);
-
+            {filteredKey.map((record,i) => {
+                    const dtt = new Date(record.date);
+                    const year = dtt.getFullYear() + '/';
+                    const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+                    const day = ('0' + dtt.getDate()).slice(-2);
                               if (record.status===0){
                                 return(
                                   <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
@@ -312,4 +324,10 @@ const styles = StyleSheet.create ({
       color : theme.colors.primary,
       // alignSelf : 'flex-start'
   },
+  searchBar: {
+    width : '80%',
+    marginLeft : '20%',
+    height: 40,
+    marginBottom : 10
+},
 })

@@ -15,9 +15,9 @@ const optionsPerPage = [2, 3, 4];
 
 export default function AnnualLeaves({ navigation }) {
  
-  const [searchQuery, setSearchQuery] = useState('');
-  const onChangeSearch = query => { setSearchQuery(query) }
-  console.log(searchQuery);
+  // const [searchQuery, setSearchQuery] = useState('');
+  // const onChangeSearch = query => { setSearchQuery(query) }
+  // console.log(searchQuery);
 
 //   const [searchTerm,setSearchTerm]=useState("");
 
