@@ -95,10 +95,10 @@ app.post('/homePage/reportCount',(req,res)=>{
     }); 
 }); 
 
-app.post('/homePage/expensesCount',(req,res)=>{
+app.post('/homePage/ExpensesAmount',(req,res)=>{
 
     const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(rep_ID) AS expensesCount FROM expenses WHERE rep_ID=?";
+    const sqlLogin = "SELECT SUM(amount) AS expensesAmount FROM expenses WHERE rep_ID=?";
      
     db.query(sqlLogin,[rep_ID],(err,result)=>{
             if(err){
@@ -106,7 +106,7 @@ app.post('/homePage/expensesCount',(req,res)=>{
                 console.log("Error while expensesCount ");
               } if(result.length > 0){
                 res.send({
-                    expensesCount: result[0].expensesCount,
+                    expensesAmount: result[0].expensesAmount,
                 });
               } 
             //   else {
@@ -224,7 +224,7 @@ app.get('/homePage/productsCount',(_req,res)=>{
 app.post('/homePage/viewTask',(req,res)=>{  
    
     const rep_ID = req.body.rep_ID;
-    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending' ORDER BY date DESC";
+    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending' OR status='Accept' ORDER BY date DESC";
      
     db.query(sql,[rep_ID],(err,result)=>{
             if(err){
@@ -239,7 +239,7 @@ app.post('/homePage/viewTask',(req,res)=>{
 // Task Handling Back-end
 
 app.post("/newTask",(req, res) => {
-    console.log(req);
+    // console.log(req);
 
     const title = req.body.title;
     const location = req.body.location;
@@ -255,7 +255,7 @@ app.post("/newTask",(req, res) => {
             console.log(err);
             console.log ("Somthing Error");
         } else{
-            console.log("Task is Inserted");
+            // console.log("Task is Inserted");
             res.send("Task is inserted");
         }
 
@@ -306,7 +306,7 @@ app.post('/Task/CompleteTask',(req,res)=>{
    
     const task_id = req.body.task_id;
     const rep_note = req.body.rep_note;
-    // console.log(rep_note);
+    // console.log(task_id);
 
     const sql = "UPDATE task SET rep_note =?, status='Complete' WHERE task_id=?";
      
@@ -314,6 +314,42 @@ app.post('/Task/CompleteTask',(req,res)=>{
             if(err){
                 res.send({err:err})
                 console.log("Error while Complete Task");  
+              } if(result){
+                res.send(result);
+              }    
+    }); 
+});
+
+app.post('/Task/DeleteSchedule',(req,res)=>{  
+   
+    const task_id = req.body.task_id;
+    // const rep_note = req.body.rep_note;
+    // console.log(rep_note);
+
+    const sql = "DELETE FROM task WHERE task_id=?";
+     
+    db.query(sql,[task_id],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Delete Schedule");  
+              } if(result){
+                res.send(result);
+              }    
+    }); 
+});
+          
+app.post('/Task/AcceptTask',(req,res)=>{  
+   
+    const task_id = req.body.task_id;
+    // const rep_note = req.body.rep_note;
+    // console.log(rep_note);
+
+    const sql = "UPDATE task SET status='Accept' WHERE task_id=?";
+     
+    db.query(sql,[task_id],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Accept Task");  
               } if(result){
                 res.send(result);
               }    
@@ -341,20 +377,22 @@ app.post('/Task/CheckAvailability',(req,res)=>{
     const rep_ID = req.body.rep_ID;
     const date = req.body.date;
     const session = req.body.session;
+    // console.log(rep_ID,date,session);
 
-    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=? AND end_Date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
+    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=? AND end_Date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
      
-    db.query(sql,[rep_ID,date,date,session,date],(err,result)=>{
+    db.query(sql,[rep_ID,date,date,date,session,date],(err,result)=>{
             if(err){
                 res.send({err:err})
-                console.log("Error while Complete Task");  
+                console.log("Error while check for Task availability");  
               } if(result){
-                res.send({
-                    repAvailable: result[0].repAvailable,
-                });
+                // res.send({
+                //     repAvailable: result[0].repAvailable,
+                // });
+                res.send(result);
               }    
     }); 
-});
+});  
 
 // Profile Details Back-end
 

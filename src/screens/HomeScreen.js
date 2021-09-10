@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, SafeAreaView, ScrollView, Image, StyleSheet, Alert, AsyncStorage, TouchableOpacity } from 'react-native'
+import { Text, View, SafeAreaView, ScrollView, Image, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native'
 import { Button }from 'react-native-paper'
-import { SafeAreaProvider } from 'react-native-safe-area-context';
+// import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Styles from '../core/Styles'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
@@ -23,7 +23,7 @@ export default function HomeScreen({ navigation }) {
   });
 
   const [reportCount, setReportCount] = React.useState('');
-  const [expensesCount, setExpensesCount] = React.useState('');
+  const [expensesAmount, setExpensesAmount] = React.useState(0);
   const [leaveCount, setLeaveCount] = React.useState('');
   const [doctorCount, setDoctorCount] = React.useState('');
   const [sheduledTaskCount, setSheduledTaskCount] = React.useState('');
@@ -47,7 +47,7 @@ export default function HomeScreen({ navigation }) {
       }
     }
     fetchData();     
-  },[]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -66,17 +66,17 @@ export default function HomeScreen({ navigation }) {
   useEffect(() => {
     try{  
       // to post claimed expenses count
-      axios.post("http://10.0.2.2:3001/homePage/expensesCount",{
+      axios.post("http://10.0.2.2:3001/homePage/ExpensesAmount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         // setStateData({...stateData, expensesCount: response.data.expensesCount });
-        setExpensesCount(response.data.expensesCount);
+        setExpensesAmount(response.data.expensesAmount);
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get Expenses count");
     }  
-  },[expensesCount]);
+  },[expensesAmount]);
 
   useEffect(() => {
     try{  
@@ -168,11 +168,10 @@ export default function HomeScreen({ navigation }) {
           console.log("Error while getTask for view");  
         } 
       } fetchData();
-  },[user,taskList]);
+  },[user,taskList]);  
 
   const viewTask = (task_id) =>{
     navigation.navigate('ViewTask', {task_id});
-
   }
 
     
@@ -199,7 +198,7 @@ export default function HomeScreen({ navigation }) {
             <FontAwesome5Icon name= "file-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.countText}> {expensesCount} </Text>
+            <Text style={styles.countText}> {expensesAmount}.00 </Text>
             <Text style={styles.countTextLabel}> Claimed Expenses </Text>
             <FontAwesome5Icon name= "money-bill-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageExpenses')}></FontAwesome5Icon>
           </View>

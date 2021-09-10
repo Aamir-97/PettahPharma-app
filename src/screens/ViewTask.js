@@ -4,6 +4,7 @@ import { TextInput, Button } from 'react-native-paper';
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 
 
@@ -21,10 +22,36 @@ export default function ViewTask ({route, navigation}){
         date : '',
         session : '',
         description : '',
+        status : '',
         type : '',
         rep_note : '',
         created_at : '',
     })
+
+    const [scheduleType, setScheduleType] = React.useState(false);
+    const [taskType, setTaskType] = React.useState(false);
+    const [completeButton, setCompleteButton] = React.useState(false);
+
+
+
+    useEffect(() => {
+      async function fetchData(){
+        try{  
+          if (taskDetails.type === "Schedule"){
+            setScheduleType(true);
+            setTaskType(false)
+          } else if (taskDetails.type === "task" && taskDetails.status === "Accept") {
+            setCompleteButton(true);
+            setTaskType(false);
+          } else {
+            setTaskType(true);
+            setScheduleType(false);
+          }     
+        } catch (err) {    
+
+        } 
+      } fetchData();
+    },[taskDetails]);
 
     useEffect(() => {
         async function fetchData(){
@@ -38,6 +65,7 @@ export default function ViewTask ({route, navigation}){
             date : response.data[0].date,
             session : response.data[0].session,
             description : response.data[0].description,      
+            status : response.data[0].status,      
             type : response.data[0].type,      
             rep_note : response.data[0].rep_note,      
             created_at : response.data[0].created_at,      
@@ -49,22 +77,22 @@ export default function ViewTask ({route, navigation}){
           console.log("Error while get product details for View");  
         } 
       } fetchData();
-  },[]);
+    },[]);
 
-// For Task Date
-const dtt = new Date(taskDetails.date);
-const year = dtt.getFullYear() + '/';
-const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
-const day = ('0' + dtt.getDate()).slice(-2);
+  // For Task Date
+  const dtt = new Date(taskDetails.date);
+  const year = dtt.getFullYear() + '/';
+  const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+  const day = ('0' + dtt.getDate()).slice(-2);
 
-// For task created date 
-const dtt2 = new Date(taskDetails.created_at);
-const year2 = dtt2.getFullYear() + '/';
-const month2 = ('0' + (dtt2.getMonth() + 1)).slice(-2) + '/';
-const day2 = ('0' + dtt2.getDate()).slice(-2);
+  // For task created date 
+  const dtt2 = new Date(taskDetails.created_at);
+  const year2 = dtt2.getFullYear() + '/';
+  const month2 = ('0' + (dtt2.getMonth() + 1)).slice(-2) + '/';
+  const day2 = ('0' + dtt2.getDate()).slice(-2);
 
   const completeTask = () => {
-    //   console.log("Completed pressed");     
+      // console.log("Completed pressed");     
           axios.post("http://10.0.2.2:3001/Task/CompleteTask",{
           task_id : task_id,
           rep_note : taskDetails.rep_note        
@@ -112,6 +140,33 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
 
   }
 
+  const deleteSchedule = () => {
+    try{  
+          axios.post("http://10.0.2.2:3001/Task/DeleteSchedule",{
+          task_id : task_id,
+          // rep_note : taskDetails.rep_note        
+      }).then((response)=>{
+        // console.log("Task rejected Successfully");
+        Alert.alert(
+            "Schedule Deleted",
+            "Your Schedule is removed from your list...!",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => {navigation.navigate('Home')}}
+            ]
+          ); 
+      });
+      } catch (err) {    
+        console.log(err);
+        console.log("Error while complete the task");  
+      }
+
+  }
+
   const rejectConfirmation = () => { 
     Alert.alert(
         "Here You....!",
@@ -128,8 +183,38 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
 
   }
 
+  const deleteConfirmation = () => { 
+    Alert.alert(
+        "Here You....!",
+        "Are you sure want to delete schedule?",
+        [
+            {
+            text: "NO",
+            onPress: () => console.log("No Pressed"),
+            style: "cancel"
+            },
+            { text: "YES", onPress: () => deleteSchedule()}
+        ]
+        );
 
-  
+  }
+
+
+  const acceptTask = () => { 
+    try{  
+      axios.post("http://10.0.2.2:3001/Task/AcceptTask",{
+      task_id : task_id,
+      // rep_note : taskDetails.rep_note        
+    }).then((response)=>{
+      setCompleteButton(true);
+    });
+    } catch (err) {    
+      console.log(err);
+      console.log("Error while complete the task");  
+    }
+  }
+
+   
     return(
         <SafeAreaView>
             <ScrollView>
@@ -143,12 +228,10 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                     </View>
 
                     <View style ={styles.productContainer}> 
-                        {/* <Image
-                            style = {styles.medicinePhoto}
-                            source ={require('../assets/medicine/amoxicillin-500mg.jpeg')}
-                        /> */}
-                        {/* <Text style={styles.textLable}> {taskType} </Text> */}
-
+                        <View style= {styles.sameRow}>
+                            <Text style={styles.textLable}>Type : </Text>
+                            <Text style={styles.text}>{taskDetails.type}</Text>
+                        </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Title : </Text>
                             <Text style={styles.text}>{taskDetails.title}</Text>
@@ -182,38 +265,94 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                                 onChangeText={(text) => setTaskDetails({...taskDetails, rep_note:text})}
                             />
 
-                        <View style={{alignSelf : 'center', marginTop : 10}}>
-                            <View style = {styles.sameRow}>
-                            <Button
-                                style= {styles.cancelButton}
-                                mode='contained'
-                                icon={({color, size}) => (
-                                    <FontAwesome5Icon
-                                    name="eject" 
-                                    color={theme.colors.surface}
-                                    size={20}
-                                    />
-                                )}
-                                // goBack={navigation.goBack}
-                                onPress={() => rejectConfirmation()} 
-                                > Reject 
-                            </Button>
-                            <Button
-                                style= {styles.submitButton}
-                                mode='contained'
-                                icon={({color, size}) => (
-                                    <FontAwesome5Icon
-                                    name="feather" 
-                                    color={theme.colors.surface}
-                                    size={20}
-                                    />
-                                )}
-                                onPress={() => completeTask()} 
-                                > Completed 
-                            </Button>
 
-                            </View>
-                        </View>
+                            {scheduleType && (
+                              <View style={{alignSelf : 'center', marginTop : 10}}>
+                                <View style = {styles.sameRow}>
+                                <Button
+                                    style= {styles.cancelButton}
+                                    labelStyle = {{fontSize : 16, fontWeight : 'bold'}}
+                                    mode='contained'
+                                    icon={({color, size}) => (
+                                        <Icon
+                                        name="delete" 
+                                        color={theme.colors.surface}
+                                        size={20}
+                                        />
+                                    )}
+                                    // goBack={navigation.goBack}
+                                    onPress={() => deleteConfirmation()} 
+                                    > Delete 
+                                </Button>
+                                <Button
+                                    // style= {styles.submitButton}
+                                    mode='contained'
+                                    icon={({color, size}) => (
+                                        <FontAwesome5Icon
+                                        name="feather" 
+                                        color={theme.colors.surface}
+                                        size={20}
+                                        />
+                                    )}
+                                    onPress={() => completeTask()} 
+                                    > Completed 
+                                </Button>
+
+                                </View>
+                              </View>
+                                
+                              )}
+
+                            {taskType && (
+                                <View style={{alignSelf : 'center', marginTop : 10}}>
+                                  <View style = {styles.sameRow}>
+                                  <Button
+                                      style= {styles.cancelButton}
+                                      mode='contained'
+                                      icon={({color, size}) => (
+                                          <FontAwesome5Icon
+                                          name="eject" 
+                                          color={theme.colors.surface}
+                                          size={20}
+                                          />
+                                      )}
+                                      // goBack={navigation.goBack}
+                                      onPress={() => rejectConfirmation()} 
+                                      > Reject 
+                                  </Button>
+                                  <Button
+                                      // style= {styles.cancelButton}
+                                      mode='contained'
+                                      icon={({color, size}) => (
+                                          <FontAwesome5Icon
+                                          name="check-double" 
+                                          color={theme.colors.surface}
+                                          size={20}
+                                          />
+                                      )}
+                                      // goBack={navigation.goBack}
+                                      onPress={() => acceptTask()} 
+                                      > Accept 
+                                  </Button>
+                                  </View>
+                                </View>                                
+                              )}
+                              { completeButton && (
+                                    <Button
+                                        style= {styles.completeButton}
+                                        mode='contained'
+                                        icon={({color, size}) => (
+                                            <FontAwesome5Icon
+                                            name="feather" 
+                                            color={theme.colors.surface}
+                                            size={20}
+                                            />
+                                        )}
+                                        onPress={() => completeTask()} 
+                                        > Completed 
+                                    </Button>
+                              )}
+
 
                     </View>
                 </BackgroundLayout>
@@ -279,5 +418,8 @@ const styles = StyleSheet.create ({
     //   justifyContent: 'space-between',
     //   marginBottom : 20,
       width : '100%'
+    },
+    completeButton : {
+      margin : 10,
     },
   })

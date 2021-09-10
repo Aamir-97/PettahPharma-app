@@ -396,7 +396,7 @@ export default function Routes() {
       try {
         loginState.userToken = 'medicalrep';
         await AsyncStorage.removeItem('userToken'); 
-        await AsyncStorage.clear();
+        // await AsyncStorage.clear();
       } catch (e){
         console.log(e);
       }

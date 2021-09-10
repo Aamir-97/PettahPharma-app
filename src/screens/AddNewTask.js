@@ -126,7 +126,8 @@ export default function AddNewTask({navigation}){
                 session : scheduleFormDetails.session,
             }).then((response)=>{
                 // console.log("Succesfully Inserted:!");
-                if (response.data.repAvailable === 1) {
+                console.log(response.data[0].repAvailable);
+                if (response.data[0].repAvailable === 1) {
                     SubmitTask();
                 } else {
                     Alert.alert(
