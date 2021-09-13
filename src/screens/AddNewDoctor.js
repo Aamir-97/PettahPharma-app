@@ -20,7 +20,6 @@ export default function AddNewDoctor ({route, navigation}){
         manager_ID: '',
       });
 
-
     useEffect(() => {
         async function fetchData(){
           try {
@@ -396,15 +395,6 @@ const styles = StyleSheet.create ({
         
     },
     visitSummaryForm : {
-        // flex: 1,
-        // alignSelf : 'stretch',
-        // padding : 20,
-        // paddingTop : 0,
-        // borderColor : theme.colors.primary,
-        // borderWidth : 2,
-        // borderRadius : 5,
-        // shadowColor : 'gray',
-        // elevation : 10
         flex : 1,
         width : '100%',
         height : '100%',
@@ -418,14 +408,11 @@ const styles = StyleSheet.create ({
     InputField : {
         flex : 1,
         width : '100%',
-        // alignSelf : 'stretch',
         height : 35,
         marginBottom : 10,
         borderBottomColor : '#009387',
         borderBottomWidth : 2,
-        fontSize : 17,
-        // color : theme.colors.primary,
-        
+        fontSize : 17,        
     },
     sameRow : {
         flexDirection : 'row',

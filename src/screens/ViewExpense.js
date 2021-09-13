@@ -25,6 +25,7 @@ export default function ViewExpenses ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/ManageExpenses/ViewExpenses",{
             expense_ID : expense_ID,  
         }).then((response)=>{
+            // console.log("/ViewExpenses");
           setExpenseDetails({...expenseDetails,
             expense_Type : response.data[0].expense_Type,
             amount : response.data[0].amount,
@@ -41,6 +42,11 @@ export default function ViewExpenses ({route, navigation}){
         } 
       } fetchData();
   },[]);
+
+    const dtt = new Date(expenseDetails.date);
+    const year = dtt.getFullYear() + '/';
+    const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+    const day = ('0' + dtt.getDate()).slice(-2);
 
   
     return(
@@ -64,7 +70,7 @@ export default function ViewExpenses ({route, navigation}){
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Date : </Text>
-                            <Text style={styles.text}>{expenseDetails.date}</Text>
+                            <Text style={styles.text}>{year+month+day}</Text>
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Location : </Text>

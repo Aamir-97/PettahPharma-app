@@ -30,7 +30,6 @@ import VSRForm from './src/screens/VSRForm'
 import AddNewTask from './src/screens/AddNewTask'
 import AddNewDoctor from './src/screens/AddNewDoctor'
 import DiscussionForum from './src/screens/DiscussionForum'
-import TestForm from './src/screens/TestForm'
 import { View, ActivityIndicator, Alert } from 'react-native'
 import Profile from './src/screens/Profile'
 import EditProfile from './src/screens/EditProfile'
@@ -76,7 +75,6 @@ const HomeStackScreen= ({navigation}) => {
         )
       }} /> 
     <HomeStack.Screen name="AddNewTask" component = {AddNewTask} options={{ title:'Add New Schedule'}} />
-    <HomeStack.Screen name="TestForm" component = {TestForm} />
     <HomeStack.Screen name="ViewTask" component = {ViewTask} options={{ title:'Task Details'}}/>
 
     </HomeStack.Navigator>
@@ -213,7 +211,8 @@ const ManageLeavesStackScreen = ({navigation}) => {
       <ManageLeavesStack.Screen name="ManageLeaves" component={ManageLeaves} options= { {
         headerLeft: () => (
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
-        )
+        ),
+        title: "Manage Leaves"
       }}/>
       <ManageLeavesStack.Screen name="ApplyLeaves" component={ApplyLeaves} options={{
         title: "Apply Leaves"
@@ -395,13 +394,13 @@ export default function Routes() {
     signOut: async() => {
       try {
         loginState.userToken = 'medicalrep';
-        await AsyncStorage.removeItem('userToken'); 
-        // await AsyncStorage.clear();
+        // await AsyncStorage.removeItem('userToken'); 
+        await AsyncStorage.removeItem('user'); 
+        await AsyncStorage.clear();
       } catch (e){
         console.log(e);
       }
       dispatch({ type : 'LOGOUT' });
-
     },
 
   }),[loginState.userToken]);
@@ -419,10 +418,12 @@ export default function Routes() {
     setTimeout(async()=>{
       let userToken;
       userToken= null;
+      // userToken= "medicalRep";
       try {   
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile); 
-        userToken = profile.userToken;
+        // const userProfile = await AsyncStorage.getItem('user');
+        // const profile  = JSON.parse(userProfile); 
+        // userToken = profile.userToken;
+        userToken = await AsyncStorage.getItem('user');
       } catch (e){
         console.log(e);
       }
@@ -445,20 +446,8 @@ export default function Routes() {
     <Provider theme={theme}>          
       { loginState.userToken !== null ? (
       <Drawer.Navigator 
-                // screenOptions={{
-                //   headerStyle: {
-                //     backgroundColor : "#0A6466",
-                //     height : 50
-                //   },
-                //   headerTintColor : "#ffffff",
-                //   headerTintStyle : {
-                //     fontWeight : 'bold',
-                //     alignItems : 'center',
-                //     justifyContent : 'center',
-                //   }
-                //   }}
-                  drawerContent={props => <DrawerContent {...props}/>}
-                  >
+          drawerContent={props => <DrawerContent {...props}/>}
+      >
 
           <Drawer.Screen name="Home" component={HomeStackScreen} />
           <Drawer.Screen name="Profile" component={ProfileStackScreen}/>

@@ -10,11 +10,7 @@ import { theme } from '../core/theme'
 import DateTimePicker from '@react-native-community/datetimepicker'
 import DocumentPicker from 'react-native-document-picker'
 
-
-
-
 import axios from 'axios';
-import { setDate } from 'date-fns';
 
 
 export default function ViewDoctor ({route, navigation}){
@@ -41,6 +37,8 @@ export default function ViewDoctor ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/DoctorDetails/ViewDoctor",{
             doctor_id : doctor_id, 
         }).then((response)=>{
+
+            // console.log("/DoctorDetails/ViewDoctor");
             const doctorProfile = response.data[0];
             setDoctorDetails({...doctorDetails,
             display_photo : doctorProfile.display_photo,
@@ -167,7 +165,6 @@ export default function ViewDoctor ({route, navigation}){
     const day = ('0' + dtt.getDate()).slice(-2);
 
     setDoctorDetails({...doctorDetails, dob : year+month+day})
-      
     },[date]);
 
 
@@ -199,7 +196,7 @@ export default function ViewDoctor ({route, navigation}){
                   res.name,
                   res.size,
                   )
-                  console.log(res);
+                  // console.log(res);
                   setDoctorDetails({...doctorDetails, display_photo: res.uri});
                   // console.log("ithu eduthittu");
               } catch (err) {
@@ -450,11 +447,8 @@ export default function ViewDoctor ({route, navigation}){
 
 const styles = StyleSheet.create ({
     header : {
-    //   top : 5,
       fontSize : 25,
       fontWeight : 'bold',
-      // alignSelf : 'center',
-      // marginBottom : 30,
       marginLeft : 5,
       color : theme.colors.primary
       
@@ -477,7 +471,6 @@ const styles = StyleSheet.create ({
   
     },
     InputField : {
-      // alignSelf : 'stretch',
       height : 50,
       marginBottom : 15,
       borderBottomColor : '#009387',
@@ -487,10 +480,8 @@ const styles = StyleSheet.create ({
   },
     sameRow : {
       flexDirection : 'row',
-      // justifyContent: 'space-between',
       marginBottom : 20,
       width : '100%',
-      // alignSelf : 'center'
     },
     cancelButton : {
       backgroundColor : 'red',

@@ -2,7 +2,6 @@ import React, {useState, useEffect} from 'react'
 import { Text, View, Picker, SafeAreaView, ScrollView, StyleSheet, Image, Alert} from 'react-native'
 import { Button, Avatar, TextInput } from 'react-native-paper'
 import { theme } from '../core/theme'
-import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { emailValidator } from '../helpers/emailValidator'
@@ -13,9 +12,7 @@ import axios from 'axios'
 
 
 export default function Profile({ route , navigation}) {
-  // const [selectedValue, setSelectedValue] = useState("Sick Leave");
   const {rep_ID} = route.params;
-  // const ref = useRef();
 
 const [profileDetails , setProfileDetails] = React.useState({
   name : '',
@@ -33,7 +30,7 @@ const [profileDetails , setProfileDetails] = React.useState({
           rep_ID : rep_ID,
       }).then((response)=>{
         const profile = response.data[0];
-        // console.log("Hello......");
+        console.log("/profileDetails");
         setProfileDetails({...profileDetails, 
           name : profile.name, 
           display_photo : profile.display_photo,
@@ -123,9 +120,9 @@ const [profileDetails , setProfileDetails] = React.useState({
               res.name,
               res.size,
               )
-              console.log(res);
+              // console.log(res);
               setProfileDetails({...profileDetails, display_photo: res.uri});
-              // console.log("ithu eduthittu");
+              // console.log("image uploaded");
           } catch (err) {
               if (DocumentPicker.isCancel(err)) {
               // User cancelled the picker, exit any dialogs or menus and move on
@@ -133,8 +130,7 @@ const [profileDetails , setProfileDetails] = React.useState({
               throw err
               }
           }
-          return <Text>Success</Text>
-  
+          return <Text>Success</Text>  
       }
 
 
@@ -156,7 +152,6 @@ const [profileDetails , setProfileDetails] = React.useState({
         </View>
 
         <View style ={styles.sameRow}>
-          {/* <Image source={require ('../assets/aamirDp.jpeg')} style ={styles.displayPhoto} />  */}
             {profileDetails.display_photo && (
               <Image 
                 source= {{uri : profileDetails.display_photo }}
@@ -178,9 +173,7 @@ const [profileDetails , setProfileDetails] = React.useState({
         <TextInput
           mode= 'outlined'
           outlineColor =  {theme.colors.primary}
-          // style = {styles.InputField}
           label="Your Name"
-          // placeholder = "Name with intial"
           value={profileDetails.name}
           onChangeText={(text) => setProfileDetails({...profileDetails, name:text})}
         />
@@ -198,37 +191,29 @@ const [profileDetails , setProfileDetails] = React.useState({
           <TextInput
             mode= 'outlined'
             outlineColor =  {theme.colors.primary}
-            // style = {styles.InputField}
             label="Email"
             keyboardType = 'email-address'
-            // placeholder = "Enter your mail id"
             value={profileDetails.email}
             onChangeText={(text) => setProfileDetails({...profileDetails,email:text})}
           />
           <TextInput
             mode= 'outlined'
             outlineColor =  {theme.colors.primary}
-            // style = {styles.InputField}
             label="Contact Number"
             keyboardType = 'number-pad'
-            // placeholder = "Your phone number(Ex:011..)"
             value={profileDetails.phone_no}
             onChangeText={(text) => setProfileDetails({...profileDetails, phone_no:text})}
           />
           <TextInput
             mode= 'outlined'
             outlineColor =  {theme.colors.primary}
-            // style = {styles.InputField}
             label="Address"
-            // placeholder = "Ex: No, Lane, Hometown."
             value={profileDetails.address}
             onChangeText={(text) => setProfileDetails({...profileDetails, address:text})}
           />
           <TextInput
             mode= 'outlined'
-            // style = {styles.InputField}
             label="Password"
-            // placeholder = "Use different charactors(Ex:A@aa!/#)"
             value={profileDetails.password}
             onChangeText={(text) => setProfileDetails({...profileDetails, password:text})}
           />
@@ -278,10 +263,7 @@ const styles = StyleSheet.create ({
     top : 5,
     fontSize : 25,
     fontWeight : 'bold',
-    // alignSelf : 'center',
-    // marginBottom : 30,
-    color : theme.colors.primary
-    
+    color : theme.colors.primary,    
 },
   subHeader:{
     fontSize : 15,
@@ -301,7 +283,6 @@ const styles = StyleSheet.create ({
 
   },
   InputField : {
-    // alignSelf : 'stretch',
     height : 50,
     marginBottom : 15,
     borderBottomColor : '#009387',
@@ -311,10 +292,8 @@ const styles = StyleSheet.create ({
 },
   sameRow : {
     flexDirection : 'row',
-    // justifyContent: 'space-between',
     marginBottom : 20,
     width : '100%',
-    // alignSelf : 'center'
   },
   editProfileButton :{
 

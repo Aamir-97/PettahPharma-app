@@ -1,37 +1,34 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
-import {Text, ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
+import {ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
 import { theme } from '../core/theme';
 import BackgroundLayout from '../components/BackgroundLayout';
-// import Button from '../components/Button';
 import BackButton from '../components/BackButton'
-import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import EntypoIcons from 'react-native-vector-icons/Entypo'
 import SearchInput, { createFilter } from 'react-native-search-filter';
-import { ListItem } from 'react-native-elements'
-
 
 import axios from 'axios';
 
 const Keys_to_filter = ['name'];
 
-
 const optionsPerPage = [2, 3, 4];
 
 export default function DoctorDetails({navigation}){
 
-//   const [searchQuery, setSearchQuery] = React.useState('');
-//   const onChangeSearch = query => { setSearchQuery(query) }
-//   console.log(searchQuery);
-
-  const [searchTerm,setSearchTerm]=useState("");
-
 
   const [page, setPage] = React.useState(3);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
+  
+  React.useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
 
 
   const [doctorList,setDoctorList]=useState([]);
+
+  const [searchTerm,setSearchTerm]=useState("");
+  const filteredKey = doctorList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
+
 
   const [user, setUser] = React.useState({ 
     rep_ID: '', 
@@ -60,24 +57,19 @@ export default function DoctorDetails({navigation}){
           axios.post('http://10.0.2.2:3001/viewDoctorDetails',{
             rep_ID : user.rep_ID,
           }).then((response)=> {
-                setDoctorList(response.data)
+                setDoctorList(response.data);
+                // console.log("/viewDoctorDetails");
           })
       } catch (err) {
           console.log("Error While Get the doctor Details");
       }    
-  },[doctorList]);
+  },[user]);
   
-
-  React.useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
   const doctorView = (doctor_id) => {
     navigation.navigate('ViewDoctor', {doctor_id});
-    console.log(doctor_id);
+    // console.log(doctor_id);
   }
 
-  const filteredKey = doctorList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
 
   return (
@@ -90,7 +82,6 @@ export default function DoctorDetails({navigation}){
                 <Searchbar
                     style= {styles.searchBar}
                     placeholder="Search"
-                    // onChangeText={onChangeSearch}
                     onChangeText={(text)=>{setSearchTerm(text)}}
                     value={searchTerm}
                 />
@@ -130,14 +121,13 @@ export default function DoctorDetails({navigation}){
                             <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={{uri : record.display_photo}} /></DataTable.Cell>
                             <DataTable.Cell align="center">Dr. {record.name}</DataTable.Cell>
                             <DataTable.Cell align="center">{record.clinic}</DataTable.Cell>
-                            <DataTable.Cell align="center">{record.contact_no}</DataTable.Cell>
-                            {/* <DataTable.Cell numeric>                              
+                            <DataTable.Cell align="center">{record.contact_no}                                 
                                 <EntypoIcons
                                   name="chevron-right" 
                                   color={theme.colors.primary}
                                   size={15}
                                 />
-                            </DataTable.Cell> */}
+                                </DataTable.Cell>
                         </DataTable.Row>
                     </TouchableOpacity>
                     )
@@ -156,31 +146,6 @@ export default function DoctorDetails({navigation}){
                     optionsLabel={'Rows per page'}
                 />
             </DataTable>
-
-            
-            {/* {filteredKey.map((record,i) => {
-                    return(
-                    <View key={record.doctor_id}>
-                    <TouchableOpacity                        
-                        onPress = {()=> doctorView(record.doctor_id)}
-                    >
-                      <ListItem
-                        // key={i}
-                        title={record.name}
-                        subtitle={record.clinic}
-                        subtitle={record.contact_no}
-                        leftAvatar={{ source: { uri: record.display_photo } }}
-                        bottomDivider
-                        chevron
-                      />
-                    </TouchableOpacity>
-                    </View>
-                    )
-              })
-            } */}
-
-
-
         </BackgroundLayout>
     </ScrollView>
   );
@@ -195,7 +160,6 @@ const styles= StyleSheet.create({
     },
     sameRow : {
         flexDirection : 'row',
-        // alignSelf : 'center',
         justifyContent : 'space-between'
     },
     addButton: {

@@ -16,13 +16,13 @@ const optionsPerPage = [2, 3, 4];
 
 export default function ProductDetails({navigation}){
 
-//   const [searchQuery, setSearchQuery] = React.useState('');
-//   const onChangeSearch = query => setSearchQuery(query);
-
-  const [searchTerm, setSearchTerm] = useState('');
-
+    React.useEffect(() => {
+        setPage(0);
+    }, [itemsPerPage]);
+  
   const [productList,setProductList]=useState([]);
 
+  const [searchTerm, setSearchTerm] = useState('');
   const filteredKey = productList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
 
@@ -35,10 +35,6 @@ export default function ProductDetails({navigation}){
 
   const [page, setPage] = React.useState(2);
   const [itemsPerPage, setItemsPerPage] = React.useState(optionsPerPage[0]);
-
-  React.useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
 
   const viewProduct = (product_id) => {
       navigation.navigate('ViewProduct', {product_id});
@@ -56,8 +52,6 @@ export default function ProductDetails({navigation}){
                 <Searchbar
                     style= {styles.searchBar}
                     placeholder="Search"
-                    // onChangeText={onChangeSearch}
-                    // value={query}
                     onChangeText={(text) => {setSearchTerm(text)} }
                     value={searchTerm}
                 />
@@ -88,10 +82,8 @@ export default function ProductDetails({navigation}){
                                     name="chevron-right" 
                                     color={theme.colors.primary}
                                     size={15}
-                                />
-                            
+                                />                            
                             </DataTable.Cell>
-                            {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
                         </DataTable.Row>
                     </TouchableOpacity>
                     )
@@ -125,7 +117,6 @@ const styles= StyleSheet.create({
     },
     sameRow : {
         flexDirection : 'row',
-        // alignSelf : 'center',
         justifyContent : 'space-between'
     },
     productImage: {

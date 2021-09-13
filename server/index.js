@@ -75,23 +75,17 @@ app.post('/login',(req,res)=>{
 
 // Home Page Back-end
 app.post('/homePage/reportCount',(req,res)=>{
-    // console.log(req.body.rep_ID);
     const rep_ID = req.body.rep_ID;
     const sqlLogin = "SELECT COUNT(report_id) AS reportCount FROM visit_summary_report WHERE rep_ID=?";
      
     db.query(sqlLogin,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while reportCount ");
-              } if(result.length > 0){
-                res.send({
-                    reportCount: result[0].reportCount,
-                });
-                // console.log("Get Report reportCount");
-              } 
-            //   else {
-            //     res.send({message : " No report submit yet "});
-            //   }     
+      if(err){
+          res.send({err:err})
+          console.log("Error while reportCount ");
+        }else if(result){
+          res.send(result[0]);
+        } 
+   
     }); 
 }); 
 
@@ -556,7 +550,7 @@ app.post("/VisitSummaryReport/ViewVSR", (req, res) => {
     // console.log(req);
     const report_id = req.body.report_id; 
     
-    const sql =  "SELECT * FROM `visit_summary_report` WHERE report_id=?" ;
+    const sql =  "SELECT * FROM visit_summary_report WHERE report_id=?" ;
 
     db.query(sql,[report_id], (err,result)=> {
         if(err){
@@ -1037,7 +1031,7 @@ app.post('/AnnualLeaves/pendingleaveCount',(req,res)=>{
 }); 
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 /* Apply Leaves Page */
-app.post("/applyLeave",(req,res)=>{
+app.post('/applyLeave',(req,res)=>{
     console.log(req);
   
     const rep_ID = req.body.rep_ID;
@@ -1115,18 +1109,18 @@ app.post('/ApplyLeaves/pendingleaveCount',(req,res)=>{
 /* Manage Expenses */  
 
 app.post('/ClaimExpenses',(req,res)=>{
-    // console.log(req)
+    console.log(req)
     const rep_ID = req.body.rep_ID;
     const expense_Type = req.body.expense_Type;
     const date = req.body.date;
     const location = req.body.location;
     const bills = req.body.bills;  
-    const amount = req.body.amount;
-    const description = req.body.description;
+    const amount = req.body.amount;  
+    const description = req.body.description;  
     
-    const sqlClaimExpense = "INSERT INTO expenses (rep_ID,expense_Type,date,location,bills,amount,description) VALUES (?,?,?,?,?,?,?)";
+    const sqlClaimExpense = "INSERT INTO expenses(rep_ID, expense_Type, date, location, bills, amount, description) VALUES (?,?,?,?,?,?,?)";
 
-    db.query(sqlClaimExpense, [rep_ID,expense_Type,date,location,bills,amount,description], (err,result)=>{
+    db.query(sqlClaimExpense, [rep_ID, expense_Type, date, location, bills, amount, description], (err,result)=>{
         if(err){
             console.log(err);
             console.log ("Error while claim expenses");
@@ -1161,7 +1155,7 @@ app.post('/Expenses/DailyBatta', (req, res) =>{
   });
 });
 app.post('/Expenses/Accomodation', (req, res) =>{
-    const rep_ID = req.body.rep_ID;
+    const rep_ID = req.body.rep_ID;  
     //total expenses by category
     db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Accommodation"', [rep_ID], (err, result, _fields)=> {
       if(!err){
@@ -1216,7 +1210,7 @@ app.post('/ViewExpenses',(req,res)=>{
     });
 });
 
-app.post('/ManageExpenses/ViewExpense',(req,res)=>{
+app.post('/ManageExpenses/ViewExpenses',(req,res)=>{
     const expense_ID = req.body.expense_ID;   
 
     const sql = "SELECT expense_Type, amount, date, location, description, salesmanager_comment, CASE WHEN status = 0 THEN 'Pending' WHEN status = 1 THEN 'Claim Accepted' ELSE 'The claim rejected' END AS status FROM expenses WHERE expense_ID = ?";

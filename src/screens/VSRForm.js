@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import { SafeAreaProvider } from 'react-native-safe-area-context';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Picker, Alert, AsyncStorage, Platform, TextInput} from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Picker, Alert, AsyncStorage, Platform, TextInput} from 'react-native';
 import { IconButton, Button } from 'react-native-paper'
 import NumericInput from 'react-native-numeric-input'
 import BackgroundLayout from '../components/BackgroundLayout';
@@ -26,7 +26,6 @@ export default function VSRForm ({navigation}){
         manager_ID: '',
       });
 
-
     const [formDetails, setFormDetails] = React.useState({
         visit_type : '',
         location : '',
@@ -50,6 +49,7 @@ export default function VSRForm ({navigation}){
             const rep_ID = profile.rep_ID;
             getDocotorsName(rep_ID);
             getProductsName();
+            // console.log("formdata")
           }      
         } catch (e){
           console.log(e);
@@ -65,6 +65,7 @@ export default function VSRForm ({navigation}){
           rep_ID : rep_ID,  
       }).then((response)=>{
         setDoctorList(response.data);
+        // console.log("/getDoctorName");
       });
       } catch (err) {    
         console.log(err);
@@ -77,6 +78,7 @@ export default function VSRForm ({navigation}){
         axios.get("http://10.0.2.2:3001/vsr/getProductsName",{
       }).then((response)=>{
         setProductList(response.data);
+        // console.log("/getProductsName");
       });
       } catch (err) {    
         console.log(err);
@@ -85,7 +87,6 @@ export default function VSRForm ({navigation}){
     };
 
     const submitForm = () => {
-        // console.log("Submit form funtion is working");
         axios.post("http://10.0.2.2:3001/vsr/submitForm", {
             visit_type: formDetails.visit_type, 
             location: formDetails.location,
@@ -152,19 +153,16 @@ export default function VSRForm ({navigation}){
 
 
     useEffect(() => {
-        //   Date convertor
+      //   Date convertor
       const dtt = new Date(date);
       const year = dtt.getFullYear() + '/';
       const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
       const day = ('0' + dtt.getDate()).slice(-2);
-
-      setFormDetails ({...formDetails, date : year+month+day})
-        
+      setFormDetails ({...formDetails, date : year+month+day});        
       },[date]); 
 
 
     const checkRequired = () => {
-        // console.log("required function is working");
         const visit_type = requiredField(formDetails.visit_type)
         const location = requiredField(formDetails.location)
         const date = requiredField(formDetails.date)
@@ -214,7 +212,6 @@ export default function VSRForm ({navigation}){
                 {/* VSRForm */}
 
                 <View style={styles.visitSummaryForm}>
-                    {/* <View style={{flexDirection : 'row', width : '100%'}}> */}
                         <View style={styles.InputField}>
                             <Picker 
                                     selectedValue={formDetails.visit_type}
@@ -281,16 +278,6 @@ export default function VSRForm ({navigation}){
                                     value= {year+month+day}
                                 />
                             </View>
-
-                            {/* <View style={{flex : 2}}>
-                                <Button 
-                                    uppercase = ''
-                                    icon="calendar" 
-                                    mode="contained" 
-                                    onPress={() => {showDatepicker()}}>
-                                    Calender  
-                                </Button>
-                            </View> */}
 
                             <View style={{flex : 2}}>
                                 <IconButton
@@ -362,7 +349,6 @@ export default function VSRForm ({navigation}){
 
                     <TextInput 
                         style={styles.CommentField} 
-                        // label= "Comment"
                         placeholder= "Comment"
                         value= {formDetails.description}
                         onChangeText = {text => setFormDetails({...formDetails, description:text})}
@@ -395,12 +381,6 @@ const styles = StyleSheet.create ({
         
     },
     visitSummaryForm : {
-        // alignSelf : 'stretch',
-        // margin : 20,
-        // padding : 20,
-        // borderColor : theme.colors.primary,
-        // borderWidth : 2,
-        // borderRadius : 5
         flex : 1,
         width : '100%',
         height : '100%',

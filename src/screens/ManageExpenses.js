@@ -2,17 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Text, View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage} from 'react-native'
 import { Button, Searchbar, Card, DataTable } from 'react-native-paper'
 import { theme } from '../core/theme'
-// import Icon from 'react-native-vector-icons/Ionicons'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackButton from '../components/BackButton'
-import FontistoIcon from 'react-native-vector-icons/Fontisto'
-import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 import axios from 'axios';
 import SearchInput, { createFilter } from 'react-native-search-filter';
 
-const Keys_to_filter = ['leave_type', 'date'];
+const Keys_to_filter = ['expense_Type', 'date'];
 const optionsPerPage = [2, 3, 4];
 
 export default function ManageExpenses({ navigation }) {
@@ -25,7 +22,8 @@ export default function ManageExpenses({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
+          // console.log("user");           
         }
       } catch (e){
         console.log(e);
@@ -34,12 +32,12 @@ export default function ManageExpenses({ navigation }) {
     fetchData();
   },[]);
 
-  // const [searchQuery, setSearchQuery] = useState('');
-  // const onChangeSearch = query => { setSearchQuery(query) }
-  // console.log(searchQuery);
 
   const [page, setPage] = useState(3);
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
 
   const [expensesList,setExpensesList]=useState([]);
 
@@ -59,13 +57,9 @@ export default function ManageExpenses({ navigation }) {
       rep_ID : user.rep_ID,
     }).then((response)=>{
       setExpensesList(response.data);
+      // console.log("/ViewExpenses")
     });
   },[user]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
 
   useEffect(() => {
     async function fetchData(){
@@ -74,13 +68,14 @@ export default function ManageExpenses({ navigation }) {
             rep_ID : user.rep_ID,  
           }).then((response)=>{
             setDailyBatta(response.data[0].Total);
+            // console.log("/DailyBatta");
           });
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[dailybatta]);
+  },[user]);
 
   useEffect(() => {
     async function fetchData(){
@@ -89,13 +84,14 @@ export default function ManageExpenses({ navigation }) {
           rep_ID : user.rep_ID,  
         }).then((response)=>{
           setAccomodation(response.data[0].Total);
+          // console.log("/Accomodation");
         });
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[accomodations]);
+  },[user]);
 
   useEffect(() => {
     async function fetchData(){
@@ -104,13 +100,14 @@ export default function ManageExpenses({ navigation }) {
           rep_ID : user.rep_ID,  
         }).then((response)=>{
           setFuel(response.data[0].Total);
+          // console.log("/Fuel");
         });
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[fuel]);
+  },[user]);
 
   useEffect(() => {
     async function fetchData(){
@@ -119,13 +116,14 @@ export default function ManageExpenses({ navigation }) {
           rep_ID : user.rep_ID,  
         }).then((response)=>{
           setOther(response.data[0].Total);
+          // console.log("/Other");
         });
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[other]);
+  },[user]);
 
   useEffect(() => {
     async function fetchData(){
@@ -134,19 +132,19 @@ export default function ManageExpenses({ navigation }) {
           rep_ID : user.rep_ID,  
         }).then((response)=>{
           setTotal(response.data[0].Total);
+          // console.log("/Total");
         });;
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[total]);
+  },[user]);
   
 
   const ViewExpense = (expense_ID) => {
     navigation.navigate('ViewExpense', {expense_ID});
-  //   console.log("expense passed to the ViewExpense function");
-}
+  }
 
   return (
     <SafeAreaView>
@@ -159,7 +157,6 @@ export default function ManageExpenses({ navigation }) {
                 <Searchbar
                     style= {styles.searchBar}
                     placeholder="Search"
-                    // onChangeText={onChangeSearch}
                     onChangeText={(text) => {setSearchTerm(text)} }
                     value={searchTerm}
                 />
@@ -177,7 +174,6 @@ export default function ManageExpenses({ navigation }) {
                   />
               )}
               onPress={() => navigation.navigate('ClaimExpenses')} 
-              // labelStyle = {{fontWeight : 'bold', marginLeft : -2, color:'#0000FF'}}
               > Claim For Expenses
             </Button>
         </View>
@@ -289,7 +285,6 @@ const styles = StyleSheet.create ({
     width : '100%'
   },
   card: {
-    // backgroundColor :"#D2F7F7",
     backgroundColor : theme.colors.surface,
     flex : 1,
     width : '100%',
@@ -322,7 +317,6 @@ const styles = StyleSheet.create ({
       marginBottom : 6,
       fontWeight : 'bold',
       color : theme.colors.primary,
-      // alignSelf : 'flex-start'
   },
   searchBar: {
     width : '80%',

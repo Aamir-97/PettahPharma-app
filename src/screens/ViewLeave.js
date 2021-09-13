@@ -36,6 +36,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
           await axios.post("http://10.0.2.2:3001/AnnualLeaves/ViewLeave",{
             leave_ID : leave_ID,  
         }).then((response)=>{
+            console.log("/ViewLeave");
           setLeaveDetails({...LeaveDetails,
             leave_Type : response.data[0].leave_Type,
             start_Date : response.data[0].start_Date,
@@ -51,7 +52,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
           console.log("Error while getting leave details");  
         } 
       } fetchData();
-  },[LeaveDetails]);
+  },[]);
 
   
     return(

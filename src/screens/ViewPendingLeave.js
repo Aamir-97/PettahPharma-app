@@ -38,6 +38,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
           await axios.post("http://10.0.2.2:3001/ManageLeaves/ViewPendingLeave",{
             leave_ID : leave_ID,  
         }).then((response)=>{
+            // console.log("/ViewPendingLeave");
           setPendingLeaveDetails({...pendingLeaveDetails,
             leave_Type : response.data[0].leave_Type,
             start_Date : response.data[0].start_Date,
@@ -52,13 +53,14 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
           console.log("Error while get Pending Leave details for View");  
         } 
       } fetchData();
-  },[pendingLeaveDetails]);
+  },[]);
 
   const deleteLeave = () => {
     try{  
         axios.post("http://10.0.2.2:3001/ManageLeaves/DeleteLeave",{
           leave_ID : leave_ID,  
       }).then((response)=>{
+            // console.log("/DeleteLeave");
             Alert.alert(
             "Database Leaves Table",
             "Pending leave Details successfully removed...!",
@@ -134,7 +136,6 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                             <View style = {styles.sameRow}>
                             <Button style= {styles.cancelButton} mode='contained' icon={({color, size}) => ( <Icon name="delete-forever"  color={theme.colors.surface} size={25} /> )} onPress={() => deleteConfirmation()}  > Delete 
                             </Button>
-                            {/* <Button disabled style= {styles.submitButton} mode='contained' icon={({color, size}) => ( <Icon name="rotate-right" color={theme.colors.surface} size={25} /> )} onPress={() => submitForm()} > Update </Button> */}
 
                             </View>
                         </View>

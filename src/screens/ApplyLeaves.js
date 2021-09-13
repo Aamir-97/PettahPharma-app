@@ -25,14 +25,15 @@ export default function ApplyLeaves({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+          console.log("user");            
         }
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[user]);
+  },[]);
 
   const [pendingleaveCount, setPendingLeaveCount] = useState('');
   const [totalleaveCount, setTotalLeaveCount] = useState('');
@@ -43,12 +44,13 @@ export default function ApplyLeaves({ navigation }) {
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         setPendingLeaveCount(response.data.pendingleaveCount);
+        console.log("/pendingleaveCount")
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get  Pending Leave count");
     } 
-  },[pendingleaveCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -56,16 +58,18 @@ export default function ApplyLeaves({ navigation }) {
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         setTotalLeaveCount(response.data.totalleaveCount);
+        console.log("/totalleaveCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while getting Total Leave count");
     } 
-  },[totalleaveCount]);
+  },[user]);
+
 //----------------------------------------------------------------------------------------------------------------
-  const [date, setDate] = useState(new Date());
+    const [date, setDate] = useState(new Date());
     const [mode, setMode] = useState('date');
-    const [show, setShow] = useState('false');
+    const [show, setShow] = useState(false);
 
     const onChange = (event, selectedDate) => {
       const currentDate = selectedDate || date;
@@ -87,14 +91,14 @@ export default function ApplyLeaves({ navigation }) {
       const year = dtt.getFullYear() + '/';
       const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
       const day = ('0' + dtt.getDate()).slice(-2);
-      setStartDate( year+month+day);        
+      setStartDate( year+month+day); 
+      console.log("startDate");     
       },[date]);
 
 
 
 //------------------------------------------------------------------------------------------------------------------
   const [date2, setDate2] = useState(new Date());
-
   const [mode2, setMode2] = useState('date2');
   const [show2, setShow2] = useState(false);
 
@@ -120,7 +124,8 @@ export default function ApplyLeaves({ navigation }) {
   const year = dtt.getFullYear() + '/';
   const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
   const day = ('0' + dtt.getDate()).slice(-2);
-  setEndDate(year+month+day);        
+  setEndDate(year+month+day);  
+  console.log("endDate");     
   },[date2]);
 //---------------------------------------------------------------------------------------------------------------------------
   const checkRequired = () => {
@@ -189,6 +194,7 @@ export default function ApplyLeaves({ navigation }) {
       endDate: endDate, 
       description: description
     }).then((response)=>{
+      console.log("/applyLeave");
       // console.log(leave_ID);
       // console.log("Inserted sucessfully");
       Alert.alert("Database", "Leave Form submitted sucessfully",
@@ -286,7 +292,7 @@ export default function ApplyLeaves({ navigation }) {
         <TextInput style={styles.description} onChangeText={(val) => setDescription(val)} value={description}/>
 
         <View style = {{flexDirection  : 'row' , alignSelf : 'center', width : '70%'}}>
-        <Button icon = "cancel" mode= "contained" color = '#0A6466' style={{backgroundColor:'red'}} title = 'cancel' onPress={() => {alert('Cancelled')}}>Cancel</Button>
+        <Button icon = "cancel" mode= "contained" color = '#0A6466' style={{backgroundColor:'red'}} title = 'cancel' onPress={() => {navigation.goBack()}}>Cancel</Button>
         <Button icon = "send" mode = "contained" color = '#0A6466' style = {{marginLeft : 10}}title = 'submit' style={{marginLeft : 10}} onPress={() => {checkAvailable() }}>Apply</Button>
         </View>
       </View>

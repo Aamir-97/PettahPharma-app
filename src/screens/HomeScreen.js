@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
-import { Text, View, SafeAreaView, ScrollView, Image, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native'
+import { ActivityIndicator, Text, View, SafeAreaView, ScrollView, Image, StyleSheet, AsyncStorage, TouchableOpacity } from 'react-native'
 import { Button }from 'react-native-paper'
-// import { SafeAreaProvider } from 'react-native-safe-area-context';
 import Styles from '../core/Styles'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
@@ -13,8 +12,6 @@ import { ListItem, Icon } from 'react-native-elements'
 
 import axios from 'axios'
 
-
-
 export default function HomeScreen({ navigation }) {
 
   const [user, setUser] = React.useState({ 
@@ -23,13 +20,13 @@ export default function HomeScreen({ navigation }) {
   });
 
   const [reportCount, setReportCount] = React.useState('');
-  const [expensesAmount, setExpensesAmount] = React.useState(0);
+  const [expensesAmount, setExpensesAmount] = React.useState('');
   const [leaveCount, setLeaveCount] = React.useState('');
   const [doctorCount, setDoctorCount] = React.useState('');
   const [sheduledTaskCount, setSheduledTaskCount] = React.useState('');
-  const [completedTaskCount, setCompletedTaskCount] = React.useState('');
+  const [completedTaskCount, setCompletedTaskCount] = React.useState(-1);
   const [productsCount, setProductsCount] = React.useState('');
-
+  const [userName, setuserName] = React.useState('');
 
   const [taskList, setTaskList]=useState([]);
 
@@ -40,28 +37,36 @@ export default function HomeScreen({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (userProfile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });       
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+          // console.log("user");       
         }
       } catch (e){
         console.log(e);
       }
     }
     fetchData();     
-  },[user]);
+  },[]);
 
   useEffect(() => {
     try{  
       axios.post("http://10.0.2.2:3001/homePage/reportCount",{
-        rep_ID : user.rep_ID,  
-      }).then((response)=>{
-        // setStateData({...stateData, reportCount : response.data[0].reportCount})
-        setReportCount(response.data.reportCount);
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get report count");
-    }   
-  },[reportCount]);
+      rep_ID : user.rep_ID,  
+    }).then((response)=>{
+      setReportCount(response.data.reportCount);
+      // console.log("ReportCount");
+    });
+    
+      axios.post("http://10.0.2.2:3001/profileDetails",{
+      rep_ID : user.rep_ID,  
+    }).then((response)=>{
+      setuserName(response.data[0].name);
+      // console.log("HomePageRepName");
+    });
+  } catch (err) {
+    console.log(err);
+    console.log("Error while get report count");
+  } 
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -69,14 +74,14 @@ export default function HomeScreen({ navigation }) {
       axios.post("http://10.0.2.2:3001/homePage/ExpensesAmount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
-        // setStateData({...stateData, expensesCount: response.data.expensesCount });
         setExpensesAmount(response.data.expensesAmount);
+        // console.log("Expense");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get Expenses count");
     }  
-  },[expensesAmount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -84,14 +89,14 @@ export default function HomeScreen({ navigation }) {
       axios.post("http://10.0.2.2:3001/homePage/leaveCount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
-        // setStateData({...stateData, leaveCount: response.data.leaveCount });
         setLeaveCount(response.data.leaveCount);
+        // console.log("LeaveCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get Leave count");
     } 
-  },[leaveCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -99,16 +104,14 @@ export default function HomeScreen({ navigation }) {
       axios.post("http://10.0.2.2:3001/homePage/doctorCount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
-        // console.log(response.data.doctorCount);      
-        // setStateData({...stateData, doctorCount: response.data.doctorCount });
         setDoctorCount(response.data.doctorCount);
-
+        // console.log("DoctorCount");
       });  
     } catch (err) {
       console.log(err);
       console.log("Error while get Doctor count");
     }   
-  },[doctorCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -116,15 +119,14 @@ export default function HomeScreen({ navigation }) {
       axios.post("http://10.0.2.2:3001/homePage/SheduledTaskCount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
-        // setStateData({...stateData, SheduledTaskCount: response.data.SheduledTaskCount });
         setSheduledTaskCount(response.data.SheduledTaskCount);
-
+        // console.log("SheduledTaskCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get schedule task count");
     } 
-  },[sheduledTaskCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -132,28 +134,27 @@ export default function HomeScreen({ navigation }) {
       axios.post("http://10.0.2.2:3001/homePage/CompletedTaskCount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
-        // setStateData({...stateData, SheduledTaskCount: response.data.SheduledTaskCount });
         setCompletedTaskCount(response.data.CompletedTaskCount);
-
+        // console.log("CompletedTaskCount");      
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get schedule task count");
     } 
-  },[completedTaskCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
       // to post total products count
       axios.get("http://10.0.2.2:3001/homePage/productsCount").then((response)=>{
-        // setStateData({...stateData, productsCount: response.data.productsCount });
         setProductsCount(response.data.productsCount);
+        // console.log("ProductsCount");      
       });
     } catch (err) {
       console.log(err);
       console.log("Error while get product count");
     }   
-  },[productsCount]);
+  },[user]);
 
   useEffect(() => {
         async function fetchData(){
@@ -162,13 +163,14 @@ export default function HomeScreen({ navigation }) {
             rep_ID : user.rep_ID,  
         }).then((response)=>{
           setTaskList(response.data);
+          // console.log("ViewTask");            
         });
         } catch (err) {    
           console.log(err);
           console.log("Error while getTask for view");  
         } 
       } fetchData();
-  },[user,taskList]);  
+  },[user]);  
 
   const viewTask = (task_id) =>{
     navigation.navigate('ViewTask', {task_id});
@@ -179,11 +181,18 @@ export default function HomeScreen({ navigation }) {
   return (
     <SafeAreaView>
       <ScrollView> 
-      <BackgroundLayout>
+      {completedTaskCount === -1 ? (
+      <View style={{justifyContent: 'center',alignItems : 'center'}}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+      ) :
+
+      (<BackgroundLayout>
+
       <Image style= {Styles.homelogo} 
       source ={require('../assets/logoWithoutName.png')} 
       />
-      <Text style={Styles.header}>Good Morning, Aamir!</Text>
+      <Text style={Styles.header}>Good Morning, {userName}!</Text>
       <View style={{alignSelf : 'center', flexDirection : 'row'}}>
         <Text style ={styles.countTextLabel}> You have </Text>
         <Text style ={{ color: 'red', fontSize : 15, fontWeight : 'bold'} }> {sheduledTaskCount} </Text> 
@@ -219,7 +228,7 @@ export default function HomeScreen({ navigation }) {
           <View style={{alignItems: 'center'}}>
             <Text style={styles.countText}> {completedTaskCount} </Text>
             <Text style={styles.countTextLabel}> Completed Tasks </Text>
-            <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('')}></FontAwesome5Icon>
+            <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} onPress= {() => console.log("Task Clikked")}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
             <Text style={styles.countText}> {productsCount} </Text>
@@ -234,7 +243,6 @@ export default function HomeScreen({ navigation }) {
           <View style = {styles.sameRow}>
             <Text style= {styles.TaskHeader}>Task and Schedules </Text>
             <Button
-                // style= {styles.addButton}
                 mode='contained'
                 icon={({color, size}) => (
                     <Icons
@@ -258,7 +266,6 @@ export default function HomeScreen({ navigation }) {
                     return( 
                   <TouchableOpacity
                       key={record.task_id}
-                      // onPress = {() => navigation.navigate('ViewTask',{task_id})}
                       onPress = {() => viewTask(record.task_id)}
                   >          
                     <ListItem bottomDivider>
@@ -266,7 +273,6 @@ export default function HomeScreen({ navigation }) {
                       <ListItem.Content>
                         <ListItem.Title style={{color: theme.colors.primary, fontWeight : 'bold'}}>{record.title} - ({record.type})</ListItem.Title>
                         <ListItem.Subtitle style= {styles.Subtitle}>{year + month + day} - {record.location}</ListItem.Subtitle>
-                        {/* <ListItem.Subtitle>{record.location}</ListItem.Subtitle> */}
                       </ListItem.Content>
                       <ListItem.Chevron />
                     </ListItem>  
@@ -277,7 +283,8 @@ export default function HomeScreen({ navigation }) {
 
         </View>
 
-      </BackgroundLayout>
+      </BackgroundLayout>      
+      )}
       </ScrollView>
     </SafeAreaView>
   )
@@ -290,7 +297,6 @@ const styles = StyleSheet.create ({
     minHeight : 300,
     padding: 15,
     backgroundColor : theme.colors.surface,
-    // backgroundColor : '#E7FFFF',
     borderRadius : 5,
     shadowColor : '#D2F7F7',
     elevation : 10,
@@ -315,7 +321,6 @@ const styles = StyleSheet.create ({
   },
   Subtitle: {
     fontSize : 15,
-    // alignSelf : 'center'
   },
   countText : {
     fontSize : 15,

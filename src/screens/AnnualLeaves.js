@@ -1,30 +1,29 @@
 import React, {useState, useEffect} from 'react'
 import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage, TouchableOpacity,Button} from 'react-native'
-import Styles from '../core/Styles'
-import TopNav from '../components/TopNav'
 import { theme } from '../core/theme'
-import Icon from 'react-native-vector-icons/Ionicons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
-import FontistoIcon from 'react-native-vector-icons/Fontisto'
-import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 import { Text ,DataTable} from 'react-native-paper'
 import axios from 'axios';
+import SearchInput, { createFilter } from 'react-native-search-filter';
+
 
 const optionsPerPage = [2, 3, 4];
+const Keys_to_filter = ['leave_type', 'date'];
+
 
 export default function AnnualLeaves({ navigation }) {
- 
-  // const [searchQuery, setSearchQuery] = useState('');
-  // const onChangeSearch = query => { setSearchQuery(query) }
-  // console.log(searchQuery);
-
-//   const [searchTerm,setSearchTerm]=useState("");
 
   const [page, setPage] = useState(3);
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
 
   const [leaveList,setLeaveList]=useState([]);
+
+  const [searchTerm,setSearchTerm]=useState("");
+  const filteredKey = leaveList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
   const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
 
@@ -32,17 +31,34 @@ export default function AnnualLeaves({ navigation }) {
   const [totalleaveCount, setTotalLeaveCount] = useState('');
 
   useEffect(() => {
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+          // console.log("user");            
+        }
+      } catch (e){
+        console.log(e);
+      }
+    }
+    fetchData();
+  },[]);
+
+  useEffect(() => {
     try{  
       axios.post("http://10.0.2.2:3001/AnnualLeaves/pendingleaveCount",{
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         setPendingLeaveCount(response.data.pendingleaveCount);
+        // console.log("/pendingleaveCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while getting Pending Leave count");
     } 
-  },[pendingleaveCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -50,12 +66,13 @@ export default function AnnualLeaves({ navigation }) {
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         setTotalLeaveCount(response.data.totalleaveCount);
+        // console.log("/totalleaveCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while getting Total Leave count");
     } 
-  },[totalleaveCount]);
+  },[user]);
   
 // view approved and rejected leaves
   useEffect(()=>{
@@ -63,36 +80,17 @@ export default function AnnualLeaves({ navigation }) {
     axios.post('http://10.0.2.2:3001/viewLeaves',{
       rep_ID : user.rep_ID,
     }).then((response)=>{
-      setLeaveList(response.data)
+      setLeaveList(response.data);
+      // console.log("/viewLeaves");
     })
   } catch (err) {
       console.log("Error while displaying leaves");
   }
 },[user]);
-
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
-
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[user]);
   
   const ViewLeave = (leave_ID) => {
     navigation.navigate('ViewLeave', {leave_ID});
-  //   console.log("leave passed to the ViewLeave function");
-}
+  }
 
 
   
@@ -126,13 +124,7 @@ export default function AnnualLeaves({ navigation }) {
                     {/* <DataTable.Title align = "center">Description</DataTable.Title> */}
                 </DataTable.Header>
 
-                {leaveList.filter(val=>{if(searchQuery===""){
-                            return val;
-                            }else if(
-                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                            { return val;
-                             } 
-                          }).map((record)=>{
+                {filteredKey.map((record,i) => {
                             return(
                               <TouchableOpacity key={record.leave_ID} onPress = {()=> ViewLeave(record.leave_ID)}>
                     <DataTable.Row >

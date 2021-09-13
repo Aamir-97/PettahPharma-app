@@ -3,11 +3,8 @@ import { SafeAreaView, ScrollView, View, Text, StyleSheet,Image, Alert } from 'r
 import { TextInput, Button } from 'react-native-paper';
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme'
-import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
-
-
 
 import axios from 'axios';
 
@@ -97,7 +94,7 @@ export default function ViewTask ({route, navigation}){
           task_id : task_id,
           rep_note : taskDetails.rep_note        
       }).then((response)=>{
-        console.log("Task completd..!");
+        // console.log("Task completd..!");
         Alert.alert(
             "Task Completed",
             "Your completed task submitted...!",
@@ -204,7 +201,6 @@ export default function ViewTask ({route, navigation}){
     try{  
       axios.post("http://10.0.2.2:3001/Task/AcceptTask",{
       task_id : task_id,
-      // rep_note : taskDetails.rep_note        
     }).then((response)=>{
       setCompleteButton(true);
     });
@@ -280,12 +276,10 @@ export default function ViewTask ({route, navigation}){
                                         size={20}
                                         />
                                     )}
-                                    // goBack={navigation.goBack}
                                     onPress={() => deleteConfirmation()} 
                                     > Delete 
                                 </Button>
                                 <Button
-                                    // style= {styles.submitButton}
                                     mode='contained'
                                     icon={({color, size}) => (
                                         <FontAwesome5Icon
@@ -316,12 +310,10 @@ export default function ViewTask ({route, navigation}){
                                           size={20}
                                           />
                                       )}
-                                      // goBack={navigation.goBack}
                                       onPress={() => rejectConfirmation()} 
                                       > Reject 
                                   </Button>
                                   <Button
-                                      // style= {styles.cancelButton}
                                       mode='contained'
                                       icon={({color, size}) => (
                                           <FontAwesome5Icon
@@ -330,7 +322,6 @@ export default function ViewTask ({route, navigation}){
                                           size={20}
                                           />
                                       )}
-                                      // goBack={navigation.goBack}
                                       onPress={() => acceptTask()} 
                                       > Accept 
                                   </Button>
@@ -415,8 +406,6 @@ const styles = StyleSheet.create ({
 
     sameRow : {
       flexDirection : 'row',
-    //   justifyContent: 'space-between',
-    //   marginBottom : 20,
       width : '100%'
     },
     completeButton : {

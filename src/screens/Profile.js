@@ -38,20 +38,18 @@ export default function Profile({navigation}){
 
 // useEffect for get medical rep details
     useEffect(() => {
-        async function fetchData(){
-          try {
+        async function fetchData(){        
             const userProfile = await AsyncStorage.getItem('user');
             const profile  = JSON.parse(userProfile);
             if ( profile !== null){
               setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
-            //   getProfileData(user.rep_ID);    
             
             // Beck-end function
             await axios.post("http://10.0.2.2:3001/profileDetails",{
                 rep_ID : profile.rep_ID,
             }).then((response)=>{
                 const profile = response.data[0];
-                // console.log(response.data[0].name);
+                // console.log("/profileDetails");
                 setProfileDetails({...profileDetails, 
                     name : profile.name,
                     display_photo : profile.display_photo,
@@ -65,13 +63,11 @@ export default function Profile({navigation}){
 
                 });
             });
+            return;
             }
-          } catch (e){
-            console.log(e);
-          }
         }
         fetchData();       
-      },[profileDetails]);
+      },[]);
 
 
     //   useEffect for get manager details
@@ -83,7 +79,7 @@ export default function Profile({navigation}){
                 manager_ID : user.manager_ID,
             }).then((response)=>{
                 const profile = response.data[0];
-                // console.log(response.data[0].name);
+                // console.log("/ManagerDetails");
                 setManagerDetails({...mangerDetails, 
                     name : profile.name,
                     display_photo : profile.display_photo,
@@ -91,7 +87,6 @@ export default function Profile({navigation}){
                     phone_no : profile.phone_no,
                     working_area : profile.area,
                     joined : profile.created_at,
-
                 });
             });
           } catch (e){
@@ -99,7 +94,7 @@ export default function Profile({navigation}){
           }
         }
         fetchData();       
-      },[profileDetails]);
+      },[user]);
 
 
     // const getProfileData = (rep_ID) => {
@@ -130,7 +125,6 @@ export default function Profile({navigation}){
 
     const editProfile = (rep_ID) => {
         navigation.navigate('EditProfile', {rep_ID});
-        // console.log(rep_ID);
     }
 
     const dtt = new Date(profileDetails.joined);
@@ -177,10 +171,6 @@ export default function Profile({navigation}){
                                     />
                                 )
                             }                      
-                            {/* <Image 
-                                source= {{uri : profileDetails.display_photo }}
-                                style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}
-                            /> */}
 
                         <Text style={{fontSize:25, fontWeight:'bold', color: theme.colors.primary,  }}>{ profileDetails.name }</Text>
 

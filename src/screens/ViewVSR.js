@@ -34,6 +34,7 @@ export default function ViewVSR ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/VisitSummaryReport/ViewVSR",{
             report_id : report_id,  
         }).then((response)=>{
+            console.log("/VisitSummaryReport/ViewVSR");
             setReportDetails({...reportDetails,
             visit_type : response.data[0].visit_type,
             location : response.data[0].location,
@@ -234,8 +235,6 @@ const styles = StyleSheet.create ({
         marginBottom : 10,
         fontWeight : 'bold',
         color : theme.colors.primary,
-
-
     },
 
     medicinePhoto: {
@@ -250,11 +249,8 @@ const styles = StyleSheet.create ({
         backgroundColor : 'red',
         marginRight : 5,
     },
-
     sameRow : {
       flexDirection : 'row',
-    //   justifyContent: 'space-between',
-    //   marginBottom : 20,
       width : '100%'
     },
   })

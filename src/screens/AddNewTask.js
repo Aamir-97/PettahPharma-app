@@ -9,8 +9,6 @@ import DateTimePicker from '@react-native-community/datetimepicker'
 import { requiredField } from '../helpers/requiredField'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 
-
-
 import axios from 'axios'
 
 export default function AddNewTask({navigation}){
@@ -28,8 +26,6 @@ export default function AddNewTask({navigation}){
           const profile  = JSON.parse(userProfile); 
           if (profile !== null ){
             setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });        
-            // const rep_ID = profile.rep_ID;
-            // Call any function
           }      
         } catch (e){
           console.log(e);
@@ -320,8 +316,6 @@ export default function AddNewTask({navigation}){
                 <Button 
                     icon = "alarm-multiple"
                     mode="contained" 
-                    // onPress={() => SubmitTask()}>
-                    // onPress={() => checkAvailable()}>
                     onPress={() => checkRequired()}>
                         Schedule
                 </Button>
@@ -349,11 +343,7 @@ const styles = StyleSheet.create ({
     InputField : {
         height : 45,
         marginBottom : 5,
-        fontSize : 16,
-        // borderColor : theme.colors.primary,
-        // borderWidth : 1,
-        // borderRadius : 5
-        
+        fontSize : 16,      
     },
     dropDownField : {
         height : 45,
@@ -367,13 +357,10 @@ const styles = StyleSheet.create ({
     },
     sameRow : {
         flexDirection : 'row',
-        // justifyContent: 'space-between',
     },
     CommentField : {
         height : 100,
-        // alignSelf : 'stretch',
         marginBottom : 20,
-        // padding : 20,
         fontSize : 16,
 
     }

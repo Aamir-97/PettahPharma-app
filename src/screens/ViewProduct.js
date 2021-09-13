@@ -4,8 +4,6 @@ import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 
-
-
 import axios from 'axios';
 
 
@@ -27,6 +25,7 @@ export default function ViewProduct ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/ProductDetails/ViewProduct",{
             product_id : product_id,  
         }).then((response)=>{
+          // console.log("/ProductDetails/ViewProduct");
           setProductDetails({...productDetails,
             display_photo : response.data[0].display_photo,
             name : response.data[0].name,
@@ -105,7 +104,6 @@ const styles = StyleSheet.create ({
       fontWeight : 'bold',
       fontSize : 22,
       marginLeft : 5,
-    //   top : 5,
       textAlign : 'center'    
     },
 
@@ -120,10 +118,7 @@ const styles = StyleSheet.create ({
         marginBottom : 10,
         fontWeight : 'bold',
         color : theme.colors.primary,
-
-
     },
-
     medicinePhoto: {
         width:150, 
         height: 150, 
@@ -135,8 +130,6 @@ const styles = StyleSheet.create ({
 
     sameRow : {
       flexDirection : 'row',
-    //   justifyContent: 'space-between',
-    //   marginBottom : 20,
       width : '100%'
     },
   })

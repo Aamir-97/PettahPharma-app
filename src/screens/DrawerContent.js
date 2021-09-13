@@ -1,15 +1,11 @@
 import React, {useEffect} from 'react';
 import { View, StyleSheet, TouchableOpacity, AsyncStorage } from 'react-native';
 import {
-    useTheme,
     Avatar,
     Title,
     Caption,
     Paragraph,
     Drawer,
-    Text,
-    TouchableRipple,
-    Switch
 } from 'react-native-paper';
 import {
     DrawerContentScrollView,
@@ -61,6 +57,7 @@ export function DrawerContent(props) {
                     rep_ID : profile.rep_ID,
                 }).then((response)=>{
                     const profile = response.data[0];
+                    // console.log("ProfileDetails");
                     setProfileDetails({...profileDetails, 
                         name : profile.name,
                         display_photo : profile.display_photo,
@@ -75,7 +72,7 @@ export function DrawerContent(props) {
           }
         }
         fetchData();     
-    },[profileDetails]);
+    },[]);
 
 
     return(

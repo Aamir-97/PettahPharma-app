@@ -1,32 +1,30 @@
 import React, { useState, useEffect } from 'react'
-import { Text, View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, Button, AsyncStorage} from 'react-native'
-import Styles from '../core/Styles'
-import TopNav from '../components/TopNav'
+import { Text, View, SafeAreaView, ScrollView, StyleSheet, AsyncStorage} from 'react-native'
 import { theme } from '../core/theme'
-import Icon from 'react-native-vector-icons/Ionicons'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
-import FontistoIcon from 'react-native-vector-icons/Fontisto'
-import { ThemeProvider } from '@react-navigation/native'
 import BackgroundLayout from '../components/BackgroundLayout'
 import {Card, DataTable} from 'react-native-paper';
 import axios from 'axios';
+import SearchInput, { createFilter } from 'react-native-search-filter';
+
 
 const optionsPerPage = [2, 3, 4];
+const Keys_to_filter = ['leave_Type'];
 
 export default function ManageLeaves({ navigation }) {
 
-  // const [searchQuery, setSearchQuery] = useState('');
-  // const onChangeSearch = query => { setSearchQuery(query) }
-  // console.log(searchQuery);
-
-//   const [searchTerm,setSearchTerm]=useState("");
-
   const [page, setPage] = useState(3);
   const [itemsPerPage, setItemsPerPage] = useState(optionsPerPage[0]);
+  useEffect(() => {
+    setPage(0);
+  }, [itemsPerPage]);
 
   const [user, setUser] = useState({ rep_ID: '', manager_ID: '', });
 
   const [pendingLeaveList,setPendingLeaveList]=useState([]);
+
+  const [searchTerm,setSearchTerm]=useState('');
+  const filteredKey = pendingLeaveList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
   const [pendingleaveCount, setPendingLeaveCount] = useState('');
   const [totalleaveCount, setTotalLeaveCount] = useState('');
@@ -38,14 +36,15 @@ export default function ManageLeaves({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });            
+          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
+          // console.log("user")           
         }
       } catch (e){
         console.log(e);
       }
     }
     fetchData();
-  },[user]);
+  },[]);
 
   useEffect(() => {
     try{  
@@ -53,12 +52,13 @@ export default function ManageLeaves({ navigation }) {
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         setPendingLeaveCount(response.data.pendingleaveCount);
+        // console.log("PendingleaveCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while getting Pending Leave count");
     } 
-  },[pendingleaveCount]);
+  },[user]);
 
   useEffect(() => {
     try{  
@@ -66,12 +66,13 @@ export default function ManageLeaves({ navigation }) {
         rep_ID : user.rep_ID, 
       }).then((response)=>{
         setTotalLeaveCount(response.data.totalleaveCount);
+        // console.log("TotalleaveCount");
       });
     } catch (err) {
       console.log(err);
       console.log("Error while getting Total Leave count");
     } 
-  },[totalleaveCount]);
+  },[user]);
 
   //view pending leaves
   useEffect(()=>{
@@ -80,20 +81,15 @@ export default function ManageLeaves({ navigation }) {
       rep_ID:user.rep_ID,
     }).then((response)=>{
       setPendingLeaveList(response.data);
+      // console.log("ViewPendingLeaves");
     })
   } catch (err){
       console.log("Error while displaying pending leaves");
   }
-},[]);
-
-
-  useEffect(() => {
-    setPage(0);
-  }, [itemsPerPage]);
+},[user]);
 
   const ViewPendingLeave = (leave_ID) => {
     navigation.navigate('ViewPendingLeave', {leave_ID});
-  //   console.log("leave passed to the ViewPendingLeave function");
 }
   
   return (
@@ -125,13 +121,7 @@ export default function ManageLeaves({ navigation }) {
                     <DataTable.Title align = "center">Description </DataTable.Title>
                 </DataTable.Header>
 
-                {pendingLeaveList.filter(val=>{if(searchQuery===""){
-                            return val;
-                            }else if(
-                            val.name.toLowerCase().includes(searchQuery.toLowerCase()));
-                            { return val;
-                             } 
-                          }).map((record)=>{
+                {filteredKey.map((record,i) => {
                             return(
                     <DataTable.Row key={record.leave_ID} onPress = {()=> ViewPendingLeave(record.leave_ID)}>
                     <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
