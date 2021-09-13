@@ -22,6 +22,7 @@ const [profileDetails , setProfileDetails] = React.useState({
   address : '',
   password : '',
 })
+const [userDate, setUserData] = React.useState('')
 
   useEffect(() => {
     async function fetchData(){
@@ -39,6 +40,7 @@ const [profileDetails , setProfileDetails] = React.useState({
           address: profile.address, 
           password: profile.password
         })
+        setUserData("rep_ID");
       })
 
     } catch (err) {
@@ -46,7 +48,7 @@ const [profileDetails , setProfileDetails] = React.useState({
     } 
     }
     fetchData();                          
-  },[]);
+  },[userDate]);
 
 
   const submitForm = () => {

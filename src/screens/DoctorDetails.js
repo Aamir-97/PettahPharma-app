@@ -53,17 +53,25 @@ export default function DoctorDetails({navigation}){
   },[]);
 
   useEffect(() => {
+    fetchData();
+    return navigation.addListener('focus', () => {
+      fetchData();
+    });
+  },[user]);
+
+    async function fetchData(){
       try { 
-          axios.post('http://10.0.2.2:3001/viewDoctorDetails',{
-            rep_ID : user.rep_ID,
-          }).then((response)=> {
-                setDoctorList(response.data);
-                // console.log("/viewDoctorDetails");
-          })
+        axios.post('http://10.0.2.2:3001/viewDoctorDetails',{
+          rep_ID : user.rep_ID,
+        }).then((response)=> {
+              setDoctorList(response.data);
+              // console.log("/viewDoctorDetails");
+        })
       } catch (err) {
           console.log("Error While Get the doctor Details");
-      }    
-  },[user]);
+      } 
+    }
+
   
   const doctorView = (doctor_id) => {
     navigation.navigate('ViewDoctor', {doctor_id});

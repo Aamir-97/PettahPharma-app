@@ -36,8 +36,13 @@ export default function Profile({navigation}){
         joined : ''
     });
 
-// useEffect for get medical rep details
     useEffect(() => {
+        fetchData();
+        return navigation.addListener('focus', () => {
+          fetchData();
+        });
+    },[user]);  
+
         async function fetchData(){        
             const userProfile = await AsyncStorage.getItem('user');
             const profile  = JSON.parse(userProfile);
@@ -62,66 +67,30 @@ export default function Profile({navigation}){
                     joined : profile.created_at
 
                 });
-            });
-            return;
+            })
+
+            // Manger Details
+            try {    
+                // Beck-end function
+                await axios.post("http://10.0.2.2:3001/Profile/ManagerDetails",{
+                    manager_ID : user.manager_ID,
+                }).then((response)=>{
+                    const profile = response.data[0];
+                    // console.log("/ManagerDetails");
+                    setManagerDetails({...mangerDetails, 
+                        name : profile.name,
+                        display_photo : profile.display_photo,
+                        email : profile.email,
+                        phone_no : profile.phone_no,
+                        working_area : profile.area,
+                        joined : profile.created_at,
+                    });
+                });
+              } catch (e){
+                console.log(e);
+              }
             }
         }
-        fetchData();       
-      },[]);
-
-
-    //   useEffect for get manager details
-    useEffect(() => {
-        async function fetchData(){
-          try {    
-            // Beck-end function
-            await axios.post("http://10.0.2.2:3001/Profile/ManagerDetails",{
-                manager_ID : user.manager_ID,
-            }).then((response)=>{
-                const profile = response.data[0];
-                // console.log("/ManagerDetails");
-                setManagerDetails({...mangerDetails, 
-                    name : profile.name,
-                    display_photo : profile.display_photo,
-                    email : profile.email,
-                    phone_no : profile.phone_no,
-                    working_area : profile.area,
-                    joined : profile.created_at,
-                });
-            });
-          } catch (e){
-            console.log(e);
-          }
-        }
-        fetchData();       
-      },[user]);
-
-
-    // const getProfileData = (rep_ID) => {
-    //     try {
-    //         axios.post("http://10.0.2.2:3001/profileDetails",{
-    //             rep_ID : rep_ID,
-    //         }).then((response)=>{
-    //             // const profile = response.data[0];
-    //             // console.log(response.data[0].name);
-    //             setProfileDetails({...profileDetails, 
-    //                 name : response.data[0].name,
-    //                 display_photo : response.data[0].display_photo,
-    //                 email : response.data[0].email,
-    //                 phone_no : response.data[0].phone_no,
-    //                 address : response.data[0].address,
-    //                 working_area : response.data[0].working_area,
-    //                 rating : response.data[0].rating,
-    //                 manager_ID : response.data[0].manager_ID,
-    //                 joined : response.data[0].joined
-
-    //             });
-    //         });
-    //     } catch (err) {
-    //         console.log(err);
-    //         console.log("Error While get the Profile Details");
-    //     }
-    // }
 
     const editProfile = (rep_ID) => {
         navigation.navigate('EditProfile', {rep_ID});
@@ -157,7 +126,6 @@ export default function Profile({navigation}){
 
                 <View>
                     <Image style={{padding:10, width:'100%',height:150, alignItems:'center'}} 
-                        // source ={{ uri: 'https://source.unsplash.com/1600x900/?portrait'}}>
                         source ={require ('../assets/landscpeImage.jpg')}>
                     </Image>
                 </View>

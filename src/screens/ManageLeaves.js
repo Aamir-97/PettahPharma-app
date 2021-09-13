@@ -47,6 +47,14 @@ export default function ManageLeaves({ navigation }) {
   },[]);
 
   useEffect(() => {
+    fetchData();
+    return navigation.addListener('focus', () => {
+      fetchData();
+    });
+  },[user]);
+
+  async function fetchData (){
+
     try{  
       axios.post("http://10.0.2.2:3001/ManageLeaves/pendingleaveCount",{
         rep_ID : user.rep_ID, 
@@ -57,10 +65,8 @@ export default function ManageLeaves({ navigation }) {
     } catch (err) {
       console.log(err);
       console.log("Error while getting Pending Leave count");
-    } 
-  },[user]);
+    }
 
-  useEffect(() => {
     try{  
       axios.post("http://10.0.2.2:3001/ManageLeaves/totalleaveCount",{
         rep_ID : user.rep_ID, 
@@ -72,21 +78,18 @@ export default function ManageLeaves({ navigation }) {
       console.log(err);
       console.log("Error while getting Total Leave count");
     } 
-  },[user]);
 
-  //view pending leaves
-  useEffect(()=>{
     try{
-    axios.post("http://10.0.2.2:3001/viewPendingLeaves",{
-      rep_ID:user.rep_ID,
-    }).then((response)=>{
-      setPendingLeaveList(response.data);
-      // console.log("ViewPendingLeaves");
-    })
-  } catch (err){
-      console.log("Error while displaying pending leaves");
+      axios.post("http://10.0.2.2:3001/viewPendingLeaves",{
+        rep_ID:user.rep_ID,
+      }).then((response)=>{
+        setPendingLeaveList(response.data);
+        // console.log("ViewPendingLeaves");
+      })
+    } catch (err){
+        console.log("Error while displaying pending leaves");
+    }
   }
-},[user]);
 
   const ViewPendingLeave = (leave_ID) => {
     navigation.navigate('ViewPendingLeave', {leave_ID});

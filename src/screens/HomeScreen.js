@@ -48,116 +48,13 @@ export default function HomeScreen({ navigation }) {
   },[]);
 
   useEffect(() => {
-    try{  
-      axios.post("http://10.0.2.2:3001/homePage/reportCount",{
-      rep_ID : user.rep_ID,  
-    }).then((response)=>{
-      setReportCount(response.data.reportCount);
-      // console.log("ReportCount");
-    });
-    
-      axios.post("http://10.0.2.2:3001/profileDetails",{
-      rep_ID : user.rep_ID,  
-    }).then((response)=>{
-      setuserName(response.data[0].name);
-      // console.log("HomePageRepName");
-    });
-  } catch (err) {
-    console.log(err);
-    console.log("Error while get report count");
-  } 
-  },[user]);
-
-  useEffect(() => {
-    try{  
-      // to post claimed expenses count
-      axios.post("http://10.0.2.2:3001/homePage/ExpensesAmount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setExpensesAmount(response.data.expensesAmount);
-        // console.log("Expense");
+      fetchData();
+      return navigation.addListener('focus', () => {
+        fetchData();
       });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get Expenses count");
-    }  
   },[user]);
 
-  useEffect(() => {
-    try{  
-      // to post annual leave taken count
-      axios.post("http://10.0.2.2:3001/homePage/leaveCount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setLeaveCount(response.data.leaveCount);
-        // console.log("LeaveCount");
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get Leave count");
-    } 
-  },[user]);
-
-  useEffect(() => {
-    try{  
-      // to post total doctors count
-      axios.post("http://10.0.2.2:3001/homePage/doctorCount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setDoctorCount(response.data.doctorCount);
-        // console.log("DoctorCount");
-      });  
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get Doctor count");
-    }   
-  },[user]);
-
-  useEffect(() => {
-    try{  
-      // to post sheduled task count
-      axios.post("http://10.0.2.2:3001/homePage/SheduledTaskCount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setSheduledTaskCount(response.data.SheduledTaskCount);
-        // console.log("SheduledTaskCount");
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get schedule task count");
-    } 
-  },[user]);
-
-  useEffect(() => {
-    try{  
-      // to post sheduled task count
-      axios.post("http://10.0.2.2:3001/homePage/CompletedTaskCount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setCompletedTaskCount(response.data.CompletedTaskCount);
-        // console.log("CompletedTaskCount");      
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get schedule task count");
-    } 
-  },[user]);
-
-  useEffect(() => {
-    try{  
-      // to post total products count
-      axios.get("http://10.0.2.2:3001/homePage/productsCount").then((response)=>{
-        setProductsCount(response.data.productsCount);
-        // console.log("ProductsCount");      
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get product count");
-    }   
-  },[user]);
-
-  useEffect(() => {
-        async function fetchData(){
+      async function fetchData(){
         try{  
           await axios.post("http://10.0.2.2:3001/homePage/viewTask",{
             rep_ID : user.rep_ID,  
@@ -168,9 +65,104 @@ export default function HomeScreen({ navigation }) {
         } catch (err) {    
           console.log(err);
           console.log("Error while getTask for view");  
-        } 
-      } fetchData();
-  },[user]);  
+        }
+        
+        try{  
+          axios.post("http://10.0.2.2:3001/homePage/reportCount",{
+          rep_ID : user.rep_ID,  
+        }).then((response)=>{
+          setReportCount(response.data.reportCount);
+          // console.log("ReportCount");
+        });
+        
+          axios.post("http://10.0.2.2:3001/profileDetails",{
+          rep_ID : user.rep_ID,  
+        }).then((response)=>{
+          setuserName(response.data[0].name);
+          // console.log("HomePageRepName");
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get report count");
+      }
+      
+      try{  
+        // to post claimed expenses count
+        axios.post("http://10.0.2.2:3001/homePage/ExpensesAmount",{
+          rep_ID : user.rep_ID, 
+        }).then((response)=>{
+          setExpensesAmount(response.data.expensesAmount);
+          // console.log("Expense");
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get Expenses count");
+      }
+
+      try{  
+        // to post annual leave taken count
+        axios.post("http://10.0.2.2:3001/homePage/leaveCount",{
+          rep_ID : user.rep_ID, 
+        }).then((response)=>{
+          setLeaveCount(response.data.leaveCount);
+          // console.log("LeaveCount");
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get Leave count");
+      }
+
+      try{  
+        // to post total doctors count
+        axios.post("http://10.0.2.2:3001/homePage/doctorCount",{
+          rep_ID : user.rep_ID, 
+        }).then((response)=>{
+          setDoctorCount(response.data.doctorCount);
+          // console.log("DoctorCount");
+        });  
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get Doctor count");
+      }
+
+      try{  
+        // to post sheduled task count
+        axios.post("http://10.0.2.2:3001/homePage/SheduledTaskCount",{
+          rep_ID : user.rep_ID, 
+        }).then((response)=>{
+          setSheduledTaskCount(response.data.SheduledTaskCount);
+          // console.log("SheduledTaskCount");
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get schedule task count");
+      }
+
+      try{  
+        // to post sheduled task count
+        axios.post("http://10.0.2.2:3001/homePage/CompletedTaskCount",{
+          rep_ID : user.rep_ID, 
+        }).then((response)=>{
+          setCompletedTaskCount(response.data.CompletedTaskCount);
+          // console.log("CompletedTaskCount");      
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get schedule task count");
+      }
+
+      try{  
+        // to post total products count
+        axios.get("http://10.0.2.2:3001/homePage/productsCount").then((response)=>{
+          setProductsCount(response.data.productsCount);
+          // console.log("ProductsCount");      
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get product count");
+      }
+
+    }; 
 
   const viewTask = (task_id) =>{
     navigation.navigate('ViewTask', {task_id});

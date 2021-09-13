@@ -67,6 +67,7 @@ app.post('/login',(req,res)=>{
                     rep_ID: result[0].rep_ID,
                     manager_ID : result[0].manager_ID,
                 })
+                console.log("login");
               } else {
                   res.send({message : 'Invalid Credentials...!'})
               } 
@@ -92,7 +93,7 @@ app.post('/homePage/reportCount',(req,res)=>{
 app.post('/homePage/ExpensesAmount',(req,res)=>{
 
     const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT SUM(amount) AS expensesAmount FROM expenses WHERE rep_ID=?";
+    const sqlLogin = "SELECT SUM(amount) AS expensesAmount FROM expenses WHERE rep_ID=? AND status=1";
      
     db.query(sqlLogin,[rep_ID],(err,result)=>{
             if(err){
@@ -218,7 +219,7 @@ app.get('/homePage/productsCount',(_req,res)=>{
 app.post('/homePage/viewTask',(req,res)=>{  
    
     const rep_ID = req.body.rep_ID;
-    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending' OR status='Accept' ORDER BY date DESC";
+    const sql = "SELECT * FROM task WHERE rep_ID=? AND status='Pending' OR status='Accept' ORDER BY date ASC";
      
     db.query(sql,[rep_ID],(err,result)=>{
             if(err){
@@ -489,7 +490,7 @@ app.post('/ProductDetails/ViewProduct',(req,res)=>{
 app.post('/viewVisitSummaryReport',(req,res)=>{
     // console.log(req.body.rep_ID);
     const rep_ID = req.body.rep_ID;
-    db.query('SELECT * FROM visit_summary_report WHERE rep_ID=?',[rep_ID],(err,result)=>{
+    db.query('SELECT * FROM visit_summary_report WHERE rep_ID=? ORDER BY created_at DESC',[rep_ID],(err,result)=>{
         if(!err){
             res.send(result);
         }else{
@@ -531,11 +532,12 @@ app.post("/vsr/submitForm", (req, res) => {
     const doctor_name  = req.body.doctor_name; 
     const product_name = req.body.product_name;
     const rep_ID = req.body.rep_ID;
-    const manager_ID = req.body.manager_ID;  
+    const manager_ID = req.body.manager_ID; 
+    const created_at = req.body.created_at; 
     
-    const sql =  "INSERT INTO visit_summary_report(visit_type, location, date, avg_duration, no_of_sample, description, doctor_name, product_name, rep_ID, manager_ID) VALUES (?,?,?,?,?,?,?,?,?,?)" ;
+    const sql =  "INSERT INTO visit_summary_report(visit_type, location, date, avg_duration, no_of_sample, description, doctor_name, product_name, rep_ID, manager_ID,created_at) VALUES (?,?,?,?,?,?,?,?,?,?,?)" ;
 
-    db.query(sql,[visit_type, location, date, avg_duration, no_of_sample ,description, doctor_name, product_name, rep_ID, manager_ID], (err,result)=> {
+    db.query(sql,[visit_type, location, date, avg_duration, no_of_sample ,description, doctor_name, product_name, rep_ID, manager_ID,created_at], (err,result)=> {
         if(err){
             console.log(err);
             console.log ("Error while submit the report");
@@ -1132,21 +1134,10 @@ app.post('/ClaimExpenses',(req,res)=>{
 });        
   
 
-app.post('/ViewExpensesByCategory', (req, res) =>{
-    const rep_ID = req.body.rep_ID;
-    //total expenses by category
-    db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? GROUP BY expense_Type', [rep_ID], (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);  
-    }
-  });
-});
 app.post('/Expenses/DailyBatta', (req, res) =>{
     const rep_ID = req.body.rep_ID;
     //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Daily batta"', [rep_ID], (err, result, _fields)=> {
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Daily batta" AND status=1', [rep_ID], (err, result, _fields)=> {
       if(!err){
         res.send(result);
     }else {
@@ -1157,7 +1148,7 @@ app.post('/Expenses/DailyBatta', (req, res) =>{
 app.post('/Expenses/Accomodation', (req, res) =>{
     const rep_ID = req.body.rep_ID;  
     //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Accommodation"', [rep_ID], (err, result, _fields)=> {
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Accommodation" AND status=1', [rep_ID], (err, result, _fields)=> {
       if(!err){
         res.send(result);
     }else {
@@ -1168,7 +1159,7 @@ app.post('/Expenses/Accomodation', (req, res) =>{
 app.post('/Expenses/Fuel', (req, res) =>{
     const rep_ID = req.body.rep_ID;
     //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Fuel"', [rep_ID], (err, result, _fields)=> {
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Fuel" AND status=1', [rep_ID], (err, result, _fields)=> {
       if(!err){
         res.send(result);
     }else {
@@ -1179,7 +1170,7 @@ app.post('/Expenses/Fuel', (req, res) =>{
 app.post('/Expenses/Other', (req, res) =>{
     const rep_ID = req.body.rep_ID;
     //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Other"', [rep_ID], (err, result, _fields)=> {
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Other" AND status=1', [rep_ID], (err, result, _fields)=> {
       if(!err){
         res.send(result);
     }else {
@@ -1190,7 +1181,7 @@ app.post('/Expenses/Other', (req, res) =>{
 app.post('/Expenses/Total', (req, res) =>{
     const rep_ID = req.body.rep_ID;
     //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ?', [rep_ID], (err, result, _fields)=> {
+    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND status=1', [rep_ID], (err, result, _fields)=> {
       if(!err){
         res.send(result);
     }else {
@@ -1219,6 +1210,21 @@ app.post('/ManageExpenses/ViewExpenses',(req,res)=>{
             if(err){
                 res.send({err:err})
                 console.log("Error while getting expense details");
+              } if(result){
+                res.send(result);
+              } 
+    });
+});
+
+app.post('/Expense/DeleteExpense',(req,res)=>{
+    const expense_ID = req.body.expense_ID;
+
+    const sql = "DELETE FROM expenses WHERE expense_ID = ?";
+    
+    db.query(sql,[expense_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while delete expense details");
               } if(result){
                 res.send(result);
               } 

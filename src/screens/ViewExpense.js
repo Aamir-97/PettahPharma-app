@@ -1,7 +1,10 @@
 import React, { useState, useEffect} from 'react'
-import { SafeAreaView, ScrollView, View, Text, StyleSheet } from 'react-native'
+import { SafeAreaView, ScrollView, View, Text, StyleSheet, Alert } from 'react-native'
+import { Button } from 'react-native-paper';
 import BackgroundLayout from '../components/BackgroundLayout';
-import { theme } from '../core/theme'
+import { theme } from '../core/theme';
+import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5';
+import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import axios from 'axios';
 
 
@@ -19,13 +22,28 @@ export default function ViewExpenses ({route, navigation}){
         status : ''
     })
 
+    const [showButton, setShowButton] = useState(false); 
+
+    useEffect(()=> {
+        async function fetchData(){
+            try{  
+                if (expenseDetails.status === 'Pending'){
+                    setShowButton(true);
+                    console.log("DeleteButton");
+                }   
+            } catch (err) {    
+                console.log(err);
+            } 
+          } fetchData();
+    },[expenseDetails])
+
     useEffect(() => {
         async function fetchData(){
         try{  
           await axios.post("http://10.0.2.2:3001/ManageExpenses/ViewExpenses",{
             expense_ID : expense_ID,  
         }).then((response)=>{
-            // console.log("/ViewExpenses");
+            console.log("/ViewExpenses");
           setExpenseDetails({...expenseDetails,
             expense_Type : response.data[0].expense_Type,
             amount : response.data[0].amount,
@@ -43,6 +61,49 @@ export default function ViewExpenses ({route, navigation}){
       } fetchData();
   },[]);
 
+  const deleteConfirmation = () => { 
+    Alert.alert(
+        "Here You....!",
+        "Are you sure want to delete?",
+        [
+            {
+            text: "NO",
+            onPress: () => console.log("No Pressed"),
+            style: "cancel"
+            },
+            { text: "YES", onPress: () => deleteExpense()}
+        ]
+        );
+
+  }
+
+  const deleteExpense = () => {
+    try{  
+          axios.post("http://10.0.2.2:3001/Expense/DeleteExpense",{
+            expense_ID : expense_ID,
+          // rep_note : taskDetails.rep_note        
+      }).then((response)=>{
+        // console.log("Task rejected Successfully");
+        Alert.alert(
+            "Expense Deleted",
+            "Your Claimed Expense is deleted...!",
+            [
+              {
+                text: "Cancel",
+                onPress: () => console.log("Cancel Pressed"),
+                style: "cancel"
+              },
+              { text: "OK", onPress: () => {navigation.goBack()}}
+            ]
+          ); 
+      });
+      } catch (err) {    
+        console.log(err);
+        console.log("Error while complete the task");  
+      }
+
+  }
+
     const dtt = new Date(expenseDetails.date);
     const year = dtt.getFullYear() + '/';
     const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
@@ -56,6 +117,7 @@ export default function ViewExpenses ({route, navigation}){
 
                     <View style={{alignSelf :'center'}}>
                         <View style={styles.sameRow}>
+                        <FontAwesome5Icon name="money-check-alt" size={25} color={theme.colors.primary} />
                         <Text style={styles.header}>Expense Details</Text> 
                         </View>
                     </View>
@@ -83,8 +145,30 @@ export default function ViewExpenses ({route, navigation}){
                             <Text style={styles.textLable}>Sales Manager Comment : </Text>
                             <Text style={styles.CommentField}>{expenseDetails.salesmanager_comment}</Text>
                         
-                            <Text style={styles.textLable}>Status : </Text>
-                            <Text style={styles.text}>{expenseDetails.status}</Text>
+                            <View style= {styles.sameRow}>
+                                <Text style={styles.textLable}>Status : </Text>
+                                <Text style={styles.status}>{expenseDetails.status}</Text>
+
+                                {showButton && (
+                                    // <View style={{alignSelf : 'flex-end'}}>
+                                        <Button
+                                            style= {styles.cancelButton}
+                                            labelStyle = {{fontSize : 16, fontWeight : 'bold'}}
+                                            mode='contained'
+                                            icon={({color, size}) => (
+                                                <Icon
+                                                name="delete" 
+                                                color={theme.colors.surface}
+                                                size={20}
+                                                />
+                                            )}
+                                            onPress={() => deleteConfirmation()} 
+                                            > Delete 
+                                        </Button>
+                                    // </View>
+
+                                )}
+                            </View>
 
 
                     </View>
@@ -119,6 +203,12 @@ const styles = StyleSheet.create ({
         fontSize : 16,
         marginBottom : 10
     },
+    status : {
+        fontSize : 18,
+        marginBottom : 10,
+        fontWeight : 'bold',
+        color : theme.colors.error
+    },
     textLable : {
         fontSize : 18,
         marginBottom : 10,
@@ -127,12 +217,13 @@ const styles = StyleSheet.create ({
     },CommentField : {
         flex : 1,
         height : 100,
+        color : 'blue',
         borderColor : theme.colors.primary,
         borderWidth : 2,
         borderRadius : 5,
         width : '100%',
-        marginBottom : 30,
-        marginTop : 30,
+        marginBottom : 20,
+        marginTop : 20,
         padding : 20,
         fontSize : 17,
 
@@ -141,5 +232,9 @@ const styles = StyleSheet.create ({
     sameRow : {
       flexDirection : 'row',
       width : '100%'
+    },
+    cancelButton : {
+        backgroundColor : 'red',
+        marginLeft : 50,
     },
   })

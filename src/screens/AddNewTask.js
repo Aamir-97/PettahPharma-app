@@ -58,7 +58,7 @@ export default function AddNewTask({navigation}){
             // console.log("Succesfully Inserted:!");
             Alert.alert(
                 "Database",
-                "New Shedule inserted...!",
+                "New Schedule inserted...!",
                 [
                   {
                     text: "Cancel",
@@ -183,7 +183,7 @@ export default function AddNewTask({navigation}){
                 <View style={{alignSelf: 'center'}}>
                     <View style={styles.sameRow}>
                         <Icon name="add-task" color={theme.colors.primary} size={30} />              
-                        <Text style={styles.header}>  Add Shedule</Text> 
+                        <Text style={styles.header}>  Add Schedule</Text> 
                     </View>
                     
                 </View>

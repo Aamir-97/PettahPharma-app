@@ -458,7 +458,7 @@ const styles = StyleSheet.create ({
     },
 
     requiredText : {
-        color : 'red'
+        color : 'red',
     },
 
 

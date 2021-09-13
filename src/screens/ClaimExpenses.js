@@ -33,7 +33,7 @@ export default function ClaimExpenses({ navigation }) {
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
           setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-          console.log("user");            
+          // console.log("user");            
         }
       } catch (e){
         console.log(e);
@@ -42,7 +42,8 @@ export default function ClaimExpenses({ navigation }) {
     fetchData();
   },[]);
   
-  const saveDetails = () => { 
+  const saveDetails = () => {
+    // console.log("SaveDetails"); 
     axios.post("http://10.0.2.2:3001/ClaimExpenses", {
       rep_ID: user.rep_ID, 
       expense_Type: expense_Type,
@@ -123,7 +124,7 @@ export default function ClaimExpenses({ navigation }) {
       const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
       const day = ('0' + dtt.getDate()).slice(-2);
       setExpDate(year+month+day);
-      console.log("Date");        
+      // console.log("Date");        
       },[date]);
 
 
@@ -298,6 +299,7 @@ export default function ClaimExpenses({ navigation }) {
                     is24Hour={true}
                     display="default"
                     onChange={onChange}
+                    maximumDate={new Date()}
                     />
                 )}
             </View>
@@ -401,5 +403,10 @@ const styles = StyleSheet.create ({
     color : 'red',
     fontWeight : 'bold',
     fontSize : 12
+  },
+  requiredText : {
+    color : 'red',
+    marginBottom : 20,
+    marginTop : -2,
   },
 })

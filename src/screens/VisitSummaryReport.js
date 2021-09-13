@@ -46,6 +46,10 @@ export default function VisitSummaryReport({navigation}){
       }
     }
     fetchData();
+    return navigation.addListener('focus', () => {
+      fetchData();
+    });
+
   },[]);
 
   const getStaticCounts = (rep_ID) => {

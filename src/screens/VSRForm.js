@@ -98,6 +98,7 @@ export default function VSRForm ({navigation}){
             product_name: formDetails.product_name,
             rep_ID : user.rep_ID,
             manager_ID : user.manager_ID,
+            created_at : new Date(),
         }).then((response)=>{
             // console.log(slmcNo);
             // console.log("Succesfully Inserted:!");
@@ -213,33 +214,40 @@ export default function VSRForm ({navigation}){
 
                 <View style={styles.visitSummaryForm}>
                         <View style={styles.InputField}>
+                            <FontistoIcon
+                                name="star" 
+                                color={theme.colors.error}
+                                size={8}
+                                style = {{marginBottom: -12}}                                    
+                            />
                             <Picker 
                                     selectedValue={formDetails.visit_type}
                                     onValueChange={(itemValue, itemIndex) => setFormDetails({ ...formDetails, visit_type: itemValue })}
                                     >
                                 <Picker.Item label="Visit type" value="" />
-                                <Picker.Item label="Ragular Visit" value="Ragular" />
+                                <Picker.Item label="Regular Visit" value="Regular" />
                                 <Picker.Item label="Promotion Visit" value="Promotion" />
                                 <Picker.Item label="Appoinment Visit" value="Appoinment" />
                             </Picker>
-
-                            <FontistoIcon
-                                name="star" 
-                                color={theme.colors.error}
-                                size={8}
-                                style = {{marginTop : 10, marginLeft: -20, marginRight : 5}}                                    
-                            />
                         </View>
-                    {/* </View> */}
+
+                    {/* <View style={styles.sameRow}> */}
+                        <FontistoIcon
+                            name="star" 
+                            color={theme.colors.error}
+                            size={8}
+                            style = {{marginBottom: -12, marginTop:6, paddingLeft:5}}                                    
+                        />
+                        <TextInput 
+                            style={styles.InputField} 
+                            label= "Location"
+                            placeholder = "Location"
+                            value= {formDetails.location}
+                            onChangeText = {text => setFormDetails({...formDetails, location:text})}
+                        />                  
+                    {/* </View>     */}
 
 
-                    <TextInput 
-                        style={styles.InputField} 
-                        label= "Location"
-                        placeholder = "Location"
-                        value= {formDetails.location}
-                        onChangeText = {text => setFormDetails({...formDetails, location:text})}
-                    />
 
                     <View style={styles.InputField}>
                         <Picker 
@@ -262,6 +270,7 @@ export default function VSRForm ({navigation}){
                                 onValueChange={(itemValue, itemIndex) => setFormDetails({ ...formDetails, avg_duration: itemValue })}
                                 >
                                 <Picker.Item label="Avg. Visit Duration (Time)" value="" />
+                                <Picker.Item label="Less Than 30 min" value="0.5" />
                                 <Picker.Item label="30 min" value="0.5" />
                                 <Picker.Item label="1 hr" value="1" />
                                 <Picker.Item label="1 hr 30 min" value="1.5" />
@@ -393,6 +402,7 @@ const styles = StyleSheet.create ({
     InputField : {
         paddingLeft : 5,
         height : 45,
+        // marginTop : 10,
         marginBottom : 10,
         borderColor : theme.colors.primary,
         borderWidth : 1,

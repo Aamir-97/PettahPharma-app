@@ -33,21 +33,24 @@ export default function ViewTask ({route, navigation}){
 
     useEffect(() => {
       async function fetchData(){
+        // console.log("button");
         try{  
           if (taskDetails.type === "Schedule"){
             setScheduleType(true);
-            setTaskType(false)
-          } else if (taskDetails.type === "task" && taskDetails.status === "Accept") {
+            setTaskType(false);
+          } else if (taskDetails.type === "Task" && taskDetails.status === "Accept") {
             setCompleteButton(true);
             setTaskType(false);
+            // console.log("CompleteButton");
           } else {
             setTaskType(true);
             setScheduleType(false);
           }     
         } catch (err) {    
-
+          console.log(err)
         } 
-      } fetchData();
+      } 
+      fetchData();
     },[taskDetails]);
 
     useEffect(() => {
@@ -56,6 +59,7 @@ export default function ViewTask ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/Task/ViewTask",{
             task_id : task_id,  
         }).then((response)=>{
+            // console.log("setTaskSchedule");
             setTaskDetails({...taskDetails,
             title : response.data[0].title,
             location : response.data[0].location,
@@ -69,6 +73,7 @@ export default function ViewTask ({route, navigation}){
         });
           // console.log({...taskList});
         });
+        // Button();
         } catch (err) {    
           console.log(err);
           console.log("Error while get product details for View");  
@@ -202,6 +207,7 @@ export default function ViewTask ({route, navigation}){
       axios.post("http://10.0.2.2:3001/Task/AcceptTask",{
       task_id : task_id,
     }).then((response)=>{
+      setTaskType(false);
       setCompleteButton(true);
     });
     } catch (err) {    
@@ -249,7 +255,7 @@ export default function ViewTask ({route, navigation}){
                             <Text style={styles.text}> {year2 + month2 + day2} </Text>
                         </View>
 
-                            <Text style={styles.textLable}>Description : </Text>
+                            <Text style={styles.textLable}>Description : {taskDetails.status} </Text>
                             <Text style={styles.text}>{taskDetails.description}</Text>
 
                             <TextInput
@@ -329,6 +335,8 @@ export default function ViewTask ({route, navigation}){
                                 </View>                                
                               )}
                               { completeButton && (
+                                <>
+                                    <Text style={styles.acceptLabel}>You already accept this task </Text>
                                     <Button
                                         style= {styles.completeButton}
                                         mode='contained'
@@ -342,6 +350,7 @@ export default function ViewTask ({route, navigation}){
                                         onPress={() => completeTask()} 
                                         > Completed 
                                     </Button>
+                                </>
                               )}
 
 
@@ -378,17 +387,20 @@ const styles = StyleSheet.create ({
 
     text : {
         fontSize : 16,
-        marginBottom : 10
-
-
+        marginBottom : 10,
     },
     textLable : {
         fontSize : 18,
         marginBottom : 10,
         fontWeight : 'bold',
         color : theme.colors.primary,
-
-
+    },
+    acceptLabel : {
+        fontSize : 18,
+        margin : 10,
+        fontWeight : 'bold',
+        color : theme.colors.primary,
+        textAlign : 'center'
     },
     cancelButton : {
         backgroundColor : 'red',

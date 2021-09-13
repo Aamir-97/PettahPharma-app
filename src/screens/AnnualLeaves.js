@@ -47,6 +47,13 @@ export default function AnnualLeaves({ navigation }) {
   },[]);
 
   useEffect(() => {
+    fetchData();
+    return navigation.addListener('focus', () => {
+      fetchData();
+    });
+  },[user]);
+
+  async function fetchData(){
     try{  
       axios.post("http://10.0.2.2:3001/AnnualLeaves/pendingleaveCount",{
         rep_ID : user.rep_ID, 
@@ -57,10 +64,8 @@ export default function AnnualLeaves({ navigation }) {
     } catch (err) {
       console.log(err);
       console.log("Error while getting Pending Leave count");
-    } 
-  },[user]);
+    }
 
-  useEffect(() => {
     try{  
       axios.post("http://10.0.2.2:3001/AnnualLeaves/totalleaveCount",{
         rep_ID : user.rep_ID, 
@@ -71,22 +76,19 @@ export default function AnnualLeaves({ navigation }) {
     } catch (err) {
       console.log(err);
       console.log("Error while getting Total Leave count");
-    } 
-  },[user]);
-  
-// view approved and rejected leaves
-  useEffect(()=>{
+    }
+
     try{
-    axios.post('http://10.0.2.2:3001/viewLeaves',{
-      rep_ID : user.rep_ID,
-    }).then((response)=>{
-      setLeaveList(response.data);
-      // console.log("/viewLeaves");
-    })
-  } catch (err) {
-      console.log("Error while displaying leaves");
+      axios.post('http://10.0.2.2:3001/viewLeaves',{
+        rep_ID : user.rep_ID,
+      }).then((response)=>{
+        setLeaveList(response.data);
+        // console.log("/viewLeaves");
+      })
+    } catch (err) {
+        console.log("Error while displaying leaves");
+    }
   }
-},[user]);
   
   const ViewLeave = (leave_ID) => {
     navigation.navigate('ViewLeave', {leave_ID});

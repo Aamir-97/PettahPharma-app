@@ -50,18 +50,13 @@ export default function ManageExpenses({ navigation }) {
   const [searchTerm,setSearchTerm]=useState("");
   const filteredKey = expensesList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
-
-
-  useEffect(()=>{
-    axios.post("http://10.0.2.2:3001/ViewExpenses",{
-      rep_ID : user.rep_ID,
-    }).then((response)=>{
-      setExpensesList(response.data);
-      // console.log("/ViewExpenses")
+  useEffect(() => {
+    fetchData();
+    return navigation.addListener('focus', () => {
+      fetchData();
     });
   },[user]);
 
-  useEffect(() => {
     async function fetchData(){
       try {
         axios.post("http://10.0.2.2:3001/Expenses/DailyBatta",{
@@ -73,12 +68,7 @@ export default function ManageExpenses({ navigation }) {
       } catch (e){
         console.log(e);
       }
-    }
-    fetchData();
-  },[user]);
 
-  useEffect(() => {
-    async function fetchData(){
       try {
         axios.post("http://10.0.2.2:3001/Expenses/Accomodation",{
           rep_ID : user.rep_ID,  
@@ -89,12 +79,7 @@ export default function ManageExpenses({ navigation }) {
       } catch (e){
         console.log(e);
       }
-    }
-    fetchData();
-  },[user]);
 
-  useEffect(() => {
-    async function fetchData(){
       try {
         axios.post("http://10.0.2.2:3001/Expenses/Fuel",{
           rep_ID : user.rep_ID,  
@@ -105,28 +90,7 @@ export default function ManageExpenses({ navigation }) {
       } catch (e){
         console.log(e);
       }
-    }
-    fetchData();
-  },[user]);
 
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        axios.post("http://10.0.2.2:3001/Expenses/Other",{
-          rep_ID : user.rep_ID,  
-        }).then((response)=>{
-          setOther(response.data[0].Total);
-          // console.log("/Other");
-        });
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[user]);
-
-  useEffect(() => {
-    async function fetchData(){
       try {
         axios.post("http://10.0.2.2:3001/Expenses/Total",{
           rep_ID : user.rep_ID,  
@@ -137,10 +101,30 @@ export default function ManageExpenses({ navigation }) {
       } catch (e){
         console.log(e);
       }
+
+      try {
+        axios.post("http://10.0.2.2:3001/Expenses/Other",{
+          rep_ID : user.rep_ID,  
+        }).then((response)=>{
+          setOther(response.data[0].Total);
+          // console.log("/Total");
+        });;
+      } catch (e){
+        console.log(e);
+      }
+
+      try {
+        axios.post("http://10.0.2.2:3001/ViewExpenses",{
+          rep_ID : user.rep_ID,
+        }).then((response)=>{
+          setExpensesList(response.data);
+          // console.log("/ViewExpenses")
+        });
+      } catch (e){
+        console.log(e);
+      }
+
     }
-    fetchData();
-  },[user]);
-  
 
   const ViewExpense = (expense_ID) => {
     navigation.navigate('ViewExpense', {expense_ID});
