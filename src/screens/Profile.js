@@ -140,7 +140,6 @@ export default function Profile({navigation}){
                             />
                         )}
                         onPress={() => navigation.goBack()} 
-                        // onPress={() => navigation.navigate('Home')} 
                         > Back
                     </Button>
                 </View>

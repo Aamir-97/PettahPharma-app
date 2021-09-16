@@ -20,7 +20,7 @@ export default function ManageLeaves({ navigation }) {
     setPage(0);
   }, [itemsPerPage]);
 
-  const [user, setUser] = useState({ rep_ID: '', manager_ID: '', });
+  const [rep_ID, setRepID] = React.useState('');
 
   const [pendingLeaveList,setPendingLeaveList]=useState([]);
 
@@ -30,38 +30,34 @@ export default function ManageLeaves({ navigation }) {
   const [pendingleaveCount, setPendingLeaveCount] = useState('');
   const [totalleaveCount, setTotalLeaveCount] = useState('');
 
-    
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
-          // console.log("user")           
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[]);
-
   useEffect(() => {
     fetchData();
     return navigation.addListener('focus', () => {
       fetchData();
     });
-  },[user]);
+  },[rep_ID]);
 
   async function fetchData (){
 
+    try {
+      const userProfile = await AsyncStorage.getItem('user');
+      const profile  = JSON.parse(userProfile);
+      if (profile !== null){
+        setRepID(profile.rep_ID);
+        console.log("user")           
+      }
+    } catch (e){
+      console.log(e);
+    }
+
+  if(rep_ID){
+
     try{  
       axios.post("http://10.0.2.2:3001/ManageLeaves/pendingleaveCount",{
-        rep_ID : user.rep_ID, 
+        rep_ID : rep_ID, 
       }).then((response)=>{
         setPendingLeaveCount(response.data.pendingleaveCount);
-        // console.log("PendingleaveCount");
+        console.log("PendingleaveCount");
       });
     } catch (err) {
       console.log(err);
@@ -70,10 +66,10 @@ export default function ManageLeaves({ navigation }) {
 
     try{  
       axios.post("http://10.0.2.2:3001/ManageLeaves/totalleaveCount",{
-        rep_ID : user.rep_ID, 
+        rep_ID : rep_ID, 
       }).then((response)=>{
         setTotalLeaveCount(response.data.totalleaveCount);
-        // console.log("TotalleaveCount");
+        console.log("TotalleaveCount");
       });
     } catch (err) {
       console.log(err);
@@ -82,14 +78,17 @@ export default function ManageLeaves({ navigation }) {
 
     try{
       axios.post("http://10.0.2.2:3001/viewPendingLeaves",{
-        rep_ID:user.rep_ID,
+        rep_ID: rep_ID,
       }).then((response)=>{
         setPendingLeaveList(response.data);
-        // console.log("ViewPendingLeaves");
+        console.log("ViewPendingLeaves");
       })
     } catch (err){
         console.log("Error while displaying pending leaves");
     }
+
+  }
+
   }
 
   const ViewPendingLeave = (leave_ID) => {

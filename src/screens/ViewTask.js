@@ -383,7 +383,6 @@ const styles = StyleSheet.create ({
       fontWeight : 'bold',
       fontSize : 22,
       marginLeft : 5,
-    //   top : 5,
       textAlign : 'center'    
     },
 

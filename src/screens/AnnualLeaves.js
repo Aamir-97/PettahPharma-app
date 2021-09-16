@@ -1,5 +1,5 @@
 import React, {useState, useEffect} from 'react'
-import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStorage, TouchableOpacity,Button} from 'react-native'
+import { View, SafeAreaView, ScrollView, StyleSheet, AsyncStorage, TouchableOpacity} from 'react-native'
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
@@ -26,41 +26,37 @@ export default function AnnualLeaves({ navigation }) {
   const [searchTerm,setSearchTerm]=useState("");
   const filteredKey = leaveList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
-  const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  const [rep_ID, setRepID] = React.useState('');
 
   const [pendingleaveCount, setPendingLeaveCount] = useState('');
   const [totalleaveCount, setTotalLeaveCount] = useState('');
-
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-          // console.log("user");            
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[]);
 
   useEffect(() => {
     fetchData();
     return navigation.addListener('focus', () => {
       fetchData();
     });
-  },[user]);
+  },[rep_ID]);
 
   async function fetchData(){
+
+    try {
+      const userProfile = await AsyncStorage.getItem('user');
+      const profile  = JSON.parse(userProfile);
+      if (profile !== null){
+        setRepID(profile.rep_ID);
+        // console.log("user");            
+      }
+    } catch (e){
+      console.log(e);
+    }
+  if(rep_ID){
     try{  
       axios.post("http://10.0.2.2:3001/AnnualLeaves/pendingleaveCount",{
-        rep_ID : user.rep_ID, 
+        rep_ID : rep_ID, 
       }).then((response)=>{
         setPendingLeaveCount(response.data.pendingleaveCount);
-        // console.log("/pendingleaveCount");
+        console.log("/pendingleaveCount");
       });
     } catch (err) {
       console.log(err);
@@ -69,10 +65,10 @@ export default function AnnualLeaves({ navigation }) {
 
     try{  
       axios.post("http://10.0.2.2:3001/AnnualLeaves/totalleaveCount",{
-        rep_ID : user.rep_ID, 
+        rep_ID : rep_ID, 
       }).then((response)=>{
         setTotalLeaveCount(response.data.totalleaveCount);
-        // console.log("/totalleaveCount");
+        console.log("/totalleaveCount");
       });
     } catch (err) {
       console.log(err);
@@ -81,14 +77,15 @@ export default function AnnualLeaves({ navigation }) {
 
     try{
       axios.post('http://10.0.2.2:3001/viewLeaves',{
-        rep_ID : user.rep_ID,
+        rep_ID : rep_ID,
       }).then((response)=>{
         setLeaveList(response.data);
-        // console.log("/viewLeaves");
+        console.log("/viewLeaves");
       })
     } catch (err) {
-        console.log("Error while displaying leaves");
+        console.log("Error while displaying pending & rejected leaves");
     }
+  }
   }
   
   const ViewLeave = (leave_ID) => {
@@ -136,14 +133,14 @@ export default function AnnualLeaves({ navigation }) {
 
                 {filteredKey.map((record,i) => {
                   const dtt = new Date(record.start_Date);
-                  const year = dtt.getFullYear() + '/';
-                  const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+                  const year = dtt.getFullYear() + '-';
+                  const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '-';
                   const day = ('0' + dtt.getDate()).slice(-2);
-                            return(
-                              <TouchableOpacity key={record.leave_ID} onPress = {()=> ViewLeave(record.leave_ID)}>
+                    return(
+                    <TouchableOpacity key={record.leave_ID} onPress = {()=> ViewLeave(record.leave_ID)}>
                     <DataTable.Row >
                     <DataTable.Cell align="right">{record.leave_Type} </DataTable.Cell>
-                    <DataTable.Cell numeric>  {record.start_Date}  </DataTable.Cell>
+                    <DataTable.Cell > {year+month+day} </DataTable.Cell>
                     <DataTable.Cell numeric>{record.no_of_days} day(s)</DataTable.Cell>
                     <DataTable.Cell numeric>{record.status}</DataTable.Cell>
                     </DataTable.Row>

@@ -29,30 +29,7 @@ export default function DoctorDetails({navigation}){
   const [searchTerm,setSearchTerm]=useState("");
   const filteredKey = doctorList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
-
-  // const [user, setUser] = React.useState({ 
-  //   rep_ID: '', 
-  //   manager_ID: '',
-  // });
-
   const [rep_ID, setRepID] = React.useState('');
-
-
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (userProfile !== null){
-          // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-          setRepID(profile.rep_ID)
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();     
-  },[]);
 
   useEffect(() => {
     fetchData();
@@ -62,22 +39,34 @@ export default function DoctorDetails({navigation}){
   },[rep_ID]);
 
     async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (userProfile !== null){
+          setRepID(profile.rep_ID);
+          console.log("user");
+        }
+      } catch (e){
+        console.log(e);
+      }
+      
+    if(rep_ID){
       try { 
         axios.post('http://10.0.2.2:3001/viewDoctorDetails',{
-          rep_ID : user.rep_ID,
+          rep_ID : rep_ID,
         }).then((response)=> {
               setDoctorList(response.data);
-              // console.log("/viewDoctorDetails");
+              console.log("/viewDoctorDetails");
         })
       } catch (err) {
           console.log("Error While Get the doctor Details");
-      } 
+      }      
+    }
     }
 
   
   const doctorView = (doctor_id) => {
     navigation.navigate('ViewDoctor', {doctor_id});
-    // console.log(doctor_id);
   }
 
 

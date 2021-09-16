@@ -79,7 +79,7 @@ app.post('/HomePage/StatisticsData',(req,res)=>{
     const sqlLogin = "SELECT \
     (SELECT COUNT(report_id) FROM visit_summary_report WHERE rep_ID=? ) AS reportCount, \
     (SELECT SUM(amount) FROM expenses WHERE rep_ID=? AND status=1 ) AS expensesAmount,  \
-    (SELECT COUNT(rep_ID) FROM leaves WHERE rep_ID=? ) AS leaveCount, \
+    (SELECT SUM(DATEDIFF(end_Date, start_Date)) FROM leaves WHERE rep_ID=? AND status=1 ) AS leaveCount, \
     (SELECT COUNT(doctor_ID) FROM doctor_details WHERE rep_ID=? ) AS doctorCount,  \
     (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Pending' AND date=CURRENT_DATE ) AS ScheduledTaskCount,  \
     (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Complete' AND type='task') AS completedTaskCount, \
@@ -577,179 +577,12 @@ app.post('/deleteDoctor',(req,res)=>{
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Start From Here Nimni..........................................................................................................................
 
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Manage Leaves Page - Pending Leaves
 app.post('/viewPendingLeaves',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    //if approved then status=1, if rejected then status=2.......... pending leaves then status= 0 (default)
     db.query('SELECT leave_ID, leave_Type, start_Date, description, DATEDIFF(end_Date, start_Date) AS no_of_days FROM leaves WHERE rep_ID=? AND status = 0 ORDER BY leave_ID DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
@@ -826,7 +659,8 @@ app.post('/ManageLeaves/DeleteLeave',(req,res)=>{
 /* Annual Leaves Page - View approved and rejected leaves*/
 app.post('/viewLeaves',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    db.query("SELECT leave_ID,leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status FROM leaves WHERE status !=0 AND rep_ID = ?",[rep_ID],(err,result,_fields)=>{
+    db.query("SELECT leave_ID,leave_Type, start_Date, DATEDIFF(end_Date, start_Date) AS no_of_days, \
+    CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status FROM leaves WHERE status !=0 AND rep_ID = ?",[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{
@@ -910,7 +744,10 @@ app.post('/ApplyLeaves/CheckAvailability',(req,res)=>{
     const startDate = req.body.startDate;
     const endDate = req.body.endDate;
   //  console.log (startDate,endDate, rep_ID);
-    const sql = "SELECT COUNT(rep_ID) AS leaveAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date BETWEEN ? AND ?)  AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date) AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date)";
+    const sql = "SELECT COUNT(rep_ID) AS leaveAvailable FROM medicalrep WHERE rep_ID=? \
+    AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date BETWEEN ? AND ?)  \
+    AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date) \
+    AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date)";
 
     db.query(sql,[rep_ID,startDate,endDate,startDate, endDate],(err,result)=>{
             if(err){
@@ -1007,7 +844,9 @@ app.post('/Expenses/StatisticsData',(req,res)=>{
 
 app.post('/ViewExpenses',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    db.query('SELECT expense_ID,expense_Type,amount,date, CASE WHEN status=0 THEN "Pending" WHEN status=1 THEN "Accept" ELSE "Rejected" END AS status FROM expenses WHERE rep_ID=? ORDER BY date DESC',[rep_ID],(err,result,_fields)=>{
+    db.query('SELECT expense_ID,expense_Type,amount,date, \
+    CASE WHEN status=0 THEN "Pending" WHEN status=1 THEN "Accept" ELSE "Rejected" END AS status \
+    FROM expenses WHERE rep_ID=? ORDER BY date DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{

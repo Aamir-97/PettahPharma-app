@@ -54,8 +54,7 @@ export default function ViewProduct ({route, navigation}){
                         <Text style={styles.header}>Product Details</Text> 
                         </View>
                     </View>
-                    {/* <Text style={styles.header}>Product Details</Text> */}
-                    {/* <Text>{productDetails.display_photo}</Text> */}
+
                     <View style ={styles.productContainer}> 
                         <Image
                             style = {styles.medicinePhoto}

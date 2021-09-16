@@ -12,59 +12,65 @@ import axios from 'axios'
 
 export default function ApplyLeaves({ navigation }) {
 
-  const [leaveType,setLeaveType] = useState('');
-  const [description,setDescription] = useState('');
-  const [startDate,setStartDate] = useState('');
-  const [endDate,setEndDate] = useState('');
+  const [leaveType, setLeaveType] = React.useState('');
+  const [description, setDescription] = React.useState('');
+  const [startDate, setStartDate] = React.useState('');
+  const [endDate, setEndDate] = React.useState('');
 
-  const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
-  
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-          console.log("user");            
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[]);
+  const [rep_ID, setRepID] = React.useState('');
 
   const [pendingleaveCount, setPendingLeaveCount] = useState('');
   const [totalleaveCount, setTotalLeaveCount] = useState('');
 
   useEffect(() => {
-    try{  
-      axios.post("http://10.0.2.2:3001/ApplyLeaves/pendingleaveCount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setPendingLeaveCount(response.data.pendingleaveCount);
-        console.log("/pendingleaveCount")
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while get  Pending Leave count");
-    } 
-  },[user]);
+    fetchData();
+    return navigation.addListener('focus', () => {
+      fetchData();
+    });
+  },[rep_ID]);  
 
-  useEffect(() => {
-    try{  
-      axios.post("http://10.0.2.2:3001/ApplyLeaves/totalleaveCount",{
-        rep_ID : user.rep_ID, 
-      }).then((response)=>{
-        setTotalLeaveCount(response.data.totalleaveCount);
-        console.log("/totalleaveCount");
-      });
-    } catch (err) {
-      console.log(err);
-      console.log("Error while getting Total Leave count");
-    } 
-  },[user]);
+    async function fetchData(){
+      try {
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          setRepID(profile.rep_ID);
+          console.log("user");            
+        }
+      } catch (e){
+        console.log(e);
+      }
+
+    if(rep_ID){
+
+      try{  
+        axios.post("http://10.0.2.2:3001/ApplyLeaves/pendingleaveCount",{
+          rep_ID : rep_ID, 
+        }).then((response)=>{
+          setPendingLeaveCount(response.data.pendingleaveCount);
+          console.log("/pendingleaveCount")
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while get  Pending Leave count");
+      } 
+
+      try{  
+        axios.post("http://10.0.2.2:3001/ApplyLeaves/totalleaveCount",{
+          rep_ID : rep_ID, 
+        }).then((response)=>{
+          setTotalLeaveCount(response.data.totalleaveCount);
+          console.log("/totalleaveCount");
+        });
+      } catch (err) {
+        console.log(err);
+        console.log("Error while getting Total Leave count");
+      }
+      
+    }
+
+    }
+
 
 //----------------------------------------------------------------------------------------------------------------
     const [date, setDate] = useState(new Date());
@@ -128,16 +134,17 @@ export default function ApplyLeaves({ navigation }) {
   console.log(year+month+day);     
   },[date2]);
 //---------------------------------------------------------------------------------------------------------------------------
-  const checkRequired = () => {
-console.log(leaveType,startDate,endDate);
-    const leaveType = requiredField(leaveType)
-    const startDate = requiredField(startDate)
-    const endDate = requiredField(endDate)
 
-    if (leaveType || startDate || endDate ) {
+  const checkRequired = () => {
+    console.log(leaveType, startDate, endDate);
+    const leaveTypeCheck = requiredField(leaveType)
+    const startDateCheck = requiredField(startDate)
+    const endDateCheck = requiredField(endDate)
+
+    if (leaveTypeCheck || startDateCheck || endDateCheck ) {
         Alert.alert(
-            "Attention.....!",
-            "Please fill the required field...!",
+            "Fill required field.....!",
+            "Type, Start Date & End Date are required...!",
             [
               {text: "Cancel", onPress: () => console.log("Cancel Pressed"), style: "cancel"},
               { text: "OK", onPress: () => console.log("Ok pressed") }
@@ -154,12 +161,12 @@ console.log(leaveType,startDate,endDate);
       console.log("checkAvailable function working...!");
       try {
         axios.post("http://10.0.2.2:3001/ApplyLeaves/CheckAvailability", {            
-            rep_ID : user.rep_ID,
+            rep_ID : rep_ID,
             startDate : startDate,
             endDate : endDate,
         }).then((response)=>{
              console.log("Succesfully Inserted:!");
-            console.log(response.data[0].leaveAvailable);
+            console.log(response.data.leaveAvailable);
             if (response.data.leaveAvailable === 1) {
                 saveDetails();
             } else {
@@ -178,15 +185,13 @@ console.log(leaveType,startDate,endDate);
 
   const saveDetails = () =>{
     axios.post("http://10.0.2.2:3001/applyLeave", { 
-      rep_ID : user.rep_ID,
+      rep_ID : rep_ID,
       leaveType: leaveType, 
       startDate: startDate, 
       endDate: endDate, 
       description: description
     }).then((response)=>{
       console.log("/applyLeave");
-      // console.log(leave_ID);
-      // console.log("Inserted sucessfully");
       Alert.alert("Database", "Leave Form submitted sucessfully",
         [{text: "Cancel", onPress: () => console.log("Cancelled"),style:"cancel"},
           {text:"Submit", onPress: () => navigation.navigate('Home')}
@@ -223,13 +228,15 @@ console.log(leaveType,startDate,endDate);
         <Text style={styles.header}>Leave Apply Form</Text> 
       </View>
 
-        <Picker leaveType={leaveType} style={styles.InputField}
-        selectedValue = {leaveType}
-        onValueChange={(itemValue,itemIndex) => setLeaveType(itemValue)} >
+        <Picker 
+            leaveType={leaveType} 
+            selectedValue = {leaveType} 
+            style={styles.InputField} 
+            onValueChange={(itemValue,itemIndex) => setLeaveType(itemValue)} >
             <Picker.Item label="Leave Type" value="" />
-            <Picker.Item label="Annual Leave" value="Annual Leave" />
-            <Picker.Item label="Medical leave" value="Medical Leave" />
-            <Picker.Item label="Casual Leave" value="Casual Leave" />
+            <Picker.Item label="Annual Leave" value="Annual" />
+            <Picker.Item label="Medical leave" value="Medical" />
+            <Picker.Item label="Casual Leave" value="Casual" />
         </Picker>
         <View style={{borderWidth : 0.5, borderTopColor: theme.colors.primary, marginTop : -22, marginBottom : 22}}></View>
 
@@ -244,7 +251,15 @@ console.log(leaveType,startDate,endDate);
                     <IconButton style = {{margin : -8}} icon="calendar" color= {theme.colors.primary} size={45} onPress={() => {showDatepicker()}} />
                 </View>
                 {show && (
-                    <DateTimePicker testID="dateTimePicker" value={date} mode={mode} is24Hour={true} display="default" onChange={onChange} />
+                    <DateTimePicker 
+                      testID="dateTimePicker" 
+                      value={date} 
+                      mode={mode} 
+                      is24Hour={true} 
+                      display="default" 
+                      onChange={onChange}
+                      minimumDate={new Date()} 
+                      />
                 )}
             </View>
 
@@ -259,7 +274,14 @@ console.log(leaveType,startDate,endDate);
                     <IconButton style = {{margin : -8}} icon="calendar" color= {theme.colors.primary} size={45} onPress={() => {showDatepicker2()}} />
                 </View>
                 {show2 && (
-                    <DateTimePicker testID="dateTimePicker" value={date2} mode={mode2} is24Hour={true} display="default" onChange={onChange2} />
+                    <DateTimePicker 
+                      testID="dateTimePicker" 
+                      value={date2} mode={mode2} 
+                      is24Hour={true} 
+                      display="default" 
+                      onChange={onChange2}
+                      minimumDate={date} 
+                      />
                 )}
             </View>
 
@@ -298,7 +320,6 @@ const styles = StyleSheet.create ({
     shadowColor : 'gray',
     elevation : 10,
     marginTop : 20,
-
   },
   InputField : {
     alignSelf : 'stretch',
@@ -306,16 +327,16 @@ const styles = StyleSheet.create ({
     marginBottom : 25,
     borderBottomColor : '#009387',
     borderBottomWidth : 1,
-    fontSize : 16,
-    
-},
+    fontSize : 16,    
+  },
   description : {
     height : 100,
     borderColor : '#0A6466',
-    borderWidth : 1,
+    borderWidth : 2,
     marginBottom : 30,
     padding : 20,
-},
+    borderRadius : 10,
+  },
   sameRow : {
     flexDirection : 'row',
     justifyContent: 'space-between',

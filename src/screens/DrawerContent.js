@@ -38,29 +38,19 @@ export function DrawerContent(props, {navigation}) {
         rating : '',
         manager_ID : ''
     });
-
-    // const [user, setUser] = React.useState({ 
-    //     rep_ID: '', 
-    //     manager_ID: '',
-    // });
     const [rep_ID, setRepID] = React.useState('');
 
     
 
     useEffect(() => {
         fetchData();
-        // return navigation.addListener('focus', () => {
-        //   fetchData();
-        // });
       },[]);
 
-    // useEffect(() => {
         async function fetchData(){
           try {
             const userProfile = await AsyncStorage.getItem('user');
             const profile  = JSON.parse(userProfile);
             if (userProfile !== null){
-            //   setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
               setRepID(profile.rep_ID);
               
                 // Beck-end function
@@ -82,9 +72,6 @@ export function DrawerContent(props, {navigation}) {
             console.log(e);
           }
         }
-    //     fetchData();     
-    // },[]);
-
 
     return(
         <View style={{flex:1}}>

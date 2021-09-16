@@ -14,12 +14,7 @@ import axios from 'axios'
 
 export default function HomeScreen({ navigation }) {
 
-  // const [user, setUser] = React.useState({ 
-  //   rep_ID: '', 
-  //   manager_ID: '',
-  // });
   const [rep_ID, setRepID] = React.useState('');
-
 
   const [reportCount, setReportCount] = React.useState('');
   const [expensesAmount, setExpensesAmount] = React.useState('');
@@ -32,26 +27,9 @@ export default function HomeScreen({ navigation }) {
 
   const [taskList, setTaskList]=useState([]);
 
- 
-  // useEffect(() => {
-  //   async function fetchData(){
-  //     try {
-  //       const userProfile = await AsyncStorage.getItem('user');
-  //       const profile  = JSON.parse(userProfile);
-  //       if (userProfile !== null){
-  //         // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-  //         setRepID(profile.rep_ID);
-  //         console.log("user");       
-  //       }
-  //     } catch (e){
-  //       console.log(e);
-  //     }
-  //   }
-  //   fetchData();     
-  // },[]);
-
   useEffect(() => {
       fetchData();
+      console.log("useEffect");
       return navigation.addListener('focus', () => {
         fetchData();
       });
@@ -63,7 +41,6 @@ export default function HomeScreen({ navigation }) {
           const userProfile = await AsyncStorage.getItem('user');
           const profile  = JSON.parse(userProfile);
           if (userProfile !== null){
-            // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
             setRepID(profile.rep_ID);
             console.log("user");       
           }

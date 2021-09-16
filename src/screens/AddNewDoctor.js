@@ -8,6 +8,8 @@ import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { requiredField } from '../helpers/requiredField';
 import { emailValidator } from '../helpers/emailValidator';
+import DocumentPicker from 'react-native-document-picker'
+
 
 
 import axios from 'axios'
@@ -123,7 +125,6 @@ export default function AddNewDoctor ({route, navigation}){
         const doctorName = requiredField(doctorDetails.doctorName)
         const clinic = requiredField(doctorDetails.clinic)
         const contactNumber = requiredField(doctorDetails.contactNumber)
-        // console.log(title , location , session, "check the required var.");
         if (slmcNo || doctorName || clinic || contactNumber) {
             Alert.alert(
                 "Attention.....!",
@@ -172,6 +173,31 @@ export default function AddNewDoctor ({route, navigation}){
           saveDetails();     
       }
 
+      // Pick a single file
+      const profileImage = async () => {
+        try {
+            const res = await DocumentPicker.pickSingle({
+            type: [DocumentPicker.types.images],
+            })
+            console.log(
+            res.uri, 
+            res.type, // mime type
+            res.name,
+            res.size,
+            )
+            // console.log(res);
+            setDoctorDetails({...doctorDetails, displayPhoto: res.uri});
+            // console.log("image uploaded");
+        } catch (err) {
+            if (DocumentPicker.isCancel(err)) {
+            // User cancelled the picker, exit any dialogs or menus and move on
+            } else {
+            throw err
+            }
+        }
+        return <Text>Success</Text>  
+    }
+
 
     return (
         <ScrollView>
@@ -189,10 +215,16 @@ export default function AddNewDoctor ({route, navigation}){
             <View style={styles.visitSummaryForm}>
 
             <View style ={styles.sameRow}>
-                <Image source={require ('../assets/Doctors/vectorDoctor.png')} style ={styles.displayPhoto} /> 
+                {doctorDetails.displayPhoto && (
+                <Image 
+                    source= {{uri : doctorDetails.displayPhoto }}
+                    style = {styles.displayPhoto}
+                    />
+                )
+                } 
                 <View style={{alignSelf: 'center',marginLeft:20}}>
-                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => console.log('Change Pressed')}>
-                    Change 
+                <Button  style={{color:'blue',fontSize:16,fontWeight : 'bold'}} icon="camera" mode="contained" onPress={() => profileImage()}>
+                    ADD 
                 </Button>
                 </View>
             </View>

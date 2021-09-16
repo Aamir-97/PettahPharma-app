@@ -415,7 +415,6 @@ export default function ViewDoctor ({route, navigation}){
                                     size={25}
                                     />
                                 )}
-                                // goBack={navigation.goBack}
                                 onPress={() => deleteConfirmation()} 
                                 > Delete 
                             </Button>

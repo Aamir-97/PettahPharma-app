@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { DataTable, Searchbar, Button, Avatar } from 'react-native-paper';
-import {Text, ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
+import { ScrollView, StyleSheet, View, AsyncStorage, TouchableOpacity} from 'react-native';
 import { theme } from '../core/theme';
 import BackgroundLayout from '../components/BackgroundLayout';
 import BackButton from '../components/BackButton'
@@ -39,13 +39,12 @@ export default function VisitSummaryReport({navigation}){
         if (profile !== null ){
           const rep_ID = profile.rep_ID;
           getStaticCounts(rep_ID);
-          // console.log("getStaticData");
         }      
       } catch (e){
         console.log(e);
       }
     }
-    fetchData();
+    // fetchData();
     return navigation.addListener('focus', () => {
       fetchData();
     });

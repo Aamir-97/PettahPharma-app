@@ -6,7 +6,6 @@ import Icon from 'react-native-vector-icons/AntDesign'
 import BackgroundLayout from '../components/BackgroundLayout'
 import { Button, IconButton,TextInput } from 'react-native-paper'
 import DocumentPicker from 'react-native-document-picker'
-import Geolocation from 'react-native-geolocation-service';
 import { requiredField } from '../helpers/requiredField';
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import axios from 'axios';
@@ -25,7 +24,6 @@ export default function ClaimExpenses({ navigation }) {
   const [locationView , setLocationView] = useState(false);
   const [billsView , setBillsView] = useState(false);
 
-  // const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
   const [rep_ID, setRepID] = React.useState('');
 
 
@@ -35,7 +33,6 @@ export default function ClaimExpenses({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
-          // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
           setRepID(profile.rep_ID);
           console.log("user");            
         }
@@ -49,7 +46,6 @@ export default function ClaimExpenses({ navigation }) {
   const saveDetails = () => {
     // console.log("SaveDetails"); 
     axios.post("http://10.0.2.2:3001/ClaimExpenses", {
-      // rep_ID: user.rep_ID, 
       rep_ID: rep_ID, 
       expense_Type: expense_Type,
       date : exp_date, 
@@ -165,53 +161,6 @@ export default function ClaimExpenses({ navigation }) {
       }
 
 
-      const componentDidMount= () => {
-        // if (hasLocationPermission) {
-          Geolocation.getCurrentPosition(
-              (position) => {
-                // console.log(position);
-                // console.log(position.coords.latitude);
-                // setLocation ({...location, latitude : position.coords.latitude,longitude : position.coords.longitude})
-                setLocation (position);
-                setLocationView(true);
-              },
-              (error) => {
-                // See error code charts below.
-                console.log(error.code, error.message);
-              },
-              { enableHighAccuracy: true, timeout: 15000, maximumAge: 10000 }
-          );
-        // }
-      }
-
-
-      // const requestLocationPermission = async () => {
-      //   try {
-      //     const granted = await PermissionsAndroid.request(
-      //       PermissionsAndroid.PERMISSIONS.ACCESS_FINE_LOCATION,
-      //       {
-      //         title: "Pettah Pharma location Permission",
-      //         message:
-      //           "Pettah Pharma needs access to your location " +
-      //           "so you can set the expense's location.",
-      //         buttonNeutral: "Ask Me Later",
-      //         buttonNegative: "Cancel",
-      //         buttonPositive: "OK"
-      //       }
-      //     );
-      //     if (granted === PermissionsAndroid.RESULTS.GRANTED) {
-      //       console.log("You can use the location");
-      //       componentDidMount();
-      //     } else {
-      //       console.log("Camera permission denied");
-      //     }
-      //   } catch (err) {
-      //     console.warn(err);
-      //   }
-      // };
-      
-
-
   return (
     <SafeAreaView>
     <ScrollView> 
@@ -239,7 +188,12 @@ export default function ClaimExpenses({ navigation }) {
                         style = {{marginTop:10, marginBottom:-20,marginLeft : -10}}
                         
                     />
-          <Picker expense_Type={expense_Type}selectedValue = {expense_Type} style={styles.InputField} onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)} >
+          <Picker 
+            expense_Type={expense_Type} 
+            selectedValue = {expense_Type} 
+            style={styles.InputField} 
+            onValueChange={(itemValue,itemIndex) => setExpenseType(itemValue)}
+             >
               <Picker.Item label="Expense Type" value="" />
               <Picker.Item label="Accomodation" value="Accomodation" />
               <Picker.Item label="Fuel" value="Fuel" />
@@ -248,19 +202,6 @@ export default function ClaimExpenses({ navigation }) {
           </Picker>
 
       <View style={{borderWidth : 0.5, borderTopColor: theme.colors.primary, marginTop : -22, marginBottom : 22}}></View>
-
-      
-      {/* <Text style = {styles.labelText}>Location : </Text>
-      <Text style={styles.subLabel}>(Set Current Location By click the button)</Text>
-      <View style={{flexDirection: 'row', alignSelf: 'flex-start',margin:12}}>
-            <Button icon="location-enter" mode="contained" onPress={componentDidMount} value={location}> SET </Button>
-
-            {locationView && (
-                <Text style = {{fontSize : 16, color: theme.colors.primary, fontWeight : 'bold'}}> Location is uploaded.. </Text>
-            
-              )}
-
-      </View> */}
 
       <Text style = {styles.labelText}>Location : </Text>
           <FontistoIcon

@@ -14,26 +14,7 @@ const optionsPerPage = [2, 3, 4];
 
 export default function ManageExpenses({ navigation }) {
 
-  // const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
   const [rep_ID, setRepID] = React.useState('');
-
-  
-  // useEffect(() => {
-  //   async function fetchData(){
-  //     try {
-  //       const userProfile = await AsyncStorage.getItem('user');
-  //       const profile  = JSON.parse(userProfile);
-  //       if (profile !== null){
-  //         // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
-  //         setRepID(profile.rep_ID);
-  //         console.log("user");           
-  //       }
-  //     } catch (e){
-  //       console.log(e);
-  //     }
-  //   }
-  //   fetchData();
-  // },[]);
 
 
   const [page, setPage] = useState(3);
@@ -66,7 +47,6 @@ export default function ManageExpenses({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
-          // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
           setRepID(profile.rep_ID);
           console.log("user");           
         }
@@ -117,12 +97,6 @@ export default function ManageExpenses({ navigation }) {
                 <View style={{top:-20}}>
                 <BackButton goBack={navigation.goBack} />
                 </View>                
-                <Searchbar
-                    style= {styles.searchBar}
-                    placeholder="Search"
-                    onChangeText={(text) => {setSearchTerm(text)} }
-                    value={searchTerm}
-                />
 
             </View>
 
@@ -175,6 +149,13 @@ export default function ManageExpenses({ navigation }) {
           </View>
         </Card.Content>
       </Card>
+
+                <Searchbar
+                    style= {styles.searchBar}
+                    placeholder="Search"
+                    onChangeText={(text) => {setSearchTerm(text)} }
+                    value={searchTerm}
+                />
 
        <DataTable>
             <DataTable.Header>
@@ -282,9 +263,9 @@ const styles = StyleSheet.create ({
       color : theme.colors.primary,
   },
   searchBar: {
-    width : '80%',
-    marginLeft : '20%',
+    width : '100%',
     height: 40,
-    marginBottom : 10
+    marginBottom : 15,
+    marginTop : 15,
 },
 })

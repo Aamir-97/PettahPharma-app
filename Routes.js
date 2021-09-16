@@ -11,7 +11,6 @@ import axios from 'axios'
 import { DrawerContent } from './src/screens/DrawerContent'
 import { AuthContext } from './src/components/context'
 
-// import AsyncStorage from '@react-native-async-storage/async-storage'
 
 // Screens
 import StartScreen from './src/screens/StartScreen'
@@ -208,17 +207,17 @@ const ManageLeavesStackScreen = ({navigation}) => {
       }
     }}
     >
-      <ManageLeavesStack.Screen name="ManageLeaves" component={ManageLeaves} options= { {
+      <ManageLeavesStack.Screen name="ManageLeaves" component={ManageLeaves} options= {{
         headerLeft: () => (
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         ),
-        title: "Manage Leaves"
+        title: "Pending Leaves"
       }}/>
       <ManageLeavesStack.Screen name="ApplyLeaves" component={ApplyLeaves} options={{
         title: "Apply Leaves"
       }} />
       <ManageLeavesStack.Screen name="AnnualLeaves" component={AnnualLeaves} options={{
-        title: "Annual Leaves"
+        title: "Approved & Rejected Leaves"
       }} />
 
       <ManageLeavesStack.Screen  name="ViewLeave" component={ViewLeave} options={{

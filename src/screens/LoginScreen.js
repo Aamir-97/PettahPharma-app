@@ -16,8 +16,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 export default function LoginScreen({ navigation }) {
-  // const [email, setEmail] = useState({ value: '', error: '' });
-  // const [password, setPassword] = useState({ value: '', error: '' });
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState('');
   const [password, setPassword] = useState('');
@@ -29,7 +27,6 @@ export default function LoginScreen({ navigation }) {
   const loginHandle= (email,password) => {
     const emailError = emailValidator(email)
     const passwordError = passwordValidator(password)
-    // console.log(emailError, passwordError);
     if (emailError || passwordError) {
       setEmailError(emailError)
       setPasswordError(passwordError)
@@ -55,10 +52,6 @@ export default function LoginScreen({ navigation }) {
         onChangeText={(text) => setEmail(text)}
         error={!!emailError}
         errorText={emailError}
-        // value={email.value}
-        // onChangeText={(text) => setEmail({ value: text, error: '' })}
-        // error={!!email.error}
-        // errorText={email.error}
         autoCapitalize="none"
         autoCompleteType="email"
         textContentType="emailAddress"
@@ -72,10 +65,6 @@ export default function LoginScreen({ navigation }) {
         onChangeText={(text) => setPassword(text)}
         error={!!passwordError}
         errorText={passwordError}
-        // value={password.value}
-        // onChangeText={(text) => setPassword({ value: text, error: '' })}
-        // error={!!password.error}
-        // errorText={password.error}
         secureTextEntry
       />
 

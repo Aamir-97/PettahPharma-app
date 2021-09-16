@@ -6,11 +6,7 @@ import { Button } from 'react-native-paper'
 import FontistoIcon from 'react-native-vector-icons/Fontisto'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-
-
-
 import axios from 'axios';
-
 
 export default function ViewVSR ({route, navigation}){
 
@@ -171,7 +167,6 @@ export default function ViewVSR ({route, navigation}){
                                     size={25}
                                     />
                                 )}
-                                // goBack={navigation.goBack}
                                 onPress={() => deleteConfirmation()} 
                                 > Delete 
                             </Button>
@@ -220,7 +215,6 @@ const styles = StyleSheet.create ({
       fontWeight : 'bold',
       fontSize : 22,
       marginLeft : 5,
-    //   top : 5,
       textAlign : 'center'    
     },
 

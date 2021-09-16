@@ -10,10 +10,7 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import FontistoIcon from 'react-native-vector-icons/Fontisto';
 import { requiredField } from '../helpers/requiredField';
 
-
-
 import axios from 'axios';
-
 
 export default function VSRForm ({navigation}){
 
@@ -49,7 +46,7 @@ export default function VSRForm ({navigation}){
             const rep_ID = profile.rep_ID;
             getDocotorsName(rep_ID);
             getProductsName();
-            // console.log("formdata")
+            console.log("formdata")
           }      
         } catch (e){
           console.log(e);
@@ -65,7 +62,7 @@ export default function VSRForm ({navigation}){
           rep_ID : rep_ID,  
       }).then((response)=>{
         setDoctorList(response.data);
-        // console.log("/getDoctorName");
+        console.log("/getDoctorName");
       });
       } catch (err) {    
         console.log(err);
@@ -78,7 +75,7 @@ export default function VSRForm ({navigation}){
         axios.get("http://10.0.2.2:3001/vsr/getProductsName",{
       }).then((response)=>{
         setProductList(response.data);
-        // console.log("/getProductsName");
+        console.log("/getProductsName");
       });
       } catch (err) {    
         console.log(err);
@@ -100,8 +97,6 @@ export default function VSRForm ({navigation}){
             manager_ID : user.manager_ID,
             created_at : new Date(),
         }).then((response)=>{
-            // console.log(slmcNo);
-            // console.log("Succesfully Inserted:!");
             if (response){
                 Alert.alert(
                     "Database",
@@ -263,7 +258,6 @@ export default function VSRForm ({navigation}){
                         </Picker>
                     </View>
 
-                    {/* <View style ={styles.sameRow}> */}
                         <View style={styles.InputField}>
                             <Picker
                                 selectedValue={formDetails.avg_duration}
@@ -402,7 +396,6 @@ const styles = StyleSheet.create ({
     InputField : {
         paddingLeft : 5,
         height : 45,
-        // marginTop : 10,
         marginBottom : 10,
         borderColor : theme.colors.primary,
         borderWidth : 1,
