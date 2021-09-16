@@ -80,7 +80,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Duration : </Text>
-                            <Text style={styles.text}>{LeaveDetails.no_of_days}</Text>
+                            <Text style={styles.text}>{LeaveDetails.no_of_days}day(s)</Text>
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Status : </Text>

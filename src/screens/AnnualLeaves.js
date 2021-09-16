@@ -3,13 +3,14 @@ import { View, SafeAreaView, ScrollView, StatusBar, Image, StyleSheet, AsyncStor
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
-import { Text ,DataTable} from 'react-native-paper'
+import { Text ,DataTable, Searchbar} from 'react-native-paper'
+import BackButton from '../components/BackButton'
 import axios from 'axios';
 import SearchInput, { createFilter } from 'react-native-search-filter';
 
 
 const optionsPerPage = [2, 3, 4];
-const Keys_to_filter = ['leave_type', 'date'];
+const Keys_to_filter = ['leave_Type', 'start_Date'];
 
 
 export default function AnnualLeaves({ navigation }) {
@@ -118,22 +119,33 @@ export default function AnnualLeaves({ navigation }) {
           <Text> Apply </Text>
         </View>
       </View>
+
+      <View style= {styles.sameRow}>
+                <View style={{top:-20}}>
+                <BackButton goBack={navigation.goBack} />
+                </View>                
+                <Searchbar style= {styles.searchBar} placeholder="Search" onChangeText={(text) => {setSearchTerm(text)} } value={searchTerm} />
+            </View>
           <DataTable >
                 <DataTable.Header>
-                    <DataTable.Title align = "center">Type of Leaves</DataTable.Title>
-                    <DataTable.Title align = "center">Duration</DataTable.Title>
-                    <DataTable.Title align = "center">Leave Status</DataTable.Title>
-                    {/* <DataTable.Title align = "center">Description</DataTable.Title> */}
+                    <DataTable.Title align = "right">Type of Leaves </DataTable.Title>
+                    <DataTable.Title> Start Date  </DataTable.Title>
+                    <DataTable.Title>        Duration</DataTable.Title>
+                    <DataTable.Title numeric>Leave Status</DataTable.Title>
                 </DataTable.Header>
 
                 {filteredKey.map((record,i) => {
+                  const dtt = new Date(record.start_Date);
+                  const year = dtt.getFullYear() + '/';
+                  const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+                  const day = ('0' + dtt.getDate()).slice(-2);
                             return(
                               <TouchableOpacity key={record.leave_ID} onPress = {()=> ViewLeave(record.leave_ID)}>
                     <DataTable.Row >
-                    <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.no_of_days} days</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.status}</DataTable.Cell>
-                    {/* <DataTable.Cell align="center">{record.description}</DataTable.Cell> */}
+                    <DataTable.Cell align="right">{record.leave_Type} </DataTable.Cell>
+                    <DataTable.Cell numeric>  {record.start_Date}  </DataTable.Cell>
+                    <DataTable.Cell numeric>{record.no_of_days} day(s)</DataTable.Cell>
+                    <DataTable.Cell numeric>{record.status}</DataTable.Cell>
                     </DataTable.Row>
                     </TouchableOpacity>
                     )})
@@ -180,5 +192,11 @@ const styles = StyleSheet.create ({
     height : '9%',
     marginTop : 5,
     marginBottom : 5,
-  }
+  },
+  searchBar: {
+    width : '80%',
+    marginLeft : '20%',
+    height: 40,
+    marginBottom : 10
+},
 })
