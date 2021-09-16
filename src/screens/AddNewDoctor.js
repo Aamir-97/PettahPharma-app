@@ -14,11 +14,7 @@ import axios from 'axios'
 
 export default function AddNewDoctor ({route, navigation}){
 
-
-    const [user, setUser] = React.useState({ 
-        rep_ID: '', 
-        manager_ID: '',
-      });
+    const [rep_ID, setRepID] = React.useState('');
 
     useEffect(() => {
         async function fetchData(){
@@ -26,7 +22,7 @@ export default function AddNewDoctor ({route, navigation}){
             const userProfile = await AsyncStorage.getItem('user');
             const profile  = JSON.parse(userProfile);
             if (userProfile !== null){
-              setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });        
+            setRepID(profile.rep_ID);       
             }
           } catch (e){
             console.log(e);
@@ -36,7 +32,7 @@ export default function AddNewDoctor ({route, navigation}){
       },[]);
 
     const [doctorDetails, setDoctorDetails] = React.useState({
-        displayPhoto : '',
+        displayPhoto : 'https://i.pravatar.cc/300',
         slmcNo : '',
         doctorName : '',
         clinic : '',
@@ -61,7 +57,8 @@ export default function AddNewDoctor ({route, navigation}){
             dob: doctorDetails.dob, 
             citations: doctorDetails.citations, 
             note: doctorDetails.note,
-            rep_ID : user.rep_ID 
+            // rep_ID : user.rep_ID, 
+            rep_ID : rep_ID 
         }).then((response)=>{
             // console.log(slmcNo);
             console.log("Succesfully Inserted:!");

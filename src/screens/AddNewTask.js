@@ -16,7 +16,7 @@ export default function AddNewTask({navigation}){
     const [user, setUser] = React.useState({ 
         rep_ID: '', 
         manager_ID: '',
-      });
+      }); 
 
   
     useEffect(() => {
@@ -25,7 +25,8 @@ export default function AddNewTask({navigation}){
           const userProfile = await AsyncStorage.getItem('user');
           const profile  = JSON.parse(userProfile); 
           if (profile !== null ){
-            setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });        
+            setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+            console.log("user");     
           }      
         } catch (e){
           console.log(e);
@@ -40,7 +41,7 @@ export default function AddNewTask({navigation}){
         date : '',
         session : '',
         description : '',
-        // created_at : new Date(now()),
+        created_at : new Date(),
     })
   
 
@@ -51,6 +52,7 @@ export default function AddNewTask({navigation}){
             date : scheduleFormDetails.date, 
             session: scheduleFormDetails.session, 
             description: scheduleFormDetails.description,
+            created_at: scheduleFormDetails.created_at,
             manager_ID : user.manager_ID,
             rep_ID: user.rep_ID, 
 
