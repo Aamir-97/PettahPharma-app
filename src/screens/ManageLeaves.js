@@ -3,13 +3,14 @@ import { Text, View, SafeAreaView, ScrollView, StyleSheet, AsyncStorage} from 'r
 import { theme } from '../core/theme'
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
 import BackgroundLayout from '../components/BackgroundLayout'
-import {Card, DataTable} from 'react-native-paper';
+import {DataTable,Searchbar} from 'react-native-paper';
+import BackButton from '../components/BackButton'
 import axios from 'axios';
 import SearchInput, { createFilter } from 'react-native-search-filter';
 
 
 const optionsPerPage = [2, 3, 4];
-const Keys_to_filter = ['leave_Type'];
+const Keys_to_filter = ['leave_Type', 'start_Date'];
 
 export default function ManageLeaves({ navigation }) {
 
@@ -114,19 +115,32 @@ export default function ManageLeaves({ navigation }) {
         </View>
       </View>
 
+      <View style= {styles.sameRow}>
+                <View style={{top:-20}}>
+                <BackButton goBack={navigation.goBack} />
+                </View>                
+                <Searchbar style= {styles.searchBar} placeholder="Search" onChangeText={(text) => {setSearchTerm(text)} } value={searchTerm} />
+            </View>
+
       <DataTable>
                 <DataTable.Header>
-                    <DataTable.Title align = "center">Type of Leave</DataTable.Title>
-                    <DataTable.Title align = "center">Duration</DataTable.Title>
-                    <DataTable.Title align = "center">Description </DataTable.Title>
+                    <DataTable.Title align = "right">Type of Leave </DataTable.Title>
+                    <DataTable.Title numeric> Start Date</DataTable.Title>
+                    <DataTable.Title numeric>Duration</DataTable.Title>
+                    <DataTable.Title numeric>Description </DataTable.Title>
                 </DataTable.Header>
 
                 {filteredKey.map((record,i) => {
+                    const dtt = new Date(record.start_Date);
+                    const year = dtt.getFullYear() + '/';
+                    const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
+                    const day = ('0' + dtt.getDate()).slice(-2);
                             return(
                     <DataTable.Row key={record.leave_ID} onPress = {()=> ViewPendingLeave(record.leave_ID)}>
-                    <DataTable.Cell align="center">{record.leave_Type}</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.no_of_days} days</DataTable.Cell>
-                    <DataTable.Cell align="center">{record.description}</DataTable.Cell>
+                    <DataTable.Cell align="right">{record.leave_Type} </DataTable.Cell>
+                    <DataTable.Cell numeric>{record.start_Date}</DataTable.Cell>
+                    <DataTable.Cell numeric>{record.no_of_days} day(s)</DataTable.Cell>
+                    <DataTable.Cell numeric>{record.description}</DataTable.Cell>
                     
                     </DataTable.Row>
                     )})
@@ -144,45 +158,6 @@ export default function ManageLeaves({ navigation }) {
                     optionsLabel={'Rows per page'}
                 />
             </DataTable>
-
-      {/* <View>
-        
-      <Card style={ styles.card }>
-        <Card.Title title="Off"/>
-        <Card.Content >
-          <View style = {styles.sameRow}>
-          <FontAwesome5Icon name= "tired" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          </View>
-        </Card.Content>
-      </Card>
-      <View style={{borderBottomWidth : 1,  marginBottom : 15, }}></View>
-      <Card style={ styles.card }>
-        <Card.Title title="Medical Leaves"/>
-        <Card.Content >
-          <View style = {styles.sameRow} >
-          <FontAwesome5Icon name= "frown" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          </View>
-        </Card.Content>
-      </Card>
-      <View style={{borderBottomWidth : 1,  marginBottom : 15, }}/>
-      <Card.Title title="Casual Leaves"/>
-        <Card.Content >
-          <View style = {styles.sameRow}>
-          <FontAwesome5Icon name= "tired" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          </View>
-        </Card.Content>
-      </Card>
-      <View style={{borderBottomWidth : 1,  marginBottom : 15, }}></View>
-      <Card style={ styles.card }>
-        <Card.Title title="Annual Leaves"  />
-        <Card.Content>
-          <View style = {styles.sameRow}>
-          <FontAwesome5Icon name= "hand-holding-usd" size= {30} color={theme.colors.primary} ></FontAwesome5Icon>
-          </View>
-        </Card.Content>
-      </Card>
-      </View> */}
-
       </BackgroundLayout>
       </ScrollView>
     </SafeAreaView>
@@ -211,5 +186,11 @@ const styles = StyleSheet.create ({
     height : '9%',
     marginTop : 5,
     marginBottom : 5
-  }
+  },
+  searchBar: {
+    width : '80%',
+    marginLeft : '20%',
+    height: 40,
+    marginBottom : 10
+},
 })
