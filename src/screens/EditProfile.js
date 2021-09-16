@@ -22,6 +22,7 @@ const [profileDetails , setProfileDetails] = React.useState({
   address : '',
   password : '',
 })
+
 const [userDate, setUserData] = React.useState('')
 
   useEffect(() => {
@@ -31,7 +32,7 @@ const [userDate, setUserData] = React.useState('')
           rep_ID : rep_ID,
       }).then((response)=>{
         const profile = response.data[0];
-        console.log("/profileDetails");
+        console.log("/editProfileDetails");
         setProfileDetails({...profileDetails, 
           name : profile.name, 
           display_photo : profile.display_photo,
@@ -232,7 +233,6 @@ const [userDate, setUserData] = React.useState('')
                       size={25}
                       />
                   )}
-                  // goBack={navigation.goBack}
                   onPress={() => navigation.goBack()} 
                   > Cancel 
               </Button>

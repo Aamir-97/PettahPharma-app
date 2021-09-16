@@ -15,7 +15,7 @@ const PORT = 3001;
 //     host : "localhost",
 //     password: "",
 //     database: "pettahpharma"
-// })
+// }),
 
 const db = mysql.createConnection({
     user : "admin",
@@ -67,154 +67,34 @@ app.post('/login',(req,res)=>{
                     rep_ID: result[0].rep_ID,
                     manager_ID : result[0].manager_ID,
                 })
-                console.log("login");
+                // console.log("login");
               } else {
                   res.send({message : 'Invalid Credentials...!'})
               } 
             }); 
 });  
 
-// Home Page Back-end
-app.post('/homePage/reportCount',(req,res)=>{
+app.post('/HomePage/StatisticsData',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(report_id) AS reportCount FROM visit_summary_report WHERE rep_ID=?";
+    const sqlLogin = "SELECT \
+    (SELECT COUNT(report_id) FROM visit_summary_report WHERE rep_ID=? ) AS reportCount, \
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID=? AND status=1 ) AS expensesAmount,  \
+    (SELECT COUNT(rep_ID) FROM leaves WHERE rep_ID=? ) AS leaveCount, \
+    (SELECT COUNT(doctor_ID) FROM doctor_details WHERE rep_ID=? ) AS doctorCount,  \
+    (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Pending' AND date=CURRENT_DATE ) AS ScheduledTaskCount,  \
+    (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Complete' AND type='task') AS completedTaskCount, \
+    (SELECT COUNT(product_id) FROM product) AS productsCount"
      
-    db.query(sqlLogin,[rep_ID],(err,result)=>{
-      if(err){
-          res.send({err:err})
-          console.log("Error while reportCount ");
-        }else if(result){
-          res.send(result[0]);
-        } 
-   
+    db.query(sqlLogin,[rep_ID,rep_ID,rep_ID,rep_ID,rep_ID,rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Home Screen Statistic Data");
+              } if(result.length > 0){
+                res.send(result);
+              } 
+ 
     }); 
 }); 
-
-app.post('/homePage/ExpensesAmount',(req,res)=>{
-
-    const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT SUM(amount) AS expensesAmount FROM expenses WHERE rep_ID=? AND status=1";
-     
-    db.query(sqlLogin,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while expensesCount ");
-              } if(result.length > 0){
-                res.send({
-                    expensesAmount: result[0].expensesAmount,
-                });
-              } 
-            //   else {
-            //     res.send({message : " No Expenses claimed yet "});
-            //   }     
-    }); 
-}); 
-   
-app.post('/homePage/leaveCount',(req,res)=>{
-
-    const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(rep_ID) AS leaveCount FROM leaves WHERE rep_ID=?";
-     
-    db.query(sqlLogin,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while leaveCount ");
-              } if(result.length > 0){
-                res.send({
-                    leaveCount: result[0].leaveCount,
-                });
-                // console.log("Get Report Count");
-              } 
-            //   else {
-            //     res.send({message : " No leave taken yet "});
-            //   }     
-    }); 
-});   
-
-app.post('/homePage/doctorCount',(req,res)=>{    
-
-    const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(doctor_ID) AS doctorCount FROM doctor_details WHERE rep_ID=?";
-     
-    db.query(sqlLogin,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while doctorCount ");
-              } if(result.length > 0){
-                //   console.log(result[0].doctorCount);
-                res.send({
-                    doctorCount: result[0].doctorCount,
-                });
-                // console.log("Get Report Count");
-              } 
-            //   else {
-            //     res.send({message : " No Doctors added yet "});
-            //   }     
-    }); 
-}); 
-
-app.post('/homePage/SheduledTaskCount',(req,res)=>{
-
-    const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(rep_ID) AS SheduledTaskCount FROM task WHERE rep_ID=? AND status='Pending' AND date=CURRENT_DATE";
-     
-    db.query(sqlLogin,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while SheduledTaskCount");
-              } if(result.length > 0){
-                res.send({
-                    SheduledTaskCount: result[0].SheduledTaskCount,
-                });
-                // console.log("Get Report Count");
-              } 
-            //   else {
-            //     res.send({message : " No task assigned yet "});
-            //   }     
-    }); 
-}); 
-
-app.post('/homePage/CompletedTaskCount',(req,res)=>{
-
-    const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(rep_ID) AS SheduledTaskCount FROM task WHERE rep_ID=? AND status='Complete' AND type='task' ";
-     
-    db.query(sqlLogin,[rep_ID],(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while SheduledTaskCount");
-              } if(result.length > 0){
-                res.send({
-                    CompletedTaskCount: result[0].SheduledTaskCount,
-                });
-                // console.log("Get Report Count");
-              } 
-            //   else {
-            //     res.send({message : " No task assigned yet "});
-            //   }     
-    }); 
-}); 
-
-app.get('/homePage/productsCount',(_req,res)=>{
-
-    // const rep_ID = req.body.rep_ID;
-    const sqlLogin = "SELECT COUNT(product_id) AS productsCount FROM product";
-     
-    db.query(sqlLogin,(err,result)=>{
-            if(err){
-                res.send({err:err})
-                console.log("Error while productsCount report");
-              } if(result.length > 0){
-                res.send({
-                    productsCount: result[0].productsCount,
-                });
-                // console.log("Get Report Count");
-              } 
-            //   else {
-            //     res.send({message : " No product available yet "});
-            //   }     
-    }); 
-});
 
 app.post('/homePage/viewTask',(req,res)=>{  
    
@@ -265,12 +145,13 @@ app.post("/task/submitScheduleForm",(req, res) => {
     const date = req.body.date ;
     const session =req.body.session;
     const description = req.body.description;
+    const created_at = req.body.created_at;
     const manager_ID = req.body.manager_ID;
     const rep_ID = req.body.rep_ID;
 
-    const sqlNewTask = "INSERT INTO task( title, location, date, session, description, manager_ID, rep_ID) VALUES (?,?,?,?,?,?,?)";
+    const sqlNewTask = "INSERT INTO task( title, location, date, session, description, manager_ID, rep_ID, created_at) VALUES (?,?,?,?,?,?,?,?)";
 
-    db.query(sqlNewTask, [title,location,date,session,description,manager_ID,rep_ID], (err,result)=>{
+    db.query(sqlNewTask, [title,location,date,session,description,manager_ID,rep_ID,created_at], (err,result)=>{
         if(err){
             console.log(err);
             console.log ("Somthing Error while submit schedule");
@@ -403,9 +284,6 @@ app.post('/profileDetails',(req,res)=>{
               } if(result.length > 0){
                 res.send(result);
               } 
-            //   else {
-            //     res.send({message : " Noo Profile Data In that Id "});
-            //   }     
     }); 
 });
 
@@ -420,10 +298,7 @@ app.post('/Profile/ManagerDetails',(req,res)=>{
                 console.log("Error while GetProfile");
               } if(result.length > 0){
                 res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Profile Data In that Id "});
-            //   }     
+              }  
     }); 
 });
 
@@ -445,10 +320,7 @@ app.put('/updateProfile',(req,res)=>{
                 console.log("Error while update Profile");
               } if(result){
                 res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Profile Data In that Id "});
-            //   }     
+              }   
     }); 
 }); 
 
@@ -475,11 +347,7 @@ app.post('/ProductDetails/ViewProduct',(req,res)=>{
                 console.log("Error while get product details");
               } if(result){
                 res.send(result);
-              } 
-            //   else {
-            //     res.send({message : " Noo Product Data In that Id "});
-            //     // console.log("NO schedule task");
-            //   }     
+              }     
     });
 });
 
@@ -549,7 +417,6 @@ app.post("/vsr/submitForm", (req, res) => {
 });
 
 app.post("/VisitSummaryReport/ViewVSR", (req, res) => {
-    // console.log(req);
     const report_id = req.body.report_id; 
     
     const sql =  "SELECT * FROM visit_summary_report WHERE report_id=?" ;
@@ -618,7 +485,7 @@ app.post('/DoctorDetails/ViewDoctor',(req,res)=>{
 });
 
 app.post("/doctor/addNewDoctor", (req, res) => {
-    console.log(req);
+    // console.log(req);
     const displayPhoto = req.body.displayPhoto;
     const slmcNo = req.body.slmcNo;
     const doctorName = req.body.doctorName;
@@ -686,18 +553,7 @@ app.post('/deleteDoctor',(req,res)=>{
                 res.send(result);
               }     
     }); 
-}); 
-
-// app.get('/ViewCategory', (_req, res) =>{
-//     //total expenses by category
-//     db.query('SELECT expense_Type, (SUM(amount)) AS Total FROM expenses GROUP BY expense_Type', (err, result, _fields)=> {
-//       if(!err){
-//         res.send(result);
-//     }else {
-//     console.log(err);
-//     }
-//   });
-// });
+});
 
 
 
@@ -892,10 +748,7 @@ app.post('/deleteDoctor',(req,res)=>{
 //-----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 //Manage Leaves Page - Pending Leaves
 app.post('/viewPendingLeaves',(req,res)=>{
-    // console.log(req.body.rep_ID);
-    //pending leaves
     const rep_ID = req.body.rep_ID;
-    //if approved then status=1, if rejected then status=2.......... pending leaves then status= 0 (default)
     db.query('SELECT leave_ID, leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days FROM leaves WHERE rep_ID=? AND status = 0 ORDER BY leave_ID DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
@@ -972,9 +825,6 @@ app.post('/ManageLeaves/DeleteLeave',(req,res)=>{
 /* Annual Leaves Page - View approved and rejected leaves*/
 app.post('/viewLeaves',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    // console.log(req.body.rep_ID);
-    //approved leaves
-    //if approved then status=1, if rejected then status=2
     db.query("SELECT leave_ID,leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days, CASE WHEN status = 1 THEN 'Approved' ELSE 'Rejected' END AS status FROM leaves WHERE status !=0 AND rep_ID = ?",[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
@@ -1034,8 +884,7 @@ app.post('/AnnualLeaves/pendingleaveCount',(req,res)=>{
 //-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 /* Apply Leaves Page */
 app.post('/applyLeave',(req,res)=>{
-    console.log(req);
-  
+    // console.log(req);  
     const rep_ID = req.body.rep_ID;
     const leaveType = req.body.leaveType;
     const startDate = req.body.startDate;
@@ -1111,7 +960,7 @@ app.post('/ApplyLeaves/pendingleaveCount',(req,res)=>{
 /* Manage Expenses */  
 
 app.post('/ClaimExpenses',(req,res)=>{
-    console.log(req)
+    // console.log(req)
     const rep_ID = req.body.rep_ID;
     const expense_Type = req.body.expense_Type;
     const date = req.body.date;
@@ -1119,10 +968,11 @@ app.post('/ClaimExpenses',(req,res)=>{
     const bills = req.body.bills;  
     const amount = req.body.amount;  
     const description = req.body.description;  
+    const bill_uri = req.body.bill_uri;  
     
-    const sqlClaimExpense = "INSERT INTO expenses(rep_ID, expense_Type, date, location, bills, amount, description) VALUES (?,?,?,?,?,?,?)";
+    const sqlClaimExpense = "INSERT INTO expenses(rep_ID, expense_Type, date, location, bills, amount, description, bill_uri) VALUES (?,?,?,?,?,?,?,?)";
 
-    db.query(sqlClaimExpense, [rep_ID, expense_Type, date, location, bills, amount, description], (err,result)=>{
+    db.query(sqlClaimExpense, [rep_ID, expense_Type, date, location, bills, amount, description, bill_uri], (err,result)=>{
         if(err){
             console.log(err);
             console.log ("Error while claim expenses");
@@ -1132,67 +982,31 @@ app.post('/ClaimExpenses',(req,res)=>{
         }
     })  
 });        
-  
 
-app.post('/Expenses/DailyBatta', (req, res) =>{
+
+app.post('/Expenses/StatisticsData',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Daily batta" AND status=1', [rep_ID], (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);  
-    }
-  });
-});
-app.post('/Expenses/Accomodation', (req, res) =>{
-    const rep_ID = req.body.rep_ID;  
-    //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Accommodation" AND status=1', [rep_ID], (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);  
-    }
-  });
-});
-app.post('/Expenses/Fuel', (req, res) =>{
-    const rep_ID = req.body.rep_ID;
-    //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Fuel" AND status=1', [rep_ID], (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);  
-    }
-  });
-});
-app.post('/Expenses/Other', (req, res) =>{
-    const rep_ID = req.body.rep_ID;
-    //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND expense_Type="Other" AND status=1', [rep_ID], (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);  
-    }
-  });
-});
-app.post('/Expenses/Total', (req, res) =>{
-    const rep_ID = req.body.rep_ID;
-    //total expenses by category
-    db.query('SELECT (SUM(amount)) AS Total FROM expenses WHERE rep_ID = ? AND status=1', [rep_ID], (err, result, _fields)=> {
-      if(!err){
-        res.send(result);
-    }else {
-    console.log(err);  
-    }
-  });
-});
+    const sqlLogin = "SELECT \
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Daily batta' AND status=1) AS DailyBatta, \
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Accommodation' AND status=1) AS Accomadation, \
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Fuel' AND status=1) AS Fuel, \
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Other' AND status=1) AS Other, \
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND status=1) AS Total";
+     
+    db.query(sqlLogin,[rep_ID,rep_ID,rep_ID,rep_ID,rep_ID],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while Expense screen Statistic data");
+              } if(result){
+                res.send(result);
+              } 
+ 
+    }); 
+}); 
 
 app.post('/ViewExpenses',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    db.query('SELECT * FROM expenses WHERE rep_ID=? ORDER BY date DESC',[rep_ID],(err,result,_fields)=>{
+    db.query('SELECT expense_ID,expense_Type,amount,date, CASE WHEN status=0 THEN "Pending" WHEN status=1 THEN "Accept" ELSE "Rejected" END AS status FROM expenses WHERE rep_ID=? ORDER BY date DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{
@@ -1204,7 +1018,7 @@ app.post('/ViewExpenses',(req,res)=>{
 app.post('/ManageExpenses/ViewExpenses',(req,res)=>{
     const expense_ID = req.body.expense_ID;   
 
-    const sql = "SELECT expense_Type, amount, date, location, description, salesmanager_comment, CASE WHEN status = 0 THEN 'Pending' WHEN status = 1 THEN 'Claim Accepted' ELSE 'The claim rejected' END AS status FROM expenses WHERE expense_ID = ?";
+    const sql = "SELECT expense_Type, amount, date, location, bills, description,bill_uri, salesmanager_comment, CASE WHEN status = 0 THEN 'Pending' WHEN status = 1 THEN 'Claim Accepted' ELSE 'The claim rejected' END AS status FROM expenses WHERE expense_ID = ?";
     
     db.query(sql,[expense_ID],(err,result)=>{
             if(err){
@@ -1233,15 +1047,6 @@ app.post('/Expense/DeleteExpense',(req,res)=>{
   
 //////////////////////////////////////////////////////////////////////////////
 
-// // GET method route
-// app.get('/', function (req, res) {
-//     res.send('GET request to the homepage')
-//   })
-  
-//   // POST method route
-//   app.post('/', function (req, res) {
-//     res.send('POST request to the homepage')
-//   })
 
 
 

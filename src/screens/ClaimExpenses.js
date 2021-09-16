@@ -20,11 +20,14 @@ export default function ClaimExpenses({ navigation }) {
   const [amount , setAmount] = React.useState('');
   const [bills , setBills] = React.useState('');
   const [description , setDescription] = React.useState('');
+  const [bill_uri , setBillUri] = React.useState('');
 
   const [locationView , setLocationView] = useState(false);
   const [billsView , setBillsView] = useState(false);
 
-  const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  // const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  const [rep_ID, setRepID] = React.useState('');
+
 
   useEffect(() => {
     async function fetchData(){
@@ -32,8 +35,9 @@ export default function ClaimExpenses({ navigation }) {
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-          // console.log("user");            
+          // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+          setRepID(profile.rep_ID);
+          console.log("user");            
         }
       } catch (e){
         console.log(e);
@@ -45,13 +49,15 @@ export default function ClaimExpenses({ navigation }) {
   const saveDetails = () => {
     // console.log("SaveDetails"); 
     axios.post("http://10.0.2.2:3001/ClaimExpenses", {
-      rep_ID: user.rep_ID, 
+      // rep_ID: user.rep_ID, 
+      rep_ID: rep_ID, 
       expense_Type: expense_Type,
       date : exp_date, 
       location : location, 
       amount: amount, 
       bills: bills, 
       description: description, 
+      bill_uri: bill_uri, 
     }).then((response)=>{
         Alert.alert(
             "Database",
@@ -78,6 +84,7 @@ export default function ClaimExpenses({ navigation }) {
         )
         // console.log(res);
         setBills(res.uri);
+        setBillUri(res.uri);
         setBillsView(true);
     } catch (err) {
         if (DocumentPicker.isCancel(err)) {
@@ -133,9 +140,10 @@ export default function ClaimExpenses({ navigation }) {
       const checkRequired = () => {
 
         const expense_Type1 = requiredField(expense_Type)
+        const location1 = requiredField(location)
         const amount1 = requiredField(amount)
         const exp_date1 = requiredField(exp_date)
-        if (expense_Type1 || amount1 || exp_date1) {
+        if (expense_Type1 || location1 || amount1 || exp_date1) {
             Alert.alert(
                 "Attention.....!",
                 "Please fill the required field...!",
@@ -242,9 +250,7 @@ export default function ClaimExpenses({ navigation }) {
       <View style={{borderWidth : 0.5, borderTopColor: theme.colors.primary, marginTop : -22, marginBottom : 22}}></View>
 
       
-
-
-      <Text style = {styles.labelText}>Location : </Text>
+      {/* <Text style = {styles.labelText}>Location : </Text>
       <Text style={styles.subLabel}>(Set Current Location By click the button)</Text>
       <View style={{flexDirection: 'row', alignSelf: 'flex-start',margin:12}}>
             <Button icon="location-enter" mode="contained" onPress={componentDidMount} value={location}> SET </Button>
@@ -254,7 +260,23 @@ export default function ClaimExpenses({ navigation }) {
             
               )}
 
-      </View>
+      </View> */}
+
+      <Text style = {styles.labelText}>Location : </Text>
+          <FontistoIcon
+              name="star" 
+              color={theme.colors.error}
+              size={8}
+              style = {{marginTop:10, marginBottom:-20,marginLeft : -10}}
+              
+          />
+          <TextInput 
+            style={styles.InputField} 
+            placeholder="Place where you are :"  
+            onChangeText={(val) => setLocation(val)}
+            value={location}
+            // keyboardType = 'number-pad'
+          />
 
       <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
                 <View style={{flex : 2}}>
@@ -318,7 +340,7 @@ export default function ClaimExpenses({ navigation }) {
               )
             }
 
-      <Text style = {styles.labelText}>Amount(Rs.) : </Text>
+        <Text style = {styles.labelText}>Amount(Rs.) : </Text>
           <FontistoIcon
               name="star" 
               color={theme.colors.error}

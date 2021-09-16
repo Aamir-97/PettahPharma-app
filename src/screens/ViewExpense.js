@@ -1,5 +1,5 @@
 import React, { useState, useEffect} from 'react'
-import { SafeAreaView, ScrollView, View, Text, StyleSheet, Alert } from 'react-native'
+import { SafeAreaView, ScrollView, View, Text, StyleSheet, Alert, Image } from 'react-native'
 import { Button } from 'react-native-paper';
 import BackgroundLayout from '../components/BackgroundLayout';
 import { theme } from '../core/theme';
@@ -17,7 +17,9 @@ export default function ViewExpenses ({route, navigation}){
         amount : '',
         date : '',
         location : '',
+        bills : [],
         description : '',
+        bill_uri : 'expenseDetails.bill_uri',
         salesmanager_comment : '',
         status : ''
     })
@@ -43,13 +45,15 @@ export default function ViewExpenses ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/ManageExpenses/ViewExpenses",{
             expense_ID : expense_ID,  
         }).then((response)=>{
-            console.log("/ViewExpenses");
+            console.log("/ManageExpenses/ViewExpenses");
           setExpenseDetails({...expenseDetails,
             expense_Type : response.data[0].expense_Type,
             amount : response.data[0].amount,
             date : response.data[0].date,
             location : response.data[0].location,
+            // bills : response.data[0].bills,
             description : response.data[0].description,   
+            bill_uri : response.data[0].bill_uri,   
             salesmanager_comment : response.data[0].salesmanager_comment,
             status : response.data[0].status,   
         });
@@ -126,22 +130,36 @@ export default function ViewExpenses ({route, navigation}){
                             <Text style={styles.textLable}>Expense Type : </Text>
                             <Text style={styles.text}>{expenseDetails.expense_Type}</Text>
                         </View>
+
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Amount : </Text>
                             <Text style={styles.text}>Rs. {expenseDetails.amount}.00</Text>
                         </View>
+
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Date : </Text>
                             <Text style={styles.text}>{year+month+day}</Text>
                         </View>
+
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Location : </Text>
                             <Text style={styles.text}>{expenseDetails.location}</Text>
                         </View>
+
                         <View style= {styles.sameRow}>
+                            <Text style={styles.textLable}>Bills : {expenseDetails.bills_uri} </Text>
+                                {expenseDetails.bill_uri && (
+                                    <Image 
+                                        source= {{uri : expenseDetails.bill_uri }}
+                                        style = {styles.billPhoto}
+                                        />
+                                    )
+                                }
+                        </View>
+
                             <Text style={styles.textLable}>Description : </Text>
                             <Text style={styles.CommentField}>{expenseDetails.description}</Text>
-                        </View>
+                      
                             <Text style={styles.textLable}>Sales Manager Comment : </Text>
                             <Text style={styles.CommentField}>{expenseDetails.salesmanager_comment}</Text>
                         
@@ -237,4 +255,10 @@ const styles = StyleSheet.create ({
         backgroundColor : 'red',
         marginLeft : 50,
     },
+    billPhoto: {
+        height : 150 ,
+        width : 150,
+        borderRadius : 10 ,
+        margin : 10,
+      },
   })

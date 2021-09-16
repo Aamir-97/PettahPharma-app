@@ -316,7 +316,7 @@ export default function VSRForm ({navigation}){
                                 is24Hour={true}
                                 display="default"
                                 onChange={onChange}
-                                // minimumDate = {new Date()}
+                                maximumDate = {new Date()}
                                 />
                             )}
                         </View>

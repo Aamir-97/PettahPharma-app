@@ -58,7 +58,7 @@ export default function VisitSummaryReport({navigation}){
         rep_ID : rep_ID,  
     }).then((response)=>{
       setProductList(response.data);
-      // console.log("viewVisitSummaryReport");
+      console.log("viewVisitSummaryReport");
     });
     } catch (err) {    
       console.log(err);

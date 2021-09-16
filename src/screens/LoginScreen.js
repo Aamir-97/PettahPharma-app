@@ -16,8 +16,12 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 
 
 export default function LoginScreen({ navigation }) {
-  const [email, setEmail] = useState({ value: '', error: '' });
-  const [password, setPassword] = useState({ value: '', error: '' });
+  // const [email, setEmail] = useState({ value: '', error: '' });
+  // const [password, setPassword] = useState({ value: '', error: '' });
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState('');
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState('');
 
 
   const { signIn , setInfo } = React.useContext(AuthContext);
@@ -27,8 +31,8 @@ export default function LoginScreen({ navigation }) {
     const passwordError = passwordValidator(password)
     // console.log(emailError, passwordError);
     if (emailError || passwordError) {
-      setEmail({ ...email, error: emailError })
-      setPassword({ ...password, error: passwordError })
+      setEmailError(emailError)
+      setPasswordError(passwordError)
       return
     }
       signIn(email, password);
@@ -47,10 +51,14 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         label="Email"
         returnKeyType="next"
-        value={email.value}
-        onChangeText={(text) => setEmail({ value: text, error: '' })}
-        error={!!email.error}
-        errorText={email.error}
+        value={email}
+        onChangeText={(text) => setEmail(text)}
+        error={!!emailError}
+        errorText={emailError}
+        // value={email.value}
+        // onChangeText={(text) => setEmail({ value: text, error: '' })}
+        // error={!!email.error}
+        // errorText={email.error}
         autoCapitalize="none"
         autoCompleteType="email"
         textContentType="emailAddress"
@@ -60,10 +68,14 @@ export default function LoginScreen({ navigation }) {
       <TextInput
         label="Password"
         returnKeyType="done"
-        value={password.value}
-        onChangeText={(text) => setPassword({ value: text, error: '' })}
-        error={!!password.error}
-        errorText={password.error}
+        value={password}
+        onChangeText={(text) => setPassword(text)}
+        error={!!passwordError}
+        errorText={passwordError}
+        // value={password.value}
+        // onChangeText={(text) => setPassword({ value: text, error: '' })}
+        // error={!!password.error}
+        // errorText={password.error}
         secureTextEntry
       />
 
@@ -76,7 +88,7 @@ export default function LoginScreen({ navigation }) {
       </View>
 
 
-      <Button mode="contained" onPress={() => {loginHandle(email.value, password.value)}}>
+      <Button mode="contained" onPress={() => {loginHandle(email, password)}}>
         Login
       </Button>
       

@@ -18,7 +18,7 @@ import{ AuthContext } from '../components/context';
 
 import axios from 'axios'
 
-export function DrawerContent(props) {
+export function DrawerContent(props, {navigation}) {
 
     const { signOut } = React.useContext(AuthContext);
 
@@ -39,25 +39,36 @@ export function DrawerContent(props) {
         manager_ID : ''
     });
 
-    const [user, setUser] = React.useState({ 
-        rep_ID: '', 
-        manager_ID: '',
-    });
+    // const [user, setUser] = React.useState({ 
+    //     rep_ID: '', 
+    //     manager_ID: '',
+    // });
+    const [rep_ID, setRepID] = React.useState('');
+
+    
 
     useEffect(() => {
+        fetchData();
+        // return navigation.addListener('focus', () => {
+        //   fetchData();
+        // });
+      },[]);
+
+    // useEffect(() => {
         async function fetchData(){
           try {
             const userProfile = await AsyncStorage.getItem('user');
             const profile  = JSON.parse(userProfile);
             if (userProfile !== null){
-              setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+            //   setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+              setRepID(profile.rep_ID);
               
                 // Beck-end function
                 await axios.post("http://10.0.2.2:3001/profileDetails",{
                     rep_ID : profile.rep_ID,
                 }).then((response)=>{
                     const profile = response.data[0];
-                    // console.log("ProfileDetails");
+                    console.log("DrawerContent");
                     setProfileDetails({...profileDetails, 
                         name : profile.name,
                         display_photo : profile.display_photo,
@@ -71,8 +82,8 @@ export function DrawerContent(props) {
             console.log(e);
           }
         }
-        fetchData();     
-    },[]);
+    //     fetchData();     
+    // },[]);
 
 
     return(

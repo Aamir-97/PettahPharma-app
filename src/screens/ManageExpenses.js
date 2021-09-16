@@ -9,28 +9,31 @@ import BackgroundLayout from '../components/BackgroundLayout'
 import axios from 'axios';
 import SearchInput, { createFilter } from 'react-native-search-filter';
 
-const Keys_to_filter = ['expense_Type', 'date'];
+const Keys_to_filter = ['expense_Type', 'date', 'status'];
 const optionsPerPage = [2, 3, 4];
 
 export default function ManageExpenses({ navigation }) {
 
-  const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  // const [user, setUser] = useState({ rep_ID: '',  manager_ID: '',});
+  const [rep_ID, setRepID] = React.useState('');
+
   
-  useEffect(() => {
-    async function fetchData(){
-      try {
-        const userProfile = await AsyncStorage.getItem('user');
-        const profile  = JSON.parse(userProfile);
-        if (profile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
-          // console.log("user");           
-        }
-      } catch (e){
-        console.log(e);
-      }
-    }
-    fetchData();
-  },[]);
+  // useEffect(() => {
+  //   async function fetchData(){
+  //     try {
+  //       const userProfile = await AsyncStorage.getItem('user');
+  //       const profile  = JSON.parse(userProfile);
+  //       if (profile !== null){
+  //         // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
+  //         setRepID(profile.rep_ID);
+  //         console.log("user");           
+  //       }
+  //     } catch (e){
+  //       console.log(e);
+  //     }
+  //   }
+  //   fetchData();
+  // },[]);
 
 
   const [page, setPage] = useState(3);
@@ -55,74 +58,50 @@ export default function ManageExpenses({ navigation }) {
     return navigation.addListener('focus', () => {
       fetchData();
     });
-  },[user]);
+  },[rep_ID]);
 
     async function fetchData(){
+
       try {
-        axios.post("http://10.0.2.2:3001/Expenses/DailyBatta",{
-            rep_ID : user.rep_ID,  
-          }).then((response)=>{
-            setDailyBatta(response.data[0].Total);
-            // console.log("/DailyBatta");
-          });
+        const userProfile = await AsyncStorage.getItem('user');
+        const profile  = JSON.parse(userProfile);
+        if (profile !== null){
+          // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
+          setRepID(profile.rep_ID);
+          console.log("user");           
+        }
       } catch (e){
         console.log(e);
       }
+    if(rep_ID){
 
       try {
-        axios.post("http://10.0.2.2:3001/Expenses/Accomodation",{
-          rep_ID : user.rep_ID,  
+        axios.post("http://10.0.2.2:3001/Expenses/StatisticsData",{
+          rep_ID : rep_ID,
         }).then((response)=>{
-          setAccomodation(response.data[0].Total);
-          // console.log("/Accomodation");
-        });
-      } catch (e){
-        console.log(e);
-      }
-
-      try {
-        axios.post("http://10.0.2.2:3001/Expenses/Fuel",{
-          rep_ID : user.rep_ID,  
-        }).then((response)=>{
-          setFuel(response.data[0].Total);
-          // console.log("/Fuel");
-        });
-      } catch (e){
-        console.log(e);
-      }
-
-      try {
-        axios.post("http://10.0.2.2:3001/Expenses/Total",{
-          rep_ID : user.rep_ID,  
-        }).then((response)=>{
+          setDailyBatta(response.data[0].DailyBatta);
+          setFuel(response.data[0].Fuel);
+          setAccomodation(response.data[0].Accomadation);
+          setOther(response.data[0].Other);
           setTotal(response.data[0].Total);
-          // console.log("/Total");
-        });;
-      } catch (e){
-        console.log(e);
-      }
-
-      try {
-        axios.post("http://10.0.2.2:3001/Expenses/Other",{
-          rep_ID : user.rep_ID,  
-        }).then((response)=>{
-          setOther(response.data[0].Total);
-          // console.log("/Total");
-        });;
+          console.log("/Expenses/StatisticsData");
+        });
       } catch (e){
         console.log(e);
       }
 
       try {
         axios.post("http://10.0.2.2:3001/ViewExpenses",{
-          rep_ID : user.rep_ID,
+          rep_ID : rep_ID,
         }).then((response)=>{
           setExpensesList(response.data);
-          // console.log("/ViewExpenses")
+          console.log("/ViewExpenses");
         });
       } catch (e){
         console.log(e);
       }
+
+    }
 
     }
 
@@ -210,22 +189,22 @@ export default function ManageExpenses({ navigation }) {
                     const year = dtt.getFullYear() + '/';
                     const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
                     const day = ('0' + dtt.getDate()).slice(-2);
-                              if (record.status===0){
+                              if (record.status==='Pending'){
                                 return(
                                   <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
                                   <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
-                                  <DataTable.Cell numeric><Text style={{color:'blue', fontWeight: 'bold'}}>Pending</Text></DataTable.Cell>
+                                  <DataTable.Cell numeric><Text style={{color:'blue', fontWeight: 'bold'}}>{record.status}</Text></DataTable.Cell>
                                   </DataTable.Row>
                                 )                                
-                              } else if (record.status===1){
+                              } else if (record.status==='Accept'){
                                 return(
                                   <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
                                   <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
-                                  <DataTable.Cell numeric><Text style={{color:theme.colors.primary, fontWeight: 'bold'}}>Accepted</Text></DataTable.Cell>
+                                  <DataTable.Cell numeric><Text style={{color:theme.colors.primary, fontWeight: 'bold'}}>{record.status}</Text></DataTable.Cell>
                                   </DataTable.Row>
                                 )  
                               } else {
@@ -234,7 +213,7 @@ export default function ManageExpenses({ navigation }) {
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
                                   <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
-                                  <DataTable.Cell numeric><Text style={{color:theme.colors.error, fontWeight: 'bold'}}>Rejected</Text></DataTable.Cell>
+                                  <DataTable.Cell numeric><Text style={{color:theme.colors.error, fontWeight: 'bold'}}>{record.status}</Text></DataTable.Cell>
                                   </DataTable.Row>
                                 )
                               }

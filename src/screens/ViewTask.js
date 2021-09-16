@@ -29,8 +29,6 @@ export default function ViewTask ({route, navigation}){
     const [taskType, setTaskType] = React.useState(false);
     const [completeButton, setCompleteButton] = React.useState(false);
 
-
-
     useEffect(() => {
       async function fetchData(){
         // console.log("button");
@@ -38,14 +36,16 @@ export default function ViewTask ({route, navigation}){
           if (taskDetails.type === "Schedule"){
             setScheduleType(true);
             setTaskType(false);
+            console.log("CompleteButton1");
           } else if (taskDetails.type === "Task" && taskDetails.status === "Accept") {
             setCompleteButton(true);
             setTaskType(false);
-            // console.log("CompleteButton");
-          } else {
+            console.log("CompleteButton2");
+          } else if (taskDetails.type === "Task" && taskDetails.status === "Pending"){
             setTaskType(true);
             setScheduleType(false);
-          }     
+            console.log("CompleteButton3");
+          }    
         } catch (err) {    
           console.log(err)
         } 
@@ -59,7 +59,7 @@ export default function ViewTask ({route, navigation}){
           await axios.post("http://10.0.2.2:3001/Task/ViewTask",{
             task_id : task_id,  
         }).then((response)=>{
-            // console.log("setTaskSchedule");
+            console.log("setTaskSchedule");
             setTaskDetails({...taskDetails,
             title : response.data[0].title,
             location : response.data[0].location,
@@ -72,6 +72,7 @@ export default function ViewTask ({route, navigation}){
             created_at : response.data[0].created_at,      
         });
           // console.log({...taskList});
+          console.log("taskList");
         });
         // Button();
         } catch (err) {    
@@ -209,6 +210,7 @@ export default function ViewTask ({route, navigation}){
     }).then((response)=>{
       setTaskType(false);
       setCompleteButton(true);
+      console.log("TaskButton");
     });
     } catch (err) {    
       console.log(err);
@@ -225,7 +227,7 @@ export default function ViewTask ({route, navigation}){
                     <View style={{alignSelf :'center'}}>
                         <View style={styles.sameRow}>
                         <FontAwesome5Icon name= "tasks" size= {30} color={theme.colors.primary} />
-                        <Text style={styles.header}>Task or Shedule Details</Text> 
+                        <Text style={styles.header}>{taskDetails.type} Details</Text> 
                         </View>
                     </View>
 

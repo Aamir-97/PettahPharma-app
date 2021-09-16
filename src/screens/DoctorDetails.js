@@ -30,10 +30,13 @@ export default function DoctorDetails({navigation}){
   const filteredKey = doctorList.filter(createFilter(searchTerm.toLowerCase(), Keys_to_filter));
 
 
-  const [user, setUser] = React.useState({ 
-    rep_ID: '', 
-    manager_ID: '',
-  });
+  // const [user, setUser] = React.useState({ 
+  //   rep_ID: '', 
+  //   manager_ID: '',
+  // });
+
+  const [rep_ID, setRepID] = React.useState('');
+
 
   useEffect(() => {
     async function fetchData(){
@@ -41,9 +44,8 @@ export default function DoctorDetails({navigation}){
         const userProfile = await AsyncStorage.getItem('user');
         const profile  = JSON.parse(userProfile);
         if (userProfile !== null){
-          setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
-        //   getDctorDetails(user.rep_ID);  
-        
+          // setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+          setRepID(profile.rep_ID)
         }
       } catch (e){
         console.log(e);
@@ -57,7 +59,7 @@ export default function DoctorDetails({navigation}){
     return navigation.addListener('focus', () => {
       fetchData();
     });
-  },[user]);
+  },[rep_ID]);
 
     async function fetchData(){
       try { 

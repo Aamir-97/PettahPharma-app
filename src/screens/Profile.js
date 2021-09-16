@@ -37,37 +37,56 @@ export default function Profile({navigation}){
     });
 
     useEffect(() => {
+        async function fetchData(){
+          try {
+            const userProfile = await AsyncStorage.getItem('user');
+            const profile  = JSON.parse(userProfile);
+            if (userProfile !== null){
+              setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID });
+              console.log("user");       
+            }
+          } catch (e){
+            console.log(e);
+          }
+        }
+        fetchData();     
+    },[]);
+
+    useEffect(() => {
         fetchData();
+        console.log("useEffect");
         return navigation.addListener('focus', () => {
           fetchData();
         });
     },[user]);  
 
-        async function fetchData(){        
-            const userProfile = await AsyncStorage.getItem('user');
-            const profile  = JSON.parse(userProfile);
-            if ( profile !== null){
-              setUser({ ...user, rep_ID: profile.rep_ID, manager_ID: profile.manager_ID }); 
-            
-            // Beck-end function
-            await axios.post("http://10.0.2.2:3001/profileDetails",{
-                rep_ID : profile.rep_ID,
-            }).then((response)=>{
-                const profile = response.data[0];
-                // console.log("/profileDetails");
-                setProfileDetails({...profileDetails, 
-                    name : profile.name,
-                    display_photo : profile.display_photo,
-                    email : profile.email,
-                    phone_no : profile.phone_no,
-                    address : profile.address,
-                    working_area : profile.working_area,
-                    rating : profile.rating,
-                    manager_ID : profile.manager_ID,
-                    joined : profile.created_at
+        async function fetchData(){                   
+            // Profile Details
+            try {
+                // Beck-end function
+                await axios.post("http://10.0.2.2:3001/profileDetails",{
+                    rep_ID : user.rep_ID,
+                }).then((response)=>{
+                    const profile = response.data[0];
+                    console.log("/profileDetails");
+                    // console.log(profile);
+                    setProfileDetails({...profileDetails, 
+                        name : profile.name,
+                        display_photo : profile.display_photo,
+                        email : profile.email,
+                        phone_no : profile.phone_no,
+                        address : profile.address,
+                        working_area : profile.working_area,
+                        rating : profile.rating,
+                        manager_ID : profile.manager_ID,
+                        joined : profile.created_at
 
-                });
-            })
+                    });
+                })
+
+            } catch (err){
+                console.log(err);
+            }
 
             // Manger Details
             try {    
@@ -76,7 +95,7 @@ export default function Profile({navigation}){
                     manager_ID : user.manager_ID,
                 }).then((response)=>{
                     const profile = response.data[0];
-                    // console.log("/ManagerDetails");
+                    console.log("/ManagerDetails");
                     setManagerDetails({...mangerDetails, 
                         name : profile.name,
                         display_photo : profile.display_photo,
@@ -88,8 +107,7 @@ export default function Profile({navigation}){
                 });
               } catch (e){
                 console.log(e);
-              }
-            }
+              }            
         }
 
     const editProfile = (rep_ID) => {
@@ -100,6 +118,11 @@ export default function Profile({navigation}){
     const year = dtt.getFullYear() + '/';
     const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
     const day = ('0' + dtt.getDate()).slice(-2);
+
+    const dtt2 = new Date(mangerDetails.joined);
+    const year2 = dtt2.getFullYear() + '/';
+    const month2 = ('0' + (dtt2.getMonth() + 1)).slice(-2) + '/';
+    const day2 = ('0' + dtt2.getDate()).slice(-2);
 
     return ( 
         <SafeAreaView>
@@ -222,7 +245,7 @@ export default function Profile({navigation}){
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="network-wired" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}>Joined At : {year + month + day} </Text>
+                            <Text style={styles.detailText}>Joined At : {year2 + month2 + day2} </Text>
                         </View>
 
                     </View>
