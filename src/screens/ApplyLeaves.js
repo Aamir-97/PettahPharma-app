@@ -92,7 +92,7 @@ export default function ApplyLeaves({ navigation }) {
       const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
       const day = ('0' + dtt.getDate()).slice(-2);
       setStartDate( year+month+day); 
-      console.log("startDate");     
+      console.log(year+month+day);     
       },[date]);
 
 
@@ -125,11 +125,11 @@ export default function ApplyLeaves({ navigation }) {
   const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
   const day = ('0' + dtt.getDate()).slice(-2);
   setEndDate(year+month+day);  
-  console.log("endDate");     
+  console.log(year+month+day);     
   },[date2]);
 //---------------------------------------------------------------------------------------------------------------------------
   const checkRequired = () => {
-
+console.log(leaveType,startDate,endDate);
     const leaveType = requiredField(leaveType)
     const startDate = requiredField(startDate)
     const endDate = requiredField(endDate)
@@ -139,51 +139,41 @@ export default function ApplyLeaves({ navigation }) {
             "Attention.....!",
             "Please fill the required field...!",
             [
-              {
-                text: "Cancel",
-                onPress: () => console.log("Cancel Pressed"),
-                style: "cancel"
-              },
+              {text: "Cancel", onPress: () => console.log("Cancel Pressed"), style: "cancel"},
               { text: "OK", onPress: () => console.log("Ok pressed") }
             ]
           )
           return 
     }
     else {
-       // checkAvailable();
+        checkAvailable();
     }
   }
 
   const checkAvailable = () =>{
-    //   console.log("checkAvailable function working...!");
+      console.log("checkAvailable function working...!");
       try {
         axios.post("http://10.0.2.2:3001/ApplyLeaves/CheckAvailability", {            
             rep_ID : user.rep_ID,
             startDate : startDate,
             endDate : endDate,
         }).then((response)=>{
-            // console.log("Succesfully Inserted:!");
+             console.log("Succesfully Inserted:!");
+            console.log(response.data[0].leaveAvailable);
             if (response.data.leaveAvailable === 1) {
                 saveDetails();
             } else {
                 Alert.alert(
                     "Attention.....!",
-                    "You already applied for leave...!",
-                    [
-                      {
-                        text: "Cancel",
-                        onPress: () => console.log("Cancel Pressed"),
-                        style: "cancel"
-                      },
-                      { text: "OK", onPress: () => console.log("Ok pressed") }
-                    ]
+                    "You already on leave or you have a task that day...!",
+                    [ { text: "Cancel", onPress: () => console.log("Cancel Pressed"), style: "cancel"},
+                      { text: "OK", onPress: () => console.log("Ok pressed") } ]
                   )
             }
         })
       } catch (err) {
             console.log(err, "Error while check availability for leave");
       }
-
   }
 
   const saveDetails = () =>{
@@ -243,20 +233,6 @@ export default function ApplyLeaves({ navigation }) {
         </Picker>
         <View style={{borderWidth : 0.5, borderTopColor: theme.colors.primary, marginTop : -22, marginBottom : 22}}></View>
 
-        {/* <View> */}
-        {/* <Text style = {styles.labelText}>Start Date </Text> */}
-        {/* <TextInput style={styles.InputField} onChangeText={(text) => setStartDate(text) } value={startDate}/> */}
-
-        {/* <DatePicker date={startDate} onDateChange={setStartDate} /> */}
-        {/* </View> */}
-
-        {/* <View > */}
-
-        {/* <Text style = {styles.labelText}>End Date</Text> */}
-        {/* <TextInput style={styles.InputField} onChangeText={(text) => setEndDate(text) } value={endDate}/> */}
-        {/* <DatePicker date={endDate} onDateChange={setEndDate} /> */}
-        {/* </View> */}
-
         <View style={{flexDirection  : 'row' , flex : 2, alignSelf : 'center'}}>
                 <View style={{flex : 2}}>
                     <Text style = {styles.labelText}>Start Date :</Text> 
@@ -293,7 +269,7 @@ export default function ApplyLeaves({ navigation }) {
 
         <View style = {{flexDirection  : 'row' , alignSelf : 'center', width : '70%'}}>
         <Button icon = "cancel" mode= "contained" color = '#0A6466' style={{backgroundColor:'red'}} title = 'cancel' onPress={() => {navigation.goBack()}}>Cancel</Button>
-        <Button icon = "send" mode = "contained" color = '#0A6466' style = {{marginLeft : 10}}title = 'submit' style={{marginLeft : 10}} onPress={() => {checkAvailable() }}>Apply</Button>
+        <Button icon = "send" mode = "contained" color = '#0A6466' style = {{marginLeft : 10}}title = 'submit' style={{marginLeft : 10}} onPress={() => {checkRequired() }}>Apply</Button>
         </View>
       </View>
 

@@ -749,14 +749,15 @@ app.post('/deleteDoctor',(req,res)=>{
 //Manage Leaves Page - Pending Leaves
 app.post('/viewPendingLeaves',(req,res)=>{
     const rep_ID = req.body.rep_ID;
-    db.query('SELECT leave_ID, leave_Type, DATEDIFF(end_Date, start_Date) AS no_of_days FROM leaves WHERE rep_ID=? AND status = 0 ORDER BY leave_ID DESC',[rep_ID],(err,result,_fields)=>{
+    //if approved then status=1, if rejected then status=2.......... pending leaves then status= 0 (default)
+    db.query('SELECT leave_ID, leave_Type, start_Date, description, DATEDIFF(end_Date, start_Date) AS no_of_days FROM leaves WHERE rep_ID=? AND status = 0 ORDER BY leave_ID DESC',[rep_ID],(err,result,_fields)=>{
         if(!err){
             res.send(result);
         }else{
         console.log(err);
         }
     });
-});  
+});      
 
 app.post('/ManageLeaves/ViewPendingLeave',(req,res)=>{
     const leave_ID = req.body.leave_ID;   
@@ -904,24 +905,24 @@ app.post('/applyLeave',(req,res)=>{
     })
 });  
 
-// app.post('/ApplyLeaves/CheckAvailability',(req,res)=>{ 
-//     const rep_ID = req.body.rep_ID;
-//     const startDate = req.body.startDate;
-//     const endDate = req.body.endDate;
+app.post('/ApplyLeaves/CheckAvailability',(req,res)=>{ 
+    const rep_ID = req.body.rep_ID;
+    const startDate = req.body.startDate;
+    const endDate = req.body.endDate;
+  //  console.log (startDate,endDate, rep_ID);
+    const sql = "SELECT COUNT(rep_ID) AS leaveAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date BETWEEN ? AND ?)  AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date) AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date)";
 
-//     const sql = "SELECT COUNT(rep_ID) AS leaveAvailable FROM leaves WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= ?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
-     
-//     db.query(sql,[rep_ID,startDate,endDate],(err,result)=>{
-//             if(err){
-//                 res.send({err:err})
-//                 console.log("Error while on leave");  
-//               } if(result){
-//                 res.send({
-//                     leaveAvailable: result[0].leaveAvailable,
-//                 });
-//               }    
-//     }); 
-// });   
+    db.query(sql,[rep_ID,startDate,endDate,startDate, endDate],(err,result)=>{
+            if(err){
+                res.send({err:err})
+                console.log("Error while on leave");  
+              } if(result){
+                res.send({
+                    leaveAvailable: result[0].leaveAvailable,
+                });
+              }    
+    }); 
+});   
 
 app.post('/ApplyLeaves/totalleaveCount',(req,res)=>{
 
@@ -1027,7 +1028,7 @@ app.post('/ManageExpenses/ViewExpenses',(req,res)=>{
               } if(result){
                 res.send(result);
               } 
-    });
+    });    
 });
 
 app.post('/Expense/DeleteExpense',(req,res)=>{
