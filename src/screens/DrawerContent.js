@@ -93,7 +93,7 @@ export function DrawerContent(props, {navigation}) {
                             </View>
                         </TouchableOpacity>
 
-                        <View style={styles.row}>
+                        {/* <View style={styles.row}>
                             <View style={styles.section}>
                                 <Paragraph style={[styles.paragraph, styles.caption]}>{profileDetails.rating}</Paragraph>
                                 <Caption style={styles.caption}>Rating</Caption>
@@ -102,7 +102,7 @@ export function DrawerContent(props, {navigation}) {
                                 <Paragraph style={[styles.paragraph, styles.caption]}>100</Paragraph>
                                 <Caption style={styles.caption}>Indicator</Caption>
                             </View>
-                        </View>
+                        </View> */}
                     </View>
 
 
@@ -178,7 +178,7 @@ export function DrawerContent(props, {navigation}) {
                             onPress={() => {props.navigation.navigate('ProductDetails')}}
 
                         />
-                        <DrawerItem 
+                        {/* <DrawerItem 
                             icon={({color, size}) => (
                                 <Icon 
                                 name="comment-multiple-outline" 
@@ -189,7 +189,7 @@ export function DrawerContent(props, {navigation}) {
                             label="Discussion Forum"
                             onPress={() => {props.navigation.navigate('DiscussionForum')}}
 
-                        />
+                        /> */}
                     </Drawer.Section>
 
                     {/* <Drawer.Section title="Preferences">

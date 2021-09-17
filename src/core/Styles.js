@@ -16,7 +16,7 @@ const Styles = StyleSheet.create({
         textAlign : "center"
     },
     homelogo : {
-        height : 60 ,
+        height : 80,
         width : 80,
         alignSelf : 'center',
     },

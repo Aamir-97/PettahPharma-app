@@ -25,12 +25,14 @@ export default function ViewExpenses ({route, navigation}){
     })
 
     const [showButton, setShowButton] = useState(false); 
+    const [salesManComment, setSalesManComment] = useState(true); 
 
     useEffect(()=> {
         async function fetchData(){
             try{  
                 if (expenseDetails.status === 'Pending'){
                     setShowButton(true);
+                    setSalesManComment(false);
                     console.log("DeleteButton");
                 }   
             } catch (err) {    
@@ -159,16 +161,20 @@ export default function ViewExpenses ({route, navigation}){
 
                             <Text style={styles.textLable}>Description : </Text>
                             <Text style={styles.CommentField}>{expenseDetails.description}</Text>
-                      
-                            <Text style={styles.textLable}>Sales Manager Comment : </Text>
-                            <Text style={styles.CommentField}>{expenseDetails.salesmanager_comment}</Text>
-                        
+
+                            {salesManComment && (
+                                <Text style={styles.textLable}>Sales Manager Comment : </Text>  
+                            )}
+
+                            {salesManComment && (
+                                <Text style={styles.CommentField}>{expenseDetails.salesmanager_comment}</Text>
+                            )}
+
                             <View style= {styles.sameRow}>
                                 <Text style={styles.textLable}>Status : </Text>
                                 <Text style={styles.status}>{expenseDetails.status}</Text>
 
                                 {showButton && (
-                                    // <View style={{alignSelf : 'flex-end'}}>
                                         <Button
                                             style= {styles.cancelButton}
                                             labelStyle = {{fontSize : 16, fontWeight : 'bold'}}
@@ -183,7 +189,6 @@ export default function ViewExpenses ({route, navigation}){
                                             onPress={() => deleteConfirmation()} 
                                             > Delete 
                                         </Button>
-                                    // </View>
 
                                 )}
                             </View>

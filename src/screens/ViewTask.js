@@ -336,6 +336,7 @@ export default function ViewTask ({route, navigation}){
                                   </View>
                                 </View>                                
                               )}
+                              
                               { completeButton && (
                                 <>
                                     <Text style={styles.acceptLabel}>You already accept this task </Text>

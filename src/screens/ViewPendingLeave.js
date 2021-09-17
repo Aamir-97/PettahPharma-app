@@ -125,9 +125,6 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                             <Text style={styles.textLable}>Duration : </Text>
                             <Text style={styles.text}>{pendingLeaveDetails.no_of_days}</Text>
                         </View>
-                    
-                            <Text style={styles.textLable}>Sales Manager Comment : </Text>
-                            <Text style={styles.CommentField}>{pendingLeaveDetails.salesmanager_comment}</Text>
                         
                             <Text style={styles.textLable}>Description : </Text>
                             <Text style={styles.CommentField}>{pendingLeaveDetails.description}</Text>

@@ -107,9 +107,9 @@ export default function HomeScreen({ navigation }) {
       (<BackgroundLayout>
 
       <Image style= {Styles.homelogo} 
-      source ={require('../assets/logoWithoutName.png')} 
+      source ={require('../assets/logo.png')} 
       />
-      <Text style={Styles.header}>Good Morning, {userName}!</Text>
+      <Text style={Styles.header}>Welcome, {userName}</Text>
       <View style={{alignSelf : 'center', flexDirection : 'row'}}>
         <Text style ={styles.countTextLabel}> You have </Text>
         <Text style ={{ color: 'red', fontSize : 15, fontWeight : 'bold'} }> {sheduledTaskCount} </Text> 
@@ -220,7 +220,6 @@ const styles = StyleSheet.create ({
     borderColor : theme.colors.primary,
     borderWidth : 1
   },
-
   TaskHeader : {
     color : theme.colors.primary,
     fontWeight : 'bold',
@@ -229,7 +228,6 @@ const styles = StyleSheet.create ({
     justifyContent: 'space-between',
     top : 5
   },
-
   sameRow : {
     flexDirection : 'row',
     justifyContent: 'space-between',

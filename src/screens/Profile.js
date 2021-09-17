@@ -3,6 +3,7 @@ import {Text, ScrollView, StyleSheet, View, TouchableOpacity, Image, SafeAreaVie
 import BackgroundLayout from '../components/BackgroundLayout';
 import { Button } from 'react-native-paper';
 import FontAwesome5Icon from 'react-native-vector-icons/FontAwesome5'
+import Icon from 'react-native-vector-icons/Fontisto'
 import { theme } from '../core/theme'
 
 import axios from 'axios';
@@ -51,6 +52,62 @@ export default function Profile({navigation}){
         }
         fetchData();     
     },[]);
+
+    // const [showKpi, setShowKpi] = useState(false);
+  const [totalDoctors, setTotalDoctor] = React.useState(0);
+  const [totalVSR, setTotalVSR] = React.useState(0);
+  const [expensesAmount, setExpensesAmount] = React.useState(0);
+  const [visitedDoctorCount, setVisitedDoctorCount] = React.useState(0);
+  const [completeTask, setCompleteTask] = React.useState(0);
+  const [totalTask, setTotalTask] = React.useState(0);
+
+  const expensePerVisit = parseInt(expensesAmount) / parseInt(totalVSR);
+  const taskCompletePercentage = parseInt(completeTask) / parseInt(totalTask) * 100;
+  const doctorCourage = parseInt(visitedDoctorCount) / parseInt(totalDoctors) * 100;
+  const expensePerVisitPercentage = parseInt(expensePerVisit) / parseInt(expensesAmount) * 100;
+
+  const ratingEqu =  ( parseInt(taskCompletePercentage)+ parseInt(doctorCourage)+ parseInt(expensePerVisitPercentage))/3;
+  const [rating, setRating]=React.useState('');
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (ratingEqu>=90){
+        setRating('4.5');
+      } 
+      else if (ratingEqu>=80){
+        setRating('4.0');
+      } 
+      else if (ratingEqu>=70){
+        setRating('3.5');
+      } 
+      else if (ratingEqu>=60){
+        setRating('3.0');
+      } 
+      else if (ratingEqu>=50){
+        setRating('2.5');
+      } 
+      else if (ratingEqu>=40){
+        setRating('2.0');
+      } 
+      else if (ratingEqu>=30){
+        setRating('1.5');
+      } 
+      else if (ratingEqu>=20){
+        setRating('1.0');
+      } 
+      else if (ratingEqu>=10){
+        setRating('0.5');
+      } 
+      else if (ratingEqu>=0){
+        setRating('0.1');
+      } 
+      else {
+        setRating('0');
+      } 
+    }
+    fetchData();
+  }, [ratingEqu]);
+
 
     useEffect(() => {
         fetchData();
@@ -107,7 +164,25 @@ export default function Profile({navigation}){
                 });
               } catch (e){
                 console.log(e);
-              }            
+              } 
+
+            // Profile Performance
+            try {              
+              await axios.post("http://10.0.2.2:3001/Profile/Kpi/StatisticData", {
+                rep_ID: user.rep_ID,
+              }).then((response) => {
+                console.log("/Profile/Kpi/StatisticData");
+                setTotalDoctor(response.data[0].doctorCount);
+                setTotalVSR(response.data[0].reportCount);
+                setExpensesAmount(response.data[0].expensesAmount);
+                // setLeaveCount(response.data[0].leaveCount);
+                setCompleteTask(response.data[0].taskcount);
+                setVisitedDoctorCount(response.data[0].visitedDoctorcount);
+                setTotalTask(response.data[0].totalTask);
+              });
+            } catch (e){
+                console.log(e);
+            } 
         }
 
     const editProfile = (rep_ID) => {
@@ -152,13 +227,12 @@ export default function Profile({navigation}){
                     </Image>
                 </View>
 
-                    <View style={{alignItems:'center'}}>   
-
+                    <View style={{alignItems:'center'}}>
                             {profileDetails.display_photo && (
                                 <Image 
                                     source= {{uri : profileDetails.display_photo }}
-                                    style = {{width:150, height: 150, marginTop:-65, borderRadius: 100}}
-                                    />
+                                    style = {styles.displayPhoto}
+                                />
                                 )
                             }                      
 
@@ -168,6 +242,10 @@ export default function Profile({navigation}){
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="briefcase" color={theme.colors.primary} size={20}></FontAwesome5Icon>
                             <Text style={{fontSize:15, paddingLeft : 5}}>Medical representative</Text>
+                        </View>
+                        <View style = {styles.sameRow}>
+                            <Text style={{fontSize:16, fontWeight : 'bold', marginRight : 5}}>Performance Rate : {rating}</Text>
+                            <Icon name="star" filled color={theme.colors.error} size={18}></Icon>
                         </View>
                     </View>
 
@@ -257,22 +335,22 @@ export default function Profile({navigation}){
                         
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="external-link-alt" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}>Mobile No. : { profileDetails.phone_no }</Text>
+                            <Text style={styles.detailText}>Expense Per Visit. : { parseInt(expensePerVisit) }.00 </Text>
                         </View>
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="crosshairs" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}>Address : { profileDetails.address }</Text>
+                            <Text style={styles.detailText}>Task Complete(%) : { parseInt(taskCompletePercentage) }% </Text>
                         </View>
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="dice-d20" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}>Email : { profileDetails.email }</Text>
+                            <Text style={styles.detailText}>Doctor Courage(%) : { parseInt(doctorCourage) }% </Text>
                         </View>
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="dollar-sign" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}>Joined At : {year + month + day} </Text>
+                            <Text style={styles.detailText}> Etho : {parseInt(expensePerVisitPercentage)}% </Text>
                         </View>
 
                     </View>
@@ -327,5 +405,13 @@ const styles = StyleSheet.create ({
         fontWeight : 'bold',
 
     },
+    displayPhoto : {
+        width:150, 
+        height: 150, 
+        marginTop:-65, 
+        borderRadius: 100,
+        borderWidth : 3,
+        borderColor : theme.colors.primary,
+    }
 
   })

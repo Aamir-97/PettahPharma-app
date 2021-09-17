@@ -130,7 +130,7 @@ export default function AddNewTask({navigation}){
                 } else {
                     Alert.alert(
                         "Attention.....!",
-                        "You already on assigned...!",
+                        "You already on assigned or you applied for leave on that day...!",
                         [
                           {
                             text: "Cancel",
@@ -152,10 +152,10 @@ export default function AddNewTask({navigation}){
 
         const title = requiredField(scheduleFormDetails.title)
         const location = requiredField(scheduleFormDetails.location)
-        // const date = requiredField({...scheduleFormDetails.date})
+        const date = requiredField({...scheduleFormDetails.date})
         const session = requiredField(scheduleFormDetails.session)
         // console.log(title , location , session, "check the required var.");
-        if (title || location || session) {
+        if (title || location || session || date) {
             Alert.alert(
                 "Attention.....!",
                 "Please fill the required field...!",

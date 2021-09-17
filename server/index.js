@@ -255,9 +255,12 @@ app.post('/Task/CheckAvailability',(req,res)=>{
     const session = req.body.session;
     // console.log(rep_ID,date,session);
 
-    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE start_date=? AND end_Date=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session=?) AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
+    const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND \
+    medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN leaves.start_Date AND leaves.end_Date) AND \
+    medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session=?) AND \
+    medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
      
-    db.query(sql,[rep_ID,date,date,date,session,date],(err,result)=>{
+    db.query(sql,[rep_ID,date,date,session,date],(err,result)=>{
             if(err){
                 res.send({err:err})
                 console.log("Error while check for Task availability");  
@@ -300,6 +303,26 @@ app.post('/Profile/ManagerDetails',(req,res)=>{
                 res.send(result);
               }  
     }); 
+});
+
+app.post('/Profile/Kpi/StatisticData', (req, res) => {
+    const rep_ID=req.body.rep_ID;
+
+    db.query("SELECT \
+    (SELECT COUNT(report_id) FROM visit_summary_report WHERE rep_ID=?) AS reportCount ,\
+    (SELECT SUM(amount) FROM expenses WHERE rep_ID=?) AS expensesAmount, \
+    (SELECT COUNT(rep_ID) FROM leaves WHERE rep_ID=?) AS leaveCount,\
+    (SELECT COUNT(doctor_ID) FROM doctor_details WHERE rep_ID=?) AS doctorCount, \
+    (SELECT COUNT(task_id) FROM task WHERE type='task' AND status='Complete' AND rep_ID = ?) AS taskcount,\
+    (SELECT COUNT(task_id) FROM task WHERE type='task' AND rep_ID = ?) AS totalTask,\
+    (SELECT COUNT(DISTINCT doctor_name) FROM visit_summary_report WHERE rep_ID = ?) AS visitedDoctorcount",
+    [rep_ID,rep_ID,rep_ID,rep_ID,rep_ID,rep_ID,rep_ID],  (err, result) => {
+        if (!err) {
+            res.send(result);
+        } else {
+            console.log(err);
+        }
+    });
 });
 
 app.put('/updateProfile',(req,res)=>{

@@ -144,8 +144,8 @@ export default function ManageExpenses({ navigation }) {
           </View>
           <View style= {styles.sameRow}>
               <FontAwesome5Icon name="money-check-alt" size={22} color={theme.colors.primary} />
-              <Text style={styles.textLable}>Total : </Text>
-              <Text style={styles.text}>Rs. {total}.00</Text>
+              <Text style={styles.totalLable}>Total : </Text>
+              <Text style={{fontSize : 16,fontWeight : 'bold'}}>Rs. {total}.00</Text>
           </View>
         </Card.Content>
       </Card>
@@ -256,8 +256,16 @@ const styles = StyleSheet.create ({
       fontSize : 16,
   },
   textLable : {
-      marginLeft : -40,
+      // marginLeft : 20,
+      alignSelf : 'flex-start',
       fontSize : 16,
+      marginBottom : 6,
+      fontWeight : 'bold',
+      color : theme.colors.primary,
+  },
+  totalLable : {
+      // marginLeft : 20,
+      fontSize : 18,
       marginBottom : 6,
       fontWeight : 'bold',
       color : theme.colors.primary,
