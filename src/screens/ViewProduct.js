@@ -12,7 +12,7 @@ export default function ViewProduct ({route, navigation}){
     const {product_id}= route.params;
 
     const [productDetails, setProductDetails] = React.useState({
-        display_photo : '',
+        display_photo : '../assets/medicine/aspirine500.jpeg',
         name : '',
         volume : '',
         price : '',
@@ -58,11 +58,12 @@ export default function ViewProduct ({route, navigation}){
                     <View style ={styles.productContainer}> 
                         <Image
                             style = {styles.medicinePhoto}
-                            source ={require('../assets/medicine/amoxicillin-500mg.jpeg')}
+                                source ={require('../assets/medicine/benadryl.jpeg')}
                         />
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Name : </Text>
                             <Text style={styles.text}>{productDetails.name}</Text>
+                            {/* <Text style={styles.text}>{productDetails.display_photo}</Text> */}
                         </View>
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Volume : </Text>

@@ -61,23 +61,26 @@ export default function ProductDetails({navigation}){
 
             <DataTable>
                 <DataTable.Header>
-                    <DataTable.Title>Image</DataTable.Title>
+                    {/* <DataTable.Title>Image</DataTable.Title> */}
                     <DataTable.Title>Medicine</DataTable.Title>
                     <DataTable.Title numeric>Volume</DataTable.Title>
                     <DataTable.Title numeric>Price</DataTable.Title>
                 </DataTable.Header>
 
                 {filteredKey.map((record,i) => {
+                    //   function numberWithCommas(x) {
+                        let price =record.price.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    //   }
                     return(
                     <TouchableOpacity
                         key={record.product_id}
                         onPress = {()=> viewProduct(record.product_id)}
                     >
                         <DataTable.Row >
-                            <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={{uri : record.display_photo}} /></DataTable.Cell>
+                            {/* <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={{uri : record.display_photo}} /></DataTable.Cell> */}
                             <DataTable.Cell align='right'>{record.name}</DataTable.Cell>
                             <DataTable.Cell numeric>{record.volume}</DataTable.Cell>
-                            <DataTable.Cell numeric>{record.price}
+                            <DataTable.Cell numeric>{price}
                                 <EntypoIcons
                                     name="chevron-right" 
                                     color={theme.colors.primary}

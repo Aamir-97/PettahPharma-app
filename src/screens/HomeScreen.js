@@ -24,18 +24,34 @@ export default function HomeScreen({ navigation }) {
   const [completedTaskCount, setCompletedTaskCount] = React.useState(-1);
   const [productsCount, setProductsCount] = React.useState('');
   const [userName, setuserName] = React.useState('');
+  const [testVar, setTestVar] = React.useState('');
 
   const [taskList, setTaskList]=useState([]);
 
   useEffect(() => {
       fetchData();
-      console.log("useEffect");
+        console.log("useEffect");
       return navigation.addListener('focus', () => {
+        console.log("useEffect2");
         fetchData();
       });
   },[rep_ID]);
 
+  useEffect(() => {
+      numberWithCommas(expensesAmount);
+      console.log("Number with comma");
+      return navigation.addListener('focus', () => {
+      numberWithCommas(expensesAmount);
+      console.log("Number with comma2");
+      });
+  },[expensesAmount]);
+
+  function numberWithCommas(x) {
+    setTestVar(x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
+  }
+
       async function fetchData(){
+      // setTestVar(x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","));
 
         try {
           const userProfile = await AsyncStorage.getItem('user');
@@ -93,6 +109,7 @@ export default function HomeScreen({ navigation }) {
     navigation.navigate('ViewTask', {task_id});
   }
 
+
     
 
   return (
@@ -124,7 +141,7 @@ export default function HomeScreen({ navigation }) {
             <FontAwesome5Icon name= "file-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('VisitSummaryReport')}></FontAwesome5Icon>
           </View>
           <View style={{alignItems: 'center'}}>
-            <Text style={styles.countText}> {expensesAmount}.00 </Text>
+            <Text style={styles.countText}> {testVar}.00 </Text>
             <Text style={styles.countTextLabel}> Claimed Expenses </Text>
             <FontAwesome5Icon name= "money-bill-alt" size= {30} color={theme.colors.primary} onPress= {() => navigation.navigate('ManageExpenses')}></FontAwesome5Icon>
           </View>

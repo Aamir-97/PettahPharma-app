@@ -287,6 +287,11 @@ export default function Profile({navigation}){
                         </View>
 
                         <View style = {styles.sameRow}>
+                            <FontAwesome5Icon name="envelope" color={theme.colors.primary} size={20}></FontAwesome5Icon>
+                            <Text style={styles.detailText}>Working Area : { profileDetails.working_area }</Text>
+                        </View>
+
+                        <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="network-wired" color={theme.colors.primary} size={20}></FontAwesome5Icon>
                             <Text style={styles.detailText}>Joined At : {year + month + day} </Text>
                         </View>
@@ -317,7 +322,7 @@ export default function Profile({navigation}){
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="map-marker-alt" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}>Working Area : { mangerDetails.area }</Text>
+                            <Text style={styles.detailText}>Working Area : { mangerDetails.working_area }</Text>
                         </View>
 
                         <View style = {styles.sameRow}>
@@ -350,7 +355,7 @@ export default function Profile({navigation}){
 
                         <View style = {styles.sameRow}>
                             <FontAwesome5Icon name="dollar-sign" color={theme.colors.primary} size={20}></FontAwesome5Icon>
-                            <Text style={styles.detailText}> Etho : {parseInt(expensePerVisitPercentage)}% </Text>
+                            <Text style={styles.detailText}> Echo : {parseInt(expensePerVisitPercentage)}% </Text>
                         </View>
 
                     </View>

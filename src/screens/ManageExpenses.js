@@ -61,7 +61,7 @@ export default function ManageExpenses({ navigation }) {
         }).then((response)=>{
           setDailyBatta(response.data[0].DailyBatta);
           setFuel(response.data[0].Fuel);
-          setAccomodation(response.data[0].Accomadation);
+          setAccomodation(response.data[0].Accomodation);
           setOther(response.data[0].Other);
           setTotal(response.data[0].Total);
           console.log("/Expenses/StatisticsData");

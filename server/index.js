@@ -768,9 +768,10 @@ app.post('/ApplyLeaves/CheckAvailability',(req,res)=>{
     const endDate = req.body.endDate;
   //  console.log (startDate,endDate, rep_ID);
     const sql = "SELECT COUNT(rep_ID) AS leaveAvailable FROM medicalrep WHERE rep_ID=? \
-    AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date BETWEEN ? AND ?)  \
-    AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date) \
-    AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN start_Date AND end_Date)";
+    AND medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.status='Pending' AND task.date BETWEEN ? AND ?)  \
+    AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE leaves.status=1 AND ? BETWEEN start_Date AND end_Date) \
+    AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE leaves.status=1 AND ? BETWEEN start_Date AND end_Date)";
+    // AND medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE leaves.status=1 ? AND  BETWEEN start_Date AND end_Date) ";
 
     db.query(sql,[rep_ID,startDate,endDate,startDate, endDate],(err,result)=>{
             if(err){
@@ -848,11 +849,11 @@ app.post('/ClaimExpenses',(req,res)=>{
 app.post('/Expenses/StatisticsData',(req,res)=>{
     const rep_ID = req.body.rep_ID;
     const sqlLogin = "SELECT \
-    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Daily batta' AND status=1) AS DailyBatta, \
-    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Accommodation' AND status=1) AS Accomadation, \
-    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Fuel' AND status=1) AS Fuel, \
-    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND expense_Type='Other' AND status=1) AS Other, \
-    (SELECT SUM(amount) FROM expenses WHERE rep_ID = ? AND status=1) AS Total";
+    (SELECT format(SUM(amount),'MONEY') FROM expenses WHERE rep_ID = ? AND expense_Type='Daily batta' AND status=1) AS DailyBatta, \
+    (SELECT format(SUM(amount),'MONEY') FROM expenses WHERE rep_ID = ? AND expense_Type='Accomodation' AND status=1) AS Accomodation, \
+    (SELECT format(SUM(amount),'MONEY') FROM expenses WHERE rep_ID = ? AND expense_Type='Fuel' AND status=1) AS Fuel, \
+    (SELECT format(SUM(amount),'MONEY') FROM expenses WHERE rep_ID = ? AND expense_Type='Other' AND status=1) AS Other, \
+    (SELECT format(SUM(amount),'MONEY') FROM expenses WHERE rep_ID = ? AND status=1) AS Total";
      
     db.query(sqlLogin,[rep_ID,rep_ID,rep_ID,rep_ID,rep_ID],(err,result)=>{
             if(err){
