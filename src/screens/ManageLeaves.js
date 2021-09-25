@@ -129,7 +129,7 @@ export default function ManageLeaves({ navigation }) {
                     <DataTable.Title align = "right">Type of Leave </DataTable.Title>
                     <DataTable.Title numeric> Start Date</DataTable.Title>
                     <DataTable.Title numeric>Duration</DataTable.Title>
-                    <DataTable.Title numeric>Description </DataTable.Title>
+                    <DataTable.Title numeric> Reason </DataTable.Title>
                 </DataTable.Header>
 
                 {filteredKey.map((record,i) => {

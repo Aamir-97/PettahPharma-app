@@ -170,11 +170,13 @@ export default function ManageExpenses({ navigation }) {
                     const year = dtt.getFullYear() + '/';
                     const month = ('0' + (dtt.getMonth() + 1)).slice(-2) + '/';
                     const day = ('0' + dtt.getDate()).slice(-2);
+
+                    let price =record.amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
                               if (record.status==='Pending'){
                                 return(
                                   <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
-                                  <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
+                                  <DataTable.Cell align = "center">Rs.{price}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
                                   <DataTable.Cell numeric><Text style={{color:'blue', fontWeight: 'bold'}}>{record.status}</Text></DataTable.Cell>
                                   </DataTable.Row>
@@ -183,7 +185,7 @@ export default function ManageExpenses({ navigation }) {
                                 return(
                                   <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
-                                  <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
+                                  <DataTable.Cell align = "center">Rs.{price}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
                                   <DataTable.Cell numeric><Text style={{color:theme.colors.primary, fontWeight: 'bold'}}>{record.status}</Text></DataTable.Cell>
                                   </DataTable.Row>
@@ -192,7 +194,7 @@ export default function ManageExpenses({ navigation }) {
                                 return(
                                   <DataTable.Row key={record.expense_ID} onPress = {()=> ViewExpense(record.expense_ID)}>
                                   <DataTable.Cell align = "center"> {record.expense_Type}</DataTable.Cell>
-                                  <DataTable.Cell align = "center">Rs.{record.amount}.00</DataTable.Cell>
+                                  <DataTable.Cell align = "center">Rs.{price}.00</DataTable.Cell>
                                   <DataTable.Cell align = "center">{year+month+day}</DataTable.Cell>
                                   <DataTable.Cell numeric><Text style={{color:theme.colors.error, fontWeight: 'bold'}}>{record.status}</Text></DataTable.Cell>
                                   </DataTable.Row>

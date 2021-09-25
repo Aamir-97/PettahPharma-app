@@ -142,6 +142,7 @@ const DoctorDetailsStackScreen = ({navigation}) => {
     }}
       >
       <DoctorDetailsStack.Screen  name="DoctorDetails" component={DoctorDetails} options= { {
+        title: "Doctor Details",
         headerLeft: () => (
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )
@@ -178,6 +179,7 @@ const ProductDetailsStackScreen = ({navigation}) => {
     }}
       >
       <ProductDetailsStack.Screen  name="ProductDetails" component={ProductDetails} options= { {
+        title: "Product Details",
         headerLeft: () => (
           <Icon.Button name= "menu" size= {25} backgroundColor="#0A6466" onPress= { () => navigation.openDrawer()}></Icon.Button>
         )

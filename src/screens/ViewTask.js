@@ -51,7 +51,7 @@ export default function ViewTask ({route, navigation}){
         } 
       } 
       fetchData();
-    },[taskDetails]);
+    },[taskDetails.type]);
 
     useEffect(() => {
         async function fetchData(){

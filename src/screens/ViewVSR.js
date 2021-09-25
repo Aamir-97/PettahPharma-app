@@ -136,10 +136,10 @@ export default function ViewVSR ({route, navigation}){
                             <Text style={styles.textLable}>Visited Doctor (if) : </Text>
                             <Text style={styles.text}> {reportDetails.doctor_name}</Text>
                         </View>
-                        <View style= {styles.sameRow}>
+
                             <Text style={styles.textLable}>Product (if sample given) : </Text>
                             <Text style={styles.text}> {reportDetails.product_name}</Text>
-                        </View>
+
                         <View style= {styles.sameRow}>
                             <Text style={styles.textLable}>Number Of Product : </Text>
                             <Text style={styles.text}> {reportDetails.no_of_sample}</Text>
@@ -157,19 +157,21 @@ export default function ViewVSR ({route, navigation}){
 
                         <View style={{alignSelf : 'center', marginTop : 10}}>
                             <View style = {styles.sameRow}>
-                            <Button
-                                style= {styles.cancelButton}
-                                mode='contained'
-                                icon={({color, size}) => (
-                                    <Icon
-                                    name="delete-forever" 
-                                    color={theme.colors.surface}
-                                    size={25}
-                                    />
-                                )}
-                                onPress={() => deleteConfirmation()} 
-                                > Delete 
-                            </Button>
+
+                                <Button
+                                    style= {styles.cancelButton}
+                                    mode='contained'
+                                    icon={({color, size}) => (
+                                        <Icon
+                                        name="delete-forever" 
+                                        color={theme.colors.surface}
+                                        size={25}
+                                        />
+                                    )}
+                                    onPress={() => deleteConfirmation()} 
+                                    > Delete 
+                                </Button>
+
                             <Button
                                 disabled
                                 style= {styles.submitButton}

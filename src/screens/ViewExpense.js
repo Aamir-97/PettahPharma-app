@@ -50,7 +50,7 @@ export default function ViewExpenses ({route, navigation}){
             console.log("/ManageExpenses/ViewExpenses");
           setExpenseDetails({...expenseDetails,
             expense_Type : response.data[0].expense_Type,
-            amount : response.data[0].amount,
+            amount : response.data[0].amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ","),
             date : response.data[0].date,
             location : response.data[0].location,
             // bills : response.data[0].bills,

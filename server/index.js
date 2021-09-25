@@ -81,7 +81,7 @@ app.post('/HomePage/StatisticsData',(req,res)=>{
     (SELECT SUM(amount) FROM expenses WHERE rep_ID=? AND status=1 ) AS expensesAmount,  \
     (SELECT SUM(DATEDIFF(end_Date, start_Date)) FROM leaves WHERE rep_ID=? AND status=1 ) AS leaveCount, \
     (SELECT COUNT(doctor_ID) FROM doctor_details WHERE rep_ID=? ) AS doctorCount,  \
-    (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Pending' AND date=CURRENT_DATE ) AS ScheduledTaskCount,  \
+    (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Pending' AND date=CURRENT_DATE AND type='Task') AS ScheduledTaskCount,  \
     (SELECT COUNT(rep_ID) FROM task WHERE rep_ID=? AND status='Complete' AND type='task') AS completedTaskCount, \
     (SELECT COUNT(product_id) FROM product) AS productsCount"
      
@@ -107,7 +107,16 @@ app.post('/homePage/viewTask',(req,res)=>{
                 console.log("Error while GetTask");  
               } if(result.length > 0){
                 res.send(result);
-              }    
+              } 
+            //   else {
+            //       res.send([
+            //           id = "-1",
+            //           date = "0000-00-00",
+            //           location = "Place",
+            //           title = "No task to do",
+            //           type = "Empty"
+            //       ])
+            //   }   
     }); 
 }); 
 
@@ -257,8 +266,8 @@ app.post('/Task/CheckAvailability',(req,res)=>{
 
     const sql = "SELECT COUNT(rep_ID) AS repAvailable FROM medicalrep WHERE rep_ID=? AND \
     medicalrep.rep_ID NOT IN (SELECT leaves.rep_ID FROM leaves WHERE ? BETWEEN leaves.start_Date AND leaves.end_Date) AND \
-    medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session=?) AND \
-    medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day')";
+    medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session=? AND status='Pending') AND \
+    medicalrep.rep_ID NOT IN (SELECT task.rep_ID FROM task WHERE task.date = ? AND task.session= 'Full-day' AND status='Pending')";
      
     db.query(sql,[rep_ID,date,date,session,date],(err,result)=>{
             if(err){

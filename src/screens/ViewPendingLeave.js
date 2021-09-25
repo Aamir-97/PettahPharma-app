@@ -126,7 +126,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                             <Text style={styles.text}>{pendingLeaveDetails.no_of_days}</Text>
                         </View>
                         
-                            <Text style={styles.textLable}>Description : </Text>
+                            <Text style={styles.textLable}>Reason : </Text>
                             <Text style={styles.CommentField}>{pendingLeaveDetails.description}</Text>
 
                             <View style={{alignSelf : 'center', marginTop : 10}}>

@@ -80,12 +80,12 @@ export default function ProductDetails({navigation}){
                             {/* <DataTable.Cell align="center"> <Avatar.Image size={36} style={styles.productImage} source={{uri : record.display_photo}} /></DataTable.Cell> */}
                             <DataTable.Cell align='right'>{record.name}</DataTable.Cell>
                             <DataTable.Cell numeric>{record.volume}</DataTable.Cell>
-                            <DataTable.Cell numeric>{price}
-                                <EntypoIcons
+                            <DataTable.Cell numeric>{price}.00
+                                {/* <EntypoIcons
                                     name="chevron-right" 
                                     color={theme.colors.primary}
                                     size={15}
-                                />                            
+                                />                             */}
                             </DataTable.Cell>
                         </DataTable.Row>
                     </TouchableOpacity>

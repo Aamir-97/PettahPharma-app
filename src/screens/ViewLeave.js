@@ -90,7 +90,7 @@ const day2 = ('0' + dtt2.getDate()).slice(-2);
                             <Text style={styles.textLable}>Sales Manager Comment : </Text>
                             <Text style={styles.CommentField}>{LeaveDetails.salesmanager_comment}</Text>
                         
-                            <Text style={styles.textLable}>Description : </Text>
+                            <Text style={styles.textLable}>Reason : </Text>
                             <Text style={styles.CommentField}>{LeaveDetails.description}</Text>
 
                     </View>
